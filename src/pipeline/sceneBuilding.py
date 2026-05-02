@@ -22,9 +22,7 @@ def initPosAndQuat(items,scene,entites):
     :param items: les items
     :return: les items mais avec des positions et orientations de base.
     '''
-    scene.build() 
-
-    for item in items: #generation de chaque iteem avec son scale du coup
+    for item in items:
         ent = entites[item['id']]
         aabb_min, aabb_max = ent.get_AABB() #on get les limites de la bounding box
         item['dimensions'] = [float(aabb_max[0] - aabb_min[0]), float(aabb_max[1] - aabb_min[1]),float(aabb_max[2] - aabb_min[2])]
@@ -206,7 +204,7 @@ def processRelations(items, relations):
     return items
 
 
-def changeQuatAndPosFromTurn(turn, item, ent, scene):
+def changeQuatAndPosFromTurn(turn, item, ent):
     '''
     Change les données d'orientation du sujet
     '''
@@ -217,12 +215,12 @@ def changeQuatAndPosFromTurn(turn, item, ent, scene):
     rotations = {
         'tip_left':[0, 0, 0.707, 0.707],
         'tip_right':[0, 0, -0.707, 0.707],
-        'upside_down': [1, 0, 0, 0],
+        'upside_down': [0, 0, 1, 0],
         'tip_forward':[0.707, 0, 0, 0.707],
         'tip_backward':[-0.707, 0, 0, 0.707],
         'turn_right':[0, 0.707, 0, 0.707],
         'turn_left': [0, -0.707, 0, 0.707],
-        'turn_around':[0, 0, 1, 0]}
+        'turn_around':[1, 0, 0, 0]}
     
     if turn not in rotations:
         print(f"Changement d'orientation non traité: {turn}")
