@@ -33,6 +33,11 @@ def getFilePath(item):
                 if os.path.exists(path):
                     return path
 
+        # fallback : n'importe quel URDF dans le dossier
+        for f in os.listdir(base):
+            if f.endswith(".urdf"):
+                return os.path.join(base, f)
+        
         raise FileNotFoundError(f"Aucun fichier exploitable trouvé dans {base}")
 
     return base

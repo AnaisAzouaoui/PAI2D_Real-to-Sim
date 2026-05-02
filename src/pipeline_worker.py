@@ -135,6 +135,12 @@ def postprocess_objects(objetsList, objet_reconnus):
         # path : ajouter depuis objet_reconnus si absent, puis resoudre vers fichier
         if not obj.get("path") and info.get("path"):
             obj["path"] = info["path"]
+        # fallback: si le id du LLM ne correspond pas aux cles d'objet_reconnus, chercher par urdf
+        if not obj.get("path"):
+            urdf = obj.get("urdf", "")
+            catalog = objets_list(OBJETS_DIR)
+            if urdf in catalog:
+                obj["path"] = catalog[urdf]["path"]
         if obj.get("path"):
             obj["path"] = resolve_urdf_path(obj["path"])
 

@@ -115,7 +115,7 @@ def create_scene(objetsList):
     scene = gs.Scene(
         show_viewer=True,
         rigid_options=gs.options.RigidOptions(
-            dt=0.005,
+            dt=0.001,
             integrator=gs.integrator.Euler,
         ),
         vis_options=gs.options.VisOptions(

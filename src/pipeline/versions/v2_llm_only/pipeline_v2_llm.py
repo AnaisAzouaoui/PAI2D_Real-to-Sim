@@ -45,7 +45,9 @@ def object_dim_quat(prompt, objet_reconnus):
   - "id" and "urdf" must be copied verbatim from the objects list above
   - scale: adjust so the object looks realistic in the scene (1.0 = use real dimensions as-is)
   - quat: orientation as [w, x, y, z] — default orientation = [1.0,0.0,0.0,0]
-  - pos z: set to half of (dimensions[2] * scale) so the object rests on the floor
+  - pos z for objects resting on the FLOOR: dimensions[2] * scale / 2
+  - pos z for objects placed ON another object: parent_pos_z + parent_dimensions[2] * parent_scale / 2 + this_dimensions[2] * this_scale / 2
+  - IMPORTANT: always compute parent object position first, then compute child position on top of it
   - objects must NOT overlap — space them according to the scene description
   - output raw JSON only, no markdown, no comments, no explanation"""
 
@@ -110,6 +112,8 @@ def modify_scene(prompt, current_objects_json, objet_reconnus):
         - For "remove": delete the object from the list
         - For "replace X with Y": change the urdf and id, keep similar pos/scale
         - For "add": add a new object with appropriate pos (no overlap)
+        - pos z for objects on the floor: dimensions[2] * scale / 2
+        - pos z for objects ON another: parent_pos_z + parent_dimensions[2] * parent_scale / 2 + this_dimensions[2] * this_scale / 2
 
         OUTPUT FORMAT — return ONLY:
         {{

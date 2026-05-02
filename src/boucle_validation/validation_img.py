@@ -4,13 +4,13 @@ import base64
 import ollama
 import openai
 import json
-from jsonToSim import validation_physique
-from validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
+from .jsonToSim import validation_physique
+from .validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
 from PIL import Image
 import xml.etree.ElementTree as ET
 import copy
 
-def boucle_vlm_img(user_image_path, jsonFile, max_iter=2):
+def boucle_vlm_img(user_image_path, jsonFile, max_iter=5):
     '''
     Boucle de validation qui compare la scène générée à une image de référence fournie par l'utilisateur.
     '''
@@ -104,7 +104,7 @@ def validation_semantique_img(user_image_path, data, scene_image_path):
         ]
     )
     '''
-    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    client = openai.OpenAI()
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[

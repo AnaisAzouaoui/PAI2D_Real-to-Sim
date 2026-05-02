@@ -4,8 +4,8 @@ import base64
 import ollama
 import openai
 import json
-from jsonToSim import validation_physique
-from validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
+from .jsonToSim import validation_physique
+from .validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
 import json
 import copy
 
@@ -15,7 +15,7 @@ import json
 
 
 
-def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=10):
+def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=5):
 
     run_dir = create_run_dir()
     history = []
@@ -106,7 +106,7 @@ def validation_semantique_prompt(original_prompt, data, image_path):
     )
     '''
     
-    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    client = openai.OpenAI()
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[

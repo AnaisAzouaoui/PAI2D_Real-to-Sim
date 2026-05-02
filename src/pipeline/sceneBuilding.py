@@ -194,7 +194,7 @@ def apply_relation(rel, item, subject):
         new_x = x + w/2 + sw/2 + 0.01
         new_y = y
     elif rel_type in ['right_of', 'left_of', 'in_front_of', 'behind']:
-        # new_z keeps subject's initPosAndQuat value (ground-level already set)
+        new_z = z  # meme hauteur que l'objet de reference
         offset = distance if isDistance else random.uniform(0.05, 0.2)
         if rel_type == 'right_of':
             new_x = x
@@ -228,14 +228,13 @@ def processRelations(items, relations):
     relations = simplifyRelations(relations)
     build_scene_graph(items_dict, relations)
 
-    # root = items jamais subjects d'une relation verticale (ne reposent sur rien)
-    subjects = {rel['subject'] for rel in relations if rel['type'] in ('on', 'inside')}
-    placed_items = {item['id'] for item in items if item['id'] not in subjects}
+    # roots = objets sans parent (pas portes par un autre objet selon build_scene_graph)
+    placed_items = {item['id'] for item in items if items_dict[item['id']].get('parent_id') is None}
     if not placed_items:
         placed_items = {items[0]['id']}
     print(f"[sceneBuilding] roots : {placed_items}")
 
-    # directionnelles en premier : les roots sont positionnés avant que leurs enfants soient posés dessus
+    # directionnelles d'abord : les roots sont repositionnes avant que leurs enfants soient poses dessus
     relations.sort(key=lambda r: 0 if r['type'] not in ('on', 'inside') else 1)
     reste = [rel for rel in relations if rel.get('object') in items_dict and rel.get('subject') in items_dict]
     while reste:
