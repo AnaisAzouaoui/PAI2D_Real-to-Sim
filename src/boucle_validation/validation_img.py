@@ -1,15 +1,14 @@
 
 import os
 import base64
-# import ollama
+import ollama
 import openai
 import json
-from .jsonToSim import validation_physique
-from .validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
+from jsonToSim import validation_physique
+from validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
 from PIL import Image
 import xml.etree.ElementTree as ET
 import copy
-
 
 def boucle_vlm_img(user_image_path, jsonFile, max_iter=2):
     '''
@@ -94,16 +93,18 @@ def validation_semantique_img(user_image_path, data, scene_image_path):
         with open(path, 'rb') as f:
             return base64.b64encode(f.read()).decode('utf-8')
 
-    # resultat = ollama.chat(
-    #     model="qwen2.5vl:3b",
-    #     messages=[
-    #         {'role': 'system', 'content': prompt},
-    #         {'role': 'user',
-    #          'content': f"Current Objects and positions: {json.dumps(pos_and_dims)}\nReview the reference image (first) and the current simulation (second).",
-    #          'images': [user_image_path, scene_image_path]}
-    #     ]
-    # )
-    client = openai.OpenAI()
+    '''
+    resultat = ollama.chat(
+        model="qwen2.5vl:3b",
+        messages=[
+            {'role': 'system', 'content': prompt},
+            {'role': 'user',
+            'content': f"Current Objects and positions: {json.dumps(pos_and_dims)}\nReview the reference image (first) and the current simulation (second).",
+            'images': [user_image_path, scene_image_path]}
+        ]
+    )
+    '''
+    client = openai.OpenAI(api_key=OPENAI_API_KEY)
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -117,6 +118,9 @@ def validation_semantique_img(user_image_path, data, scene_image_path):
     )
 
     clean = clean_reponse(response.choices[0].message.content)
+    
+
+    #clean = clean_reponse(resultat['message']['content'])
     try:
         resultat = json.loads(clean)
     except json.JSONDecodeError:

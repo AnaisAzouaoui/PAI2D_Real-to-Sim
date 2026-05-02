@@ -1,30 +1,36 @@
 
 import os
 import base64
-# import ollama
+import ollama
 import openai
 import json
-from .jsonToSim import validation_physique
-from .validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
+from jsonToSim import validation_physique
+from validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
 import json
 import copy
 
+import sys
+import os
+import json
 
-def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=2):
+
+
+def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=10):
 
     run_dir = create_run_dir()
     history = []
 
-    for iter in range(max_iter):
-        
-        with open(jsonFile, 'r') as file:
+    with open(jsonFile, 'r') as file:
             data = json.load(file)
+
+    for iter in range(max_iter):
         itemsList = data if isinstance(data, list) else data.get('objets', [])
         image_path, corrected_objects = validation_physique(itemsList)
 
         save_iteration_scene(image_path, iter, run_dir, itemsList)
         res, data = validation_semantique_prompt(user_prompt, corrected_objects, image_path)
-        print(f"DEBUG: les res keys sont {res.keys()} et le contenu est {res}")
+        #print(f"DEBUG: les res keys sont {res.keys()} et le contenu est {res}")
+        #print(f"DATA2: {data}")
 
         history.append(copy.deepcopy({
             'iteration': iter,
@@ -33,6 +39,7 @@ def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=2):
             'valid': res.get('valid', False),
             'scene': data
         }))
+
         with open(os.path.join(run_dir, 'history.json'), 'w') as f:
             print("history:", history)
             json.dump(history, f, indent=4)
@@ -82,21 +89,24 @@ def validation_semantique_prompt(original_prompt, data, image_path):
                 "feedback":  "Reasoning for changes (e.g., 'Moving mug to be centered on table and fixing ground clipping')",
                 "corrections": [{"id": "string", "pos": [x, y, z]}]
             }
-   """
+    """
 
     with open(image_path, 'rb') as f:
         image_b64 = base64.b64encode(f.read()).decode('utf-8')
 
-    # resultat = ollama.chat(
-    #     model="qwen2.5vl:3b",
-    #     messages=[
-    #         {'role': 'system', 'content': prompt},
-    #         {'role': 'user',
-    #          'content': f"Prompt: {original_prompt}\nObjects and positions: {json.dumps(pos_and_dims)}",
-    #          'images': [image_path]}
-    #     ]
-    # )
-    client = openai.OpenAI()
+    '''
+    resultat = ollama.chat(
+        model="qwen2.5vl:3b",
+        messages=[
+            {'role': 'system', 'content': prompt},
+            {'role': 'user',
+            'content': f"Prompt: {original_prompt}\nObjects and positions: {json.dumps(pos_and_dims)}",
+            'images': [image_path]}
+        ]
+    )
+    '''
+    
+    client = openai.OpenAI(api_key=OPENAI_API_KEY)
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -108,6 +118,11 @@ def validation_semantique_prompt(original_prompt, data, image_path):
         ]
     )
     clean = clean_reponse(response.choices[0].message.content)
+    
+
+    #clean = clean_reponse(resultat['message']['content'])
+    #print("CLEAN: ", clean)
+
     try:
         resultat = json.loads(clean)
     except json.JSONDecodeError:
@@ -116,4 +131,5 @@ def validation_semantique_prompt(original_prompt, data, image_path):
     if 'corrections' in resultat:
         corrections = {c['id']: c['pos'] for c in resultat['corrections']}
         data = correct_list(data, corrections, 'pos')
+        #print("CORRECTED DATA:", data)
     return resultat, data
