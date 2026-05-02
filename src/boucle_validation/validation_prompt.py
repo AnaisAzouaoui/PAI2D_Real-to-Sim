@@ -1,14 +1,16 @@
 
 import os
-import ollama
+import base64
+# import ollama
+import openai
 import json
-from jsonToSim import validation_physique
-from validation_utils import  create_run_dir, correct_list, clean_reponse, save_iteration_scene
+from .jsonToSim import validation_physique
+from .validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
 import json
 import copy
 
 
-def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=3):
+def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=2):
 
     run_dir = create_run_dir()
     history = []
@@ -17,7 +19,7 @@ def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=3):
         
         with open(jsonFile, 'r') as file:
             data = json.load(file)
-        itemsList = data.get('objets', [])
+        itemsList = data if isinstance(data, list) else data.get('objets', [])
         image_path, corrected_objects = validation_physique(itemsList)
 
         save_iteration_scene(image_path, iter, run_dir, itemsList)
@@ -82,16 +84,30 @@ def validation_semantique_prompt(original_prompt, data, image_path):
             }
    """
 
-    resultat = ollama.chat(
-        model="qwen2.5vl:3b",
+    with open(image_path, 'rb') as f:
+        image_b64 = base64.b64encode(f.read()).decode('utf-8')
+
+    # resultat = ollama.chat(
+    #     model="qwen2.5vl:3b",
+    #     messages=[
+    #         {'role': 'system', 'content': prompt},
+    #         {'role': 'user',
+    #          'content': f"Prompt: {original_prompt}\nObjects and positions: {json.dumps(pos_and_dims)}",
+    #          'images': [image_path]}
+    #     ]
+    # )
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
             {'role': 'system', 'content': prompt},
-            {'role': 'user',
-             'content': f"Prompt: {original_prompt}\nObjects and positions: {json.dumps(pos_and_dims)}",
-             'images': [image_path]}
+            {'role': 'user', 'content': [
+                {'type': 'text', 'text': f"Prompt: {original_prompt}\nObjects and positions: {json.dumps(pos_and_dims)}"},
+                {'type': 'image_url', 'image_url': {'url': f"data:image/png;base64,{image_b64}"}}
+            ]}
         ]
     )
-    clean = clean_reponse(resultat['message']['content'])
+    clean = clean_reponse(response.choices[0].message.content)
     try:
         resultat = json.loads(clean)
     except json.JSONDecodeError:

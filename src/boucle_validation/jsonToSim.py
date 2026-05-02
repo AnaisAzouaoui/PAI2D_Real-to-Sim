@@ -1,10 +1,31 @@
 import genesis as gs
 import os
+import sys
 from PIL import Image, ImageDraw, ImageFont #https://pillow.readthedocs.io/en/stable/
 import copy
 
+# rendre simulationGenesis importable depuis src/
+SRC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+from simulation.simulationGenesis import mesh_to_urdf, patch_urdf
 
-def validation_physique(objetsList): #TODO: résoudre aussi les collisions entre les objets
+
+def prepare_path(obj):
+    path = obj['path']
+    if path.endswith('.urdf'):
+        return patch_urdf(path)
+    elif path.endswith('.xml'):
+        xml_dir = os.path.dirname(path)
+        for name in ["textured.obj", "nontextured.stl", "nontextured.ply"]:
+            candidate = os.path.join(xml_dir, name)
+            if os.path.exists(candidate):
+                return mesh_to_urdf(candidate)
+    else:
+        return mesh_to_urdf(path)
+
+
+def validation_physique(objetsList):
     steps = 150
     dt = 0.01
     corrected_objects = copy.deepcopy(objetsList)
@@ -21,7 +42,7 @@ def validation_physique(objetsList): #TODO: résoudre aussi les collisions entre
     for obj in corrected_objects:
         ent = scene.add_entity(
             gs.morphs.URDF(
-                file=obj['path'],
+                file=prepare_path(obj),
                 pos=tuple(obj['pos']),
                 quat=tuple(obj.get('quat', [0.0, 1.0, 1.0, 0.0])),
                 scale=obj.get('scale', 1.0),
@@ -35,9 +56,9 @@ def validation_physique(objetsList): #TODO: résoudre aussi les collisions entre
 
     for i, ent in enumerate(entities):
         aabb_min, aabb_max = ent.get_AABB()
-        obj['lowest_point'] = float(aabb_min[2])
-        obj['highest_point'] = float(aabb_max[2])
-        
+        corrected_objects[i]['lowest_point'] = float(aabb_min[2])
+        corrected_objects[i]['highest_point'] = float(aabb_max[2])
+
         w = float(aabb_max[0] - aabb_min[0])
         d = float(aabb_max[1] - aabb_min[1])
         h = float(aabb_max[2] - aabb_min[2]) #les dimensions sont plus accurate
@@ -46,10 +67,58 @@ def validation_physique(objetsList): #TODO: résoudre aussi les collisions entre
         if z_min < 0.0: #ça veut dire que l'objet est partiellement sous le sol
             correction = abs(z_min) + 0.001
             corrected_objects[i]['pos'][2] += correction
-            obj['lowest_point'] += correction
-            obj['highest_point'] += correction
+            corrected_objects[i]['lowest_point'] += correction
+            corrected_objects[i]['highest_point'] += correction
             current_pos = ent.get_pos()
             ent.set_pos([current_pos[0], current_pos[1], current_pos[2] + correction])
+
+    if len(entities) > 1:
+        margin = 0.005
+        aabb_mins = []
+        aabb_maxs = []
+        for ent in entities:
+            aabb_min, aabb_max = ent.get_AABB()
+            aabb_mins.append([float(aabb_min[0]), float(aabb_min[1]), float(aabb_min[2])])
+            aabb_maxs.append([float(aabb_max[0]), float(aabb_max[1]), float(aabb_max[2])])
+
+        def shift_object(index, axis, amount):
+            corrected_objects[index]['pos'][axis] += amount
+            aabb_mins[index][axis] += amount
+            aabb_maxs[index][axis] += amount
+            if axis == 2:
+                corrected_objects[index]['lowest_point'] += amount
+                corrected_objects[index]['highest_point'] += amount
+            current_pos = entities[index].get_pos()
+            new_pos = [float(current_pos[0]), float(current_pos[1]), float(current_pos[2])]
+            new_pos[axis] += amount
+            entities[index].set_pos(new_pos)
+
+        max_passes = max(8, len(entities) * 3)
+        for _ in range(max_passes):
+            moved = False
+            for i in range(len(entities) - 1):
+                for j in range(i + 1, len(entities)):
+                    overlaps = [
+                        min(aabb_maxs[i][axis], aabb_maxs[j][axis]) -
+                        max(aabb_mins[i][axis], aabb_mins[j][axis])
+                        for axis in range(3)
+                    ]
+                    if overlaps[0] <= 0.0 or overlaps[1] <= 0.0 or overlaps[2] <= 0.0:
+                        continue
+
+                    axis = min(range(3), key=lambda k: overlaps[k])
+                    centers_i = [(aabb_mins[i][k] + aabb_maxs[i][k]) * 0.5 for k in range(3)]
+                    centers_j = [(aabb_mins[j][k] + aabb_maxs[j][k]) * 0.5 for k in range(3)]
+
+                    if axis == 2:
+                        target = j if centers_j[2] >= centers_i[2] else i
+                        shift_object(target, 2, overlaps[2] + margin)
+                    else:
+                        direction = 1.0 if centers_j[axis] >= centers_i[axis] else -1.0
+                        shift_object(j, axis, direction * (overlaps[axis] + margin))
+                    moved = True
+            if not moved:
+                break
 
     z_init = [float(ent.get_pos()[2]) for ent in entities]
     for _ in range(steps):
@@ -96,7 +165,7 @@ def validation_physique(objetsList): #TODO: résoudre aussi les collisions entre
         collage.paste(im, (x_offset, 0))
         x_offset += im.size[0]
 
-    path_collage = os.path.abspath("images/collage_validation.png")
+    path_collage = os.path.abspath(os.path.join(base_dir, "collage_validation.png"))
     collage.save(path_collage)
 
     gs.destroy()
@@ -217,7 +286,7 @@ def create_scene(objetsList):
 #         collage.paste(im, (x_offset, 0))
 #         x_offset += im.size[0]
 
-#     path_collage = os.path.abspath("images/collage_validation.png")
+#     path_collage = os.path.abspath(os.path.join(base_dir, "collage_validation.png"))
 #     collage.save(path_collage)
 
 
@@ -231,4 +300,3 @@ def create_scene(objetsList):
 # # = pour vérifier si tous les trucs sont stables
 
 # #entity.get_contact : donne les infos sur tous les contacts qui sont dans la scène
-

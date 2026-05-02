@@ -1,8 +1,8 @@
 import json
 import os
-from jsonToSim import create_scene
-from validation_prompt import boucle_vlm_prompt
-from validation_img import boucle_vlm_img
+from .jsonToSim import create_scene
+from .validation_prompt import boucle_vlm_prompt
+from .validation_img import boucle_vlm_img
 
 def main():
 

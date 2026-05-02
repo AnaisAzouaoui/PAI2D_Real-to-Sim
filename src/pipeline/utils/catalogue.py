@@ -84,4 +84,4 @@ def objects_desc(dirpath=OBJETS_DIR):
     if v["dimensions"] is not None
   )
 
-print(objects_desc(OBJETS_DIR))
+# print(objects_desc(OBJETS_DIR))

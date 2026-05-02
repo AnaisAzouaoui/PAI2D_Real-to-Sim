@@ -1,6 +1,5 @@
 from pipeline.utils.ollama_client import validate_json_response
 from pipeline.utils.catalogue import objets_list
-from sentence_transformers import SentenceTransformer
 import numpy as np
 
 
@@ -31,8 +30,12 @@ def model():
     """retourne le modele d'embeddings, en le chargeant si c'est le premier appel"""
     global embed_model
     if embed_model is None:
+        print("[embedding] import torch + sentence_transformers (peut prendre 30s)...")
+        from sentence_transformers import SentenceTransformer
         print("[embedding] chargement du modele...")
-        embed_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        # force CPU : le GPU Metal est sature par Ollama, et MiniLM 384D
+        # tourne en quelques ms sur CPU (25 objets + 1 query par appel)
+        embed_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2', device='cpu')
     return embed_model
 
 
@@ -131,9 +134,11 @@ def object_rec(prompt=None):
     if not prompt:
         return {}, []
 
-    #on demande au LLM de lister les objets de la phrase
-    labels = extract_labels(prompt)
-    print(f"[object_rec] labels extraits : {labels}")
+    if isinstance(prompt, list):
+        labels = prompt
+    else:
+        labels = extract_labels(prompt)
+    print(f"[object_rec] labels : {labels}")
 
     # on recupere les vecteurs du catalogue
     catalogue_vecs, catalogue_keys = catalogue_embeddings()

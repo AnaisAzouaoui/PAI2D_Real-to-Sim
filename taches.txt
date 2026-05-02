@@ -69,6 +69,8 @@ ajout des bounding boxes
 - gerer les orientations 
 - ameliorer interface + worker 
 
+
+
 - V3 - finetuner un minimum le vlm 
 - utiliser les depth maps 
 
@@ -77,3 +79,86 @@ ajout des bounding boxes
 - parler du fait qu'on a ajouter de l'aleatoire dans les positions pour avoir des 
 scene un peu diverisifier mais dire qu'on a ajouter distance pour avoir des truc plus 
 repetitif 
+
+
+
+
+## Configuration Ollama
+
+Si tu as moins de 16 GB de RAM/VRAM, limite Ollama a 1 modele charge :
+
+**macOS :**
+    launchctl setenv OLLAMA_MAX_LOADED_MODELS 1
+    # puis redemarrer Ollama
+
+**Linux :**
+    sudo systemctl edit ollama.service
+    # ajouter : Environment="OLLAMA_MAX_LOADED_MODELS=1"
+
+**Windows :**
+    setx OLLAMA_MAX_LOADED_MODELS 1
+
+
+25% avec distance 
+15% avec orientation 
+
+
+Config	Force	Description
+basic	rien	2-3 objets, sampling normal (peut avoir distance/orient par hasard)
+coreference	rien	inchange + sampling normal
+multi_instance	rien	inchange + sampling normal
+no_relation	rien	inchange (pas de distance possible vu qu'il n'y a pas de relation)
+longue	rien	4-6 objets, sampling normal -> riche par construction
+negation	rien	inchange
+anglais	rien	inchange + sampling normal
+with_distance	>=2 distances	2-4 objets, force au moins 2 relations avec distance
+with_orientation	>=2 orientations	2-4 objets, force au moins 2 orientations
+dense	>=2 dist + >=2 orient	3-5 objets, scene complexe avec distances ET orientations melangees
+
+basic           25%
+with_distance   12%
+with_orientation 10%
+dense           10%
+coreference     10%
+multi_instance  10%
+longue           8%
+no_relation      6%
+negation         5%
+anglais          4%
+
+
+
+basic                  249 (24.9%)
+  with_distance          128 (12.8%)
+  multi_instance         109 (10.9%)
+  coreference            107 (10.7%)
+  dense                  101 (10.1%)
+  longue                  83 (8.3%)
+  with_orientation        79 (7.9%)
+  no_relation             68 (6.8%)
+  negation                43 (4.3%)
+  anglais                 33 (3.3%)
+
+
+
+  essaie 1 :
+   JSON parse OK                100.0%  [####################]
+  F1 objets                    91.1%  [##################..]
+  Root accuracy                80.0%  [################....]
+  Relation exact match         33.0%  [######..............]
+  Orientation exact match      76.0%  [###############.....]
+  F1 held-out (generalisation) 89.8%  [#################...]  (78 ex)
+=============================================
+
+  Relation exact match par config :
+    no_relation          100.0%  [###############]  (10 ex)
+    coreference          66.7%  [##########.....]  (12 ex)
+    basic                38.5%  [#####..........]  (26 ex)
+    with_orientation     33.3%  [#####..........]  (6 ex)
+    anglais              25.0%  [###............]  (4 ex)
+    negation             25.0%  [###............]  (4 ex)
+    with_distance        20.0%  [###............]  (5 ex)
+    longue               0.0%  [...............]  (8 ex)
+    dense                0.0%  [...............]  (6 ex)
+    multi_instance       0.0%  [...............]  (19 ex)
+(venv_genesis) (base) anaisazouaoui@MacBook-Air-de-Anais PAI2D_Real-to-Sim % 

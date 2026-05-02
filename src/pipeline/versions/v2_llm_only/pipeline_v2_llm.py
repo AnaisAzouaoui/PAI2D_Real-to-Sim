@@ -142,8 +142,7 @@ def modify_scene(prompt, current_objects_json, objet_reconnus):
       obj["path"] = info["path"]
     if not obj.get("dimensions") and info.get("dimensions"):
       obj["dimensions"] = info["dimensions"]
-    if "root" not in obj:
-      obj["root"] = info.get("root", False)
+    obj.pop("root", None)
 
   return objetsList
 

@@ -133,6 +133,17 @@ def create_scene(objetsList):
 
         if path.endswith('.urdf'):
             path = patch_urdf(path)
+        elif path.endswith('.xml'):
+            xml_dir = os.path.dirname(path)
+            found = None
+            for name in ["textured.obj", "nontextured.stl", "nontextured.ply"]:
+                candidate = os.path.join(xml_dir, name)
+                if os.path.exists(candidate):
+                    found = candidate
+                    break
+            if found is None:
+                raise FileNotFoundError(f"Aucun mesh trouve a cote de {path}")
+            path = mesh_to_urdf(found)
         else:
             path = mesh_to_urdf(path)
 

@@ -1,21 +1,44 @@
 import os
+import sys
 import json
+import subprocess
 import traceback
 from PyQt6.QtCore import QObject, pyqtSignal
 from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_1_embedding import object_rec as _object_rec_v11
 from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_llm import object_rec as _object_rec_v1
+from pipeline.versions.v1_llm_prim.pipeline_v1_1_1 import (object_rec as _object_rec_v111,place_scene as _place_scene_v111,modify_scene as modify_scene_v111,)
 from pipeline.utils.catalogue import objets_list, OBJETS_DIR
 from pipeline.utils.ollama_client import suggest_alternatives, classify_intent
 from pipeline.versions.v2_llm_only.pipeline_v2_llm import object_dim_quat, modify_scene as modify_scene_v2
 from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import object_relations, scale, final_json, modify_scene as modify_scene_v1
+from pipeline.versions.v1_llm_prim.placement.placement_v1_distances_orientations import orientation
 from pipeline.sceneBuilding import buildScene
-# "V1"   : object_rec via LLM, placement via sceneBuilding
-# "V1.1" : object_rec via embeddings, placement via sceneBuilding
-# "V2"   : placement et modification 100% LLM direct (sans sceneBuilding)
-PIPELINE_VERSION = "V1.1"
+
+# "V1"     : object_rec via LLM, placement via sceneBuilding
+# "V1.1"   : object_rec via embeddings, placement via sceneBuilding
+# "V1.1.1" : object_rec + relations + orientations via phi3-scene (finetuned), scales via phi3:mini
+# "V2"     : placement et modification 100% LLM direct (sans sceneBuilding)
+PIPELINE_VERSION = "V1.1.1"
 
 # on choisit object_rec selon la version
-object_rec = _object_rec_v11 if PIPELINE_VERSION == "V1.1" else _object_rec_v1
+if PIPELINE_VERSION == "V1.1.1":
+    object_rec = _object_rec_v111
+elif PIPELINE_VERSION == "V1.1":
+    object_rec = _object_rec_v11
+else:
+    object_rec = _object_rec_v1
+
+def set_text_version(version):
+    global PIPELINE_VERSION, object_rec
+    PIPELINE_VERSION = version
+    if version == "V1.1.1":
+        object_rec = _object_rec_v111
+    elif version == "V1.1":
+        object_rec = _object_rec_v11
+    else:
+        object_rec = _object_rec_v1
+    print(f"[VERSION] Pipeline texte -> {version}")
+
 
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 SCENE_OUTPUT_FILE = os.path.join(SRC_DIR, '..', 'scenes', 'scene_generee.json')
@@ -23,6 +46,15 @@ SCENE_OUTPUT_FILE = os.path.join(SRC_DIR, '..', 'scenes', 'scene_generee.json')
 
 def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
     """Place les objets selon la version du pipeline choisie."""
+    if PIPELINE_VERSION == "V1.1.1":
+        if relations_corrigees is not None:
+            from pipeline.versions.v1_llm_prim.pipeline_v1_1_1 import phi3_cache
+            cached = dict(phi3_cache.get(prompt, {}))
+            cached["relations"] = relations_corrigees.get("relations", [])
+            cached["root"]      = relations_corrigees.get("root", "")
+            phi3_cache[prompt] = cached
+        return _place_scene_v111(prompt, objet_reconnus)
+
     if PIPELINE_VERSION in ("V1", "V1.1"):
         if relations_corrigees is not None:
             relations_data = relations_corrigees
@@ -38,12 +70,12 @@ def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
         items = []
         for label, info in objet_reconnus.items():
             items.append({
-                "id":         label,
-                "urdf":       info["urdf"],
-                "path":       info.get("path", ""),
+                "id":label,
+                "urdf":info["urdf"],
+                "path": info.get("path", ""),
                 "dimensions": info.get("dimensions"),
-                "scale":      info.get("scale", 1.0),
-                "root":       (label == root_id),
+                "scale":info.get("scale", 1.0),
+                "root":(label == root_id),
             })
 
         # Si le root retourné ne correspond à aucun item, marquer le premier
@@ -51,7 +83,9 @@ def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
             print(f"[V1] root '{root_id}' introuvable, fallback sur '{items[0]['id']}'")
             items[0]["root"] = True
 
-        items = buildScene(items, relations, [])
+        orientations_data = orientation(prompt, objet_reconnus)
+        print("items :", items, "  |relations : ", relations," |orientations :" , orientations_data)
+        items = buildScene(items, relations, orientations_data)
 
         for item in items:
             pos = item.get("pos", (0, 0, 0))
@@ -67,10 +101,11 @@ def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
 
 def _modify_scene(prompt, current_objects_json, objet_reconnus):
     """Modifie la scene selon la version active du pipeline."""
+    if PIPELINE_VERSION == "V1.1.1":
+        return modify_scene_v111(prompt, current_objects_json, objet_reconnus)
     if PIPELINE_VERSION in ("V1", "V1.1"):
         return modify_scene_v1(prompt, current_objects_json, objet_reconnus)
-    else:
-        return modify_scene_v2(prompt, current_objects_json, objet_reconnus)
+    return modify_scene_v2(prompt, current_objects_json, objet_reconnus)
 
 
 def resolve_urdf_path(path):
@@ -220,8 +255,11 @@ class ImageSceneWorker(QObject):
 
     def run(self):
         try:
+            print(f"[ImageSceneWorker] Demarrage | {len(self.image_paths)} image(s): {self.image_paths}")
             self.status_update.emit("Analyse de l'image en cours (V3)...")
-            from pipeline.pipeline_v3_image import scene_from_image
+            print("[ImageSceneWorker] Import du pipeline V3...")
+            from pipeline.versions.v3_image.pipeline_v3_image import scene_from_image
+            print("[ImageSceneWorker] Import OK, appel de scene_from_image...")
             objetsList = scene_from_image(self.image_paths)
             if not objetsList:
                 self.error_occurred.emit("Aucun objet reconnu dans l'image.")
@@ -269,6 +307,49 @@ class ModifySceneWorker(QObject):
         except Exception as e:
             traceback.print_exc()
             self.error_occurred.emit(f"Erreur inattendue : {str(e)}")
+        finally:
+            self.finished.emit()
+
+
+class ValidationWorker(QObject):
+    """Lance la boucle de validation (physique + VLM) sur la scene courante."""
+    status_update = pyqtSignal(str)
+    scene_ready = pyqtSignal(list)
+    error_occurred = pyqtSignal(str)
+    finished = pyqtSignal()
+
+    def __init__(self, json_file, prompt=None, image_path=None):
+        super().__init__()
+        self.json_file = json_file
+        self.prompt = prompt
+        self.image_path = image_path
+
+    def run(self):
+        try:
+            script = os.path.join(SRC_DIR, 'run_validation.py')
+            if self.image_path:
+                print(f"[ValidationWorker] Mode image | ref: '{self.image_path}'")
+                self.status_update.emit("Validation avec image de reference...")
+                args = [sys.executable, script, 'image', self.json_file, self.image_path]
+            else:
+                print(f"[ValidationWorker] Mode prompt | prompt: '{self.prompt}'")
+                self.status_update.emit("Validation semantique...")
+                args = [sys.executable, script, 'prompt', self.json_file, self.prompt]
+
+            proc = subprocess.Popen(args, cwd=SRC_DIR)
+            proc.wait()
+
+            if proc.returncode == 0:
+                with open(self.json_file, 'r', encoding='utf-8') as f:
+                    result = json.load(f)
+                self.scene_ready.emit(result)
+            else:
+                self.error_occurred.emit("La validation a echoue (voir logs du sous-processus).")
+        except (ConnectionError, RuntimeError, ValueError) as e:
+            self.error_occurred.emit(str(e))
+        except Exception as e:
+            traceback.print_exc()
+            self.error_occurred.emit(f"Erreur validation : {str(e)}")
         finally:
             self.finished.emit()
 

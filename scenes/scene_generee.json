@@ -1,71 +1,36 @@
 [
   {
-    "id": "mug",
+    "id": "025_mug",
     "urdf": "025_mug",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/025_mug/google_16k/textured.obj",
-    "dimensions": [
-      0.117,
-      0.0931,
-      0.0813
-    ],
-    "scale": 1.0,
-    "root": true,
-    "pos": [
-      0,
-      0,
-      0.05065
-    ],
+    "scale": 0.5,
     "quat": [
+      0.0,
+      0.0,
       0,
-      0,
-      0,
-      1
-    ]
+      1.0
+    ],
+    "pos": [
+      -0.6,
+      -0.4,
+      0.04065
+    ],
+    "root": false
   },
   {
-    "id": "banane",
-    "urdf": "011_banane",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/011_banane/google_16k/textured.obj",
-    "dimensions": [
-      0.1089,
-      0.1784,
-      0.0367
-    ],
-    "scale": 0.6,
-    "root": false,
-    "pos": [
-      0,
-      0,
-      0.02101
-    ],
-    "quat": [
-      0,
-      0,
-      0,
-      1
-    ]
-  },
-  {
-    "id": "banane_2",
-    "urdf": "011_banane",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/011_banane/google_16k/textured.obj",
-    "dimensions": [
-      0.1089,
-      0.1784,
-      0.0367
-    ],
+    "id": "11826_lave_linge",
+    "urdf": "11826_lave_linge",
     "scale": 1.0,
-    "root": false,
-    "pos": [
-      0,
-      -0.1615104348487917,
-      0.05065
-    ],
     "quat": [
+      0.0,
+      0.0,
       0,
-      0,
-      0,
-      1
-    ]
+      1.0
+    ],
+    "pos": [
+      -0.5,
+      -0.4,
+      0.4988
+    ],
+    "root": false
   }
 ]

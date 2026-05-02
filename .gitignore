@@ -1,5 +1,11 @@
 .DS_Store
+.env
 __pycache__/
 *.pyc
 /runs
 /.vscode
+venv_genesis/
+venv_new/
+venv/
+.venv/
+training/models/*.gguf

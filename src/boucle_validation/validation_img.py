@@ -1,15 +1,17 @@
 
 import os
-import ollama
+import base64
+# import ollama
+import openai
 import json
-from jsonToSim import validation_physique
-from validation_utils import  create_run_dir, correct_list, clean_reponse, save_iteration_scene
+from .jsonToSim import validation_physique
+from .validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
 from PIL import Image
 import xml.etree.ElementTree as ET
 import copy
 
 
-def boucle_vlm_img(user_image_path, jsonFile, max_iter=3):
+def boucle_vlm_img(user_image_path, jsonFile, max_iter=2):
     '''
     Boucle de validation qui compare la scène générée à une image de référence fournie par l'utilisateur.
     '''
@@ -17,8 +19,8 @@ def boucle_vlm_img(user_image_path, jsonFile, max_iter=3):
     history = []
 
     with open(jsonFile, 'r') as file:
-            data = json.load(file)
-    itemsList = data.get('objets', [])
+        data = json.load(file)
+    itemsList = data if isinstance(data, list) else data.get('objets', [])
 
     for iter in range(max_iter):
 
@@ -88,17 +90,33 @@ def validation_semantique_img(user_image_path, data, scene_image_path):
             }
    """
 
-    resultat = ollama.chat(
-        model="qwen2.5vl:3b",
+    def encode(path):
+        with open(path, 'rb') as f:
+            return base64.b64encode(f.read()).decode('utf-8')
+
+    # resultat = ollama.chat(
+    #     model="qwen2.5vl:3b",
+    #     messages=[
+    #         {'role': 'system', 'content': prompt},
+    #         {'role': 'user',
+    #          'content': f"Current Objects and positions: {json.dumps(pos_and_dims)}\nReview the reference image (first) and the current simulation (second).",
+    #          'images': [user_image_path, scene_image_path]}
+    #     ]
+    # )
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
             {'role': 'system', 'content': prompt},
-            {'role': 'user',
-             'content': f"Current Objects and positions: {json.dumps(pos_and_dims)}\nReview the reference image (first) and the current simulation (second).",
-             'images': [user_image_path, scene_image_path]} 
+            {'role': 'user', 'content': [
+                {'type': 'text', 'text': f"Current Objects and positions: {json.dumps(pos_and_dims)}\nReview the reference image (first) and the current simulation (second)."},
+                {'type': 'image_url', 'image_url': {'url': f"data:image/png;base64,{encode(user_image_path)}"}},
+                {'type': 'image_url', 'image_url': {'url': f"data:image/png;base64,{encode(scene_image_path)}"}}
+            ]}
         ]
     )
-    
-    clean = clean_reponse(resultat['message']['content'])
+
+    clean = clean_reponse(response.choices[0].message.content)
     try:
         resultat = json.loads(clean)
     except json.JSONDecodeError:

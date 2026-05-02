@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 import trimesh
 import shutil
 from datetime import datetime
-from jsonToSim import create_scene_validation
+from .jsonToSim import create_scene_validation
 import json
 from scipy.spatial.transform import Rotation as R
 import copy

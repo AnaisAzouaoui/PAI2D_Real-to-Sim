@@ -1,29 +1,18 @@
 from pipeline.utils.ollama_client import validate_json_response
 from pipeline.utils.helpers import normalize, fuzzy_match
 from pipeline.sceneBuilding import buildScene
+from .placement_v1_distances_orientations import orientation
 
 #---------------------------------------------------------------------
 # RECONNAITRE LES RELATIONS ENTRE OBJETS
 #---------------------------------------------------------------------
 
-VALID_RELATION_TYPES = {"on", "under", "left_of", "right_of", "in_front_of", "behind", "facing", "against", "inside"}
+VALID_RELATION_TYPES = {"on", "under", "left_of", "right_of", "in_front_of", "behind", "against", "inside"}
+RELATION_TYPES_WITH_DISTANCE = {"left_of", "right_of", "in_front_of", "behind"}
 
 
 def fix_ids_in_result(result, valid_ids):
-  """Corrige le root et les IDs des relations pour qu'ils correspondent aux ID"""
-  ids_list = list(valid_ids)
-
-  # corriger root
-  root = result.get("root", "")
-  matched_root = fuzzy_match(root, valid_ids)
-  if matched_root:
-    if matched_root != root:
-      print(f"[object_relations] root '{root}' -> corrige en '{matched_root}'")
-    result["root"] = matched_root
-  else:
-    print(f"[object_relations] root '{root}' introuvable, fallback sur '{ids_list[0]}'")
-    result["root"] = ids_list[0]
-
+  """Corrige les IDs des relations pour qu'ils correspondent aux ID"""
   # corriger les relations
   fixed_relations = []
   for rel in result.get("relations", []):
@@ -48,6 +37,27 @@ def fix_ids_in_result(result, valid_ids):
 
     rel["subject"] = matched_subj
     rel["object"] = matched_obj
+
+    # validation de la distance (metres). Conservee uniquement sur les relations qui la supportent
+    # et si c'est un nombre > 0.
+    if "distance" in rel:
+      if rel_type not in RELATION_TYPES_WITH_DISTANCE:
+        print(f"[object_relations] distance ignoree pour relation '{rel_type}' : {rel}")
+        rel.pop("distance", None)
+      else:
+        dist = rel.get("distance")
+        try:
+          dist_val = float(dist)
+        except (TypeError, ValueError):
+          print(f"[object_relations] distance non numerique '{dist}', retiree : {rel}")
+          rel.pop("distance", None)
+        else:
+          if dist_val <= 0:
+            print(f"[object_relations] distance <= 0 ({dist_val}), retiree : {rel}")
+            rel.pop("distance", None)
+          else:
+            rel["distance"] = dist_val
+
     fixed_relations.append(rel)
 
   result["relations"] = fixed_relations
@@ -105,10 +115,10 @@ def scale(prompt,objets_rec):
 
   ADJUSTMENTS FROM USER PROMPT:
   Read the user's scene description. If the user mentions a size qualifier for an object, adjust its scale:
-  - "petit/petite/small/tiny"   → multiply the computed scale by 0.6
-  - "grand/grande/big/large"    → multiply the computed scale by 1.5
-  - "immense/enormous/giant"    → multiply the computed scale by 2.0
-  - "minuscule/tiny/miniature"  → multiply the computed scale by 0.3
+  - "petit/petite/small/tiny"   -> multiply the computed scale by 0.6
+  - "grand/grande/big/large"    -> multiply the computed scale by 1.5
+  - "immense/enormous/giant"    -> multiply the computed scale by 2.0
+  - "minuscule/tiny/miniature"  -> multiply the computed scale by 0.3
   Apply the qualifier only to the object it is explicitly attached to. Do NOT apply it to other objects.
 
   CONSISTENCY CHECK — before outputting, verify:
@@ -180,36 +190,53 @@ def object_relations(prompt=None, objets_rec=None):
         - "right_of"    : A is to the right of B           (e.g. "the chair right of the bed")
         - "in_front_of" : A is in front of B               (e.g. "a chair in front of a desk")
         - "behind"      : A is behind B                    (e.g. "a plant behind the sofa")
-        - "facing"      : A and B face each other          (e.g. "two sofas facing each other")
         - "inside"      : A is inside B                    (e.g. "a book inside the drawer")
         - "against"     : A is against B                   (e.g. "a lamp against the wall")
 
+        OPTIONAL DISTANCE FIELD:
+        For the relation types "left_of", "right_of", "in_front_of", "behind" ONLY,
+        if the prompt explicitly mentions a distance between the two objects
+        (e.g. "a 3m a gauche", "at 50 cm in front", "2 metres behind"),
+        add a field "distance" with the value in METERS as a float.
+        - Convert cm -> m (50 cm -> 0.5), mm -> m (200 mm -> 0.2).
+        - Do NOT invent a distance: if the prompt says nothing about distance, omit the field.
+        - Never add "distance" on "on", "under", "inside", "against".
+
         OUTPUT FORMAT — return ONLY this JSON:
         {{
-          "root": "<id of the largest or most central anchor object>",
           "relations": [
             {{"type": "<relation>", "subject": "<id_A>", "object": "<id_B>"}},
-            {{"type": "<relation>", "subject": "<id_A>", "object": "<id_B>"}}
+            {{"type": "<relation>", "subject": "<id_A>", "object": "<id_B>", "distance": <float_meters>}}
           ]
         }}
 
         EXAMPLES:
         Scene: "a washing machine with a bin to its right"
         Objects: ["lave-linge", "poubelle"]
-        Output: {{"root": "lave-linge", "relations": [{{"type": "right_of", "subject": "poubelle", "object": "lave-linge"}}]}}
+        Output: {{"relations": [{{"type": "right_of", "subject": "poubelle", "object": "lave-linge"}}]}}
+
+        Scene: "je veux une banane a cote d'un mug"
+        Objects: ["banane", "mug"]
+        Output: {{"relations": [{{"type": "right_of", "subject": "mug", "object": "banane"}}]}}
 
         Scene: "a desk with a computer on it, a chair in front"
         Objects: ["bureau", "ordinateur", "chaise"]
-        Output: {{"root": "bureau", "relations": [{{"type": "on", "subject": "ordinateur", "object": "bureau"}}, {{"type": "in_front_of", "subject": "chaise", "object": "bureau"}}]}}
+        Output: {{"relations": [{{"type": "on", "subject": "ordinateur", "object": "bureau"}}, {{"type": "in_front_of", "subject": "chaise", "object": "bureau"}}]}}
+
+        Scene: "je veux une banane a 3m a gauche d un mug"
+        Objects: ["banane", "mug"]
+        Output: {{"relations": [{{"type": "left_of", "subject": "banane", "object": "mug", "distance": 3.0}}]}}
+
+        Scene: "un mug a 50 cm devant une banane"
+        Objects: ["mug", "banane"]
+        Output: {{"relations": [{{"type": "in_front_of", "subject": "mug", "object": "banane", "distance": 0.5}}]}}
 
         STRICT RULES:
-        - "root" must be exactly one id from the list above (copy-paste it exactly)
         - "subject" and "object" must be exact ids from the list above — no other values allowed
-        - "type" must be exactly one of: on, under, left_of, right_of, in_front_of, behind, facing
+        - "type" must be exactly one of: on, under, left_of, right_of, in_front_of, behind, inside, against
         - only extract relations explicitly stated or clearly implied in the scene description
         - do NOT invent relations that are not mentioned
-        - "facing" is symmetric — list it only once per pair
-        - if only one object is in the scene, return {{"root": "<id>", "relations": []}}
+        - if only one object is in the scene, return {{"relations": []}}
         - output raw JSON only, no markdown, no comments, no explanation"""
 
   valid_ids = set(ids)
@@ -232,7 +259,7 @@ def object_relations(prompt=None, objets_rec=None):
       rel["subject"] in valid_ids and rel["object"] in valid_ids
       for rel in result.get("relations", [])
     )
-    if result.get("root") in valid_ids and all_ids_ok:
+    if all_ids_ok:
       break
 
     print(f"[object_relations] retry {attempt + 1} — IDs encore invalides")
@@ -268,7 +295,6 @@ def modify_scene(prompt, current_scene_json, objet_reconnus):
   """V1/V1.1 : meme interface que pipeline_v2_llm.modify_scene.
   current_scene_json est ignore — V1 re-run le placement complet depuis le prompt."""
   relations_data = object_relations(prompt, objet_reconnus)
-  root_id = relations_data.get("root", "")
   relations = relations_data.get("relations", [])
 
   scales_result = scale(prompt, objet_reconnus)
@@ -282,14 +308,10 @@ def modify_scene(prompt, current_scene_json, objet_reconnus):
       "path":       info.get("path", ""),
       "dimensions": info.get("dimensions"),
       "scale":      info.get("scale", 1.0),
-      "root":       (label == root_id),
     })
 
-  if root_id not in updated_objets and items:
-    print(f"[V1] root '{root_id}' introuvable, fallback sur '{items[0]['id']}'")
-    items[0]["root"] = True
-
-  items = buildScene(items, relations, [])
+  orientations_data = orientation(prompt, updated_objets)
+  items = buildScene(items, relations, orientations_data)
 
   for item in items:
     pos = item.get("pos", (0, 0, 0))
