@@ -28,7 +28,7 @@ def getFilePath(item):
         # objets YCB : fichiers dans le sous-dossier google_16k
         google_16k = os.path.join(base, "google_16k")
         if os.path.isdir(google_16k):
-            for name in ["textured.obj", "nontextured.stl", "nontextured.ply"]:
+            for name in ["model.urdf", "textured.obj", "nontextured.stl", "nontextured.ply"]:
                 path = os.path.join(google_16k, name)
                 if os.path.exists(path):
                     return path
