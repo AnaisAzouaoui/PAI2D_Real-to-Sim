@@ -182,7 +182,7 @@ def create_scene(objetsList):
     '''
     gs.init(backend=gs.cpu)
 
-    scene = gs.Scene(show_viewer=True,vis_options=gs.options.VisOptions(show_world_frame=True,show_link_frame=True))
+    scene = gs.Scene(show_viewer=True) #,vis_options=gs.options.VisOptions(show_world_frame=True,show_link_frame=True))
 
     plane = scene.add_entity(gs.morphs.Plane()) #
 
