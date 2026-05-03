@@ -1,0 +1,217 @@
+{
+    "prompts":[
+        {
+            "id":"p01",
+            "prompt":"Une table avec un mug dessus et une banane à droite du mug.",
+            "expected_objects":[{"id":"table","urdf":"table.urdf"},
+                                {"id":"mug","urdf":"011_banane/google_16kycb_mug.urdf"},
+                                {"id":"banane","urdf":"025_mug/google_16k/mobility.urdf"}],
+            "expected_relations":[{"type":"on", "subject":"mug", "object":"table"},
+                            {"type":"right_of", "subject":"banane", "object":"mug"}],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p02",
+            "prompt":"A refrigerator with a toaster in front of it and a trash can to its left.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p03",
+            "prompt":"Un ordinateur portable sur une table, avec une clé USB à gauche de l’ordinateur portable.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p04",
+            "prompt":"A washing machine with a cardboard box on top of it and scissors underneath.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p05",
+            "prompt":"Un four contre un mur imaginaire, avec une poubelle devant.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p06",
+            "prompt":"A drawer cabinet with a mug inside and a banana on the right of it.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p07",
+            "prompt":"Une table avec des ciseaux sous la table et un mug dessus.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p08",
+            "prompt":"A dishwasher with a toaster on it and a banana behind it.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p09",
+            "prompt":"Une poubelle à 50 cm à gauche d’un réfrigérateur.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p10",
+            "prompt":"A mug is 30 cm in front of a laptop.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p11",
+            "prompt":"Une banane à 1 mètre derrière une table.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p12",
+            "prompt":"A toaster is 70 cm to the right of an oven.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p13",
+            "prompt":"Une boîte carton à 40 cm devant un lave-linge.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p14",
+            "prompt":"A USB drive is 20 cm to the left of a mug.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p15",
+            "prompt":"Un meuble à tiroirs à 2 mètres derrière un réfrigérateur.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p16",
+            "prompt":"Une table avec un ordinateur portable ouvert dessus, un mug à 20 cm à droite de l’ordinateur portable, et une banane couchée devant le mug.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p17",
+            "prompt":"A refrigerator with a toaster on top, a trash can 50 cm to the left of it, and a cardboard box turned to the right in front of the trash can.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p18",
+            "prompt":"Un lave-linge avec une boîte carton ouverte dessus, des ciseaux à 30 cm devant le lave-linge, et une perceuse couchée à droite des ciseaux.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p19",
+            "prompt":"A table with a laptop facing left, a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p20",
+            "prompt":"Un four avec un toaster dessus, une poubelle à 60 cm devant le four, et un mug de dos sur la poubelle.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p21",
+            "prompt":"A drawer cabinet with a banana inside, a mug 25 cm to the right of the cabinet, and scissors lying in front of the mug facing right.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p22",
+            "prompt":"Un mug à l’envers sur une table.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p23",
+            "prompt":"A laptop turned to the right on a table.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p24",
+            "prompt":"Une perceuse couchée devant un réfrigérateur.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p25",
+            "prompt":"Un mug sur une table et un autre mug à sa gauche.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p26",
+            "prompt":"A banana on a table and a second banana 20 cm behind it.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p27",
+            "prompt":"Une boîte carton devant un four et une autre boîte carton à droite de la première.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p28",
+            "prompt":"Je veux une banane sur une table. Derrière cette banane, il y a un mug.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p29",
+            "prompt":"Place a laptop on a table. To the left of this laptop, put a USB drive.",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        },
+        {
+            "id":"p30",
+            "prompt":"Un mug est devant un réfrigérateur. Sur ce mug, pose une banane",
+            "expected_objects":[],
+            "expected_relations":[],
+            "expected_orientations":[]
+        }
+    ]
+}
