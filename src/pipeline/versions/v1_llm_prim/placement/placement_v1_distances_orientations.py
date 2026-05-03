@@ -1,4 +1,4 @@
-from pipeline.utils.ollama_client import validate_json_response
+from pipeline.utils.ollama_client import call_llm
 from pipeline.utils.helpers import fuzzy_match
 
 
@@ -89,17 +89,8 @@ Objects: ["mug", "table"]
 Output: {{"orientations": [{{"id": "mug", "turn": "upside_down"}}]}}
 """
 
-    payload = {
-        "model": "llama3.1",
-        "system": system_prompt,
-        "prompt": prompt,
-        "stream": False,
-        "format": "json",
-        "options": {"temperature": 0}
-    }
-
     try:
-        response = validate_json_response(payload)
+        response = call_llm(system_prompt, prompt)
     except (ValueError, RuntimeError, ConnectionError) as e:
         print(f"[orientation] echec LLM ({e}), aucune orientation extraite")
         return []

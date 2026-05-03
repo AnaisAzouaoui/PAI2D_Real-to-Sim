@@ -1,80 +1,38 @@
 [
   {
-    "id": "mug",
-    "urdf": "025_mug",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/025_mug/google_16k/textured.obj",
-    "dimensions": [
-      0.11698399484157562,
-      0.09313099086284637,
-      0.08130288124084473
-    ],
-    "scale": 1.0,
-    "pos": [
-      0.007230332866975053,
-      -0.22200573831897064,
-      1.6089524030685425
-    ],
-    "quat": [
-      0,
-      0,
-      0,
-      1
-    ],
-    "parent_id": "lave_linge",
-    "root": false,
-    "lowest_point": 1.5798330402374265,
-    "highest_point": 1.6611359214782713
-  },
-  {
-    "id": "lave_linge",
+    "id": "11826_lave_linge",
     "urdf": "11826_lave_linge",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/11826_lave_linge/mobility.urdf",
-    "dimensions": [
-      1.0750784873962402,
-      1.3532803058624268,
-      1.5320930480957031
-    ],
     "scale": 1.0,
-    "pos": [
-      0,
-      0,
-      0.765937864780426
-    ],
     "quat": [
-      0,
-      0,
-      0,
-      1
+      0.0,
+      0.0,
+      0.0,
+      1.0
     ],
-    "parent_id": null,
-    "root": false,
-    "lowest_point": 0.001,
-    "highest_point": 1.5330929884910582
+    "pos": [
+      0.0,
+      0.0,
+      0.4984
+    ],
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/11826_lave_linge/mobility.urdf",
+    "root": false
   },
   {
-    "id": "banane",
-    "urdf": "011_banane",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/011_banane/google_16k/textured.obj",
-    "dimensions": [
-      0.10894200205802917,
-      0.17844700813293457,
-      0.03674006462097168
-    ],
+    "id": "025_mug",
+    "urdf": "025_mug",
     "scale": 1.0,
-    "pos": [
-      0.123,
-      -0.222,
-      1.550128698348999
-    ],
     "quat": [
-      0,
-      0,
-      0,
-      1
+      0.0,
+      0.0,
+      0.0,
+      1.0
     ],
-    "parent_id": "lave_linge",
-    "root": false,
-    "lowest_point": 1.538092975616455,
-    "highest_point": 1.5748330402374267
+    "pos": [
+      0.0,
+      0.0,
+      0.53905
+    ],
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/025_mug/google_16k/textured.obj",
+    "root": false
   }
 ]

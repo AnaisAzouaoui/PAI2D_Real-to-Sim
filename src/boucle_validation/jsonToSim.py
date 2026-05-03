@@ -8,21 +8,7 @@ import copy
 SRC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
-from simulation.simulationGenesis import mesh_to_urdf, patch_urdf
-
-
-def prepare_path(obj):
-    path = obj['path']
-    if path.endswith('.urdf'):
-        return patch_urdf(path)
-    elif path.endswith('.xml'):
-        xml_dir = os.path.dirname(path)
-        for name in ["textured.obj", "nontextured.stl", "nontextured.ply"]:
-            candidate = os.path.join(xml_dir, name)
-            if os.path.exists(candidate):
-                return mesh_to_urdf(candidate)
-    else:
-        return mesh_to_urdf(path)
+from simulation.simulationGenesis import make_morph
 
 
 def validation_physique(objetsList):
@@ -41,13 +27,7 @@ def validation_physique(objetsList):
     entities = []
     for obj in corrected_objects:
         ent = scene.add_entity(
-            gs.morphs.URDF(
-                file=prepare_path(obj),
-                pos=tuple(obj['pos']),
-                quat=tuple(obj.get('quat', [0.0, 1.0, 1.0, 0.0])),
-                scale=obj.get('scale', 1.0),
-                fixed=False 
-            ),
+            make_morph(obj['path'], pos=tuple(obj['pos']), quat=tuple(obj.get('quat', [0.0, 1.0, 1.0, 0.0])), scale=obj.get('scale', 1.0), fixed=False),
             material=gs.materials.Rigid(rho=1000)
         )
         entities.append(ent)
@@ -189,13 +169,7 @@ def create_scene(objetsList):
     #ajout des objets: une boucle for qui prend l'objet, sa position, son filepath, et qui crée les objets un par un
     for obj in objetsList:
         entity = scene.add_entity(
-            gs.morphs.URDF(
-                file=obj['path'],
-                pos=obj['pos'], 
-                quat=obj.get('quat', [0.0, 1.0, 1.0, 0.0]),
-                scale=obj.get('scale', 1.0),
-                fixed=False
-            ),
+            make_morph(obj['path'], pos=obj['pos'], quat=obj.get('quat', [0.0, 1.0, 1.0, 0.0]), scale=obj.get('scale', 1.0), fixed=False),
             material=gs.materials.Rigid(rho=1000),
         )
 

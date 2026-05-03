@@ -12,7 +12,36 @@ from pipeline.utils.ollama_client import suggest_alternatives, classify_intent
 from pipeline.versions.v2_llm_only.pipeline_v2_llm import object_dim_quat, modify_scene as modify_scene_v2
 from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import object_relations, scale, final_json, modify_scene as modify_scene_v1
 from pipeline.versions.v1_llm_prim.placement.placement_v1_distances_orientations import orientation
-from pipeline.sceneBuilding import buildScene
+import tempfile
+
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def build_scene_subprocess(items, relations, orientations):
+    """Lance buildScene dans un subprocess pour eviter le crash NSWindow sur macOS."""
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(items, f); items_path = f.name
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(relations, f); rel_path = f.name
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(orientations, f); ori_path = f.name
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        out_path = f.name
+    try:
+        proc = subprocess.run(
+            [sys.executable, os.path.join(SRC_DIR, 'run_build_scene.py'),
+             items_path, rel_path, ori_path, out_path],
+            cwd=SRC_DIR
+        )
+        if proc.returncode != 0:
+            raise RuntimeError("run_build_scene.py a echoue")
+        with open(out_path) as f:
+            return json.load(f)
+    finally:
+        for p in [items_path, rel_path, ori_path, out_path]:
+            try: os.unlink(p)
+            except OSError: pass
+
 
 # "V1"     : object_rec via LLM, placement via sceneBuilding
 # "V1.1"   : object_rec via embeddings, placement via sceneBuilding
@@ -53,7 +82,7 @@ def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
             cached["relations"] = relations_corrigees.get("relations", [])
             cached["root"]      = relations_corrigees.get("root", "")
             phi3_cache[prompt] = cached
-        return _place_scene_v111(prompt, objet_reconnus)
+        return _place_scene_v111(prompt, objet_reconnus, build_scene_fn=build_scene_subprocess)
 
     if PIPELINE_VERSION in ("V1", "V1.1"):
         if relations_corrigees is not None:
@@ -85,7 +114,7 @@ def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
 
         orientations_data = orientation(prompt, objet_reconnus)
         print("items :", items, "  |relations : ", relations," |orientations :" , orientations_data)
-        items = buildScene(items, relations, orientations_data)
+        items = build_scene_subprocess(items, relations, orientations_data)
 
         for item in items:
             pos = item.get("pos", (0, 0, 0))
@@ -102,9 +131,9 @@ def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
 def _modify_scene(prompt, current_objects_json, objet_reconnus):
     """Modifie la scene selon la version active du pipeline."""
     if PIPELINE_VERSION == "V1.1.1":
-        return modify_scene_v111(prompt, current_objects_json, objet_reconnus)
+        return modify_scene_v111(prompt, current_objects_json, objet_reconnus, build_scene_fn=build_scene_subprocess)
     if PIPELINE_VERSION in ("V1", "V1.1"):
-        return modify_scene_v1(prompt, current_objects_json, objet_reconnus)
+        return modify_scene_v1(prompt, current_objects_json, objet_reconnus, build_scene_fn=build_scene_subprocess)
     return modify_scene_v2(prompt, current_objects_json, objet_reconnus)
 
 

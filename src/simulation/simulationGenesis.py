@@ -73,37 +73,20 @@ def patch_urdf(urdf_path):
     return tmp.name
 
 
-def mesh_to_urdf(mesh_path, density=500.0):
-    """Genere un URDF avec collision en box et visuel en mesh"""
-    mesh_path = os.path.abspath(mesh_path)
-    m = trimesh.load(mesh_path, force='mesh')
-    w, d, h = m.bounding_box.extents
-    mass = max(0.01, density * w * d * h)
-    ixx = mass / 12.0 * (d**2 + h**2)
-    iyy = mass / 12.0 * (w**2 + h**2)
-    izz = mass / 12.0 * (w**2 + d**2)
-
-    urdf_content = f"""<?xml version="1.0"?>
-<robot name="mesh_obj">
-  <link name="base">
-    <visual>
-      <geometry><mesh filename="{mesh_path}"/></geometry>
-    </visual>
-    <collision>
-      <geometry><box size="{w:.6f} {d:.6f} {h:.6f}"/></geometry>
-    </collision>
-    <inertial>
-      <mass value="{mass:.6f}"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="{ixx:.6f}" iyy="{iyy:.6f}" izz="{izz:.6f}" ixy="0" ixz="0" iyz="0"/>
-    </inertial>
-  </link>
-</robot>"""
-
-    tmp = tempfile.NamedTemporaryFile(suffix='.urdf', delete=False, mode='w', encoding='utf-8')
-    tmp.write(urdf_content)
-    tmp.close()
-    return tmp.name
+def make_morph(path, **kwargs):
+    """Cree le bon morph Genesis selon le type de fichier"""
+    if path.endswith('.xml'):
+        xml_dir = os.path.dirname(path)
+        for name in ["textured.obj", "nontextured.stl", "nontextured.ply"]:
+            candidate = os.path.join(xml_dir, name)
+            if os.path.exists(candidate):
+                path = candidate
+                break
+        else:
+            raise FileNotFoundError(f"Aucun mesh trouve a cote de {path}")
+    if path.endswith(('.urdf', '.xacro')):
+        return gs.morphs.URDF(file=patch_urdf(path), **kwargs)
+    return gs.morphs.Mesh(file=path, **kwargs)
 
 
 def create_scene(objetsList):
@@ -131,24 +114,10 @@ def create_scene(objetsList):
         quat  = obj.get('quat', [0.0, 0.0, 0.0, 1.0])
         scale = obj.get('scale', 1.0)
 
-        if path.endswith('.urdf'):
-            path = patch_urdf(path)
-        elif path.endswith('.xml'):
-            xml_dir = os.path.dirname(path)
-            found = None
-            for name in ["textured.obj", "nontextured.stl", "nontextured.ply"]:
-                candidate = os.path.join(xml_dir, name)
-                if os.path.exists(candidate):
-                    found = candidate
-                    break
-            if found is None:
-                raise FileNotFoundError(f"Aucun mesh trouve a cote de {path}")
-            path = mesh_to_urdf(found)
-        else:
-            path = mesh_to_urdf(path)
-
-        morph = gs.morphs.URDF(file=path, pos=pos, quat=quat, scale=scale, fixed=False)
-        scene.add_entity(morph, material=gs.materials.Rigid(rho=1000, friction=0.5))
+        scene.add_entity(
+            make_morph(path, pos=pos, quat=quat, scale=scale, fixed=False),
+            material=gs.materials.Rigid(rho=1000, friction=0.5)
+        )
 
     scene.build()
 

@@ -39,18 +39,18 @@ VALID_ORIENTATIONS = {
     "tip_forward", "tip_backward", "tip_left", "tip_right", "upside_down",
 }
 
-_openai_client = None
+openai_client = None
 
 
-def _get_openai_client():
-    global _openai_client
-    if _openai_client is None:
+def get_openai_client():
+    global openai_client
+    if openai_client is None:
         key = os.environ.get("OPENAI_API_KEY")
-        _openai_client = OpenAI(api_key=key)
-    return _openai_client
+        openai_client = OpenAI(api_key=key)
+    return openai_client
 
 
-def _is_openai_model(model):
+def is_openai_model(model):
     return model.startswith(("gpt-", "o1-", "o3-", "o4-"))
 
 
@@ -79,7 +79,7 @@ def load_images(image_sources):
 # VISION LLM CALLS 
 # -----------------------------------------------------------------------------
 
-def _call_openai_vision(images, system_prompt, user_prompt):
+def call_openai_vision(images, system_prompt, user_prompt):
     client = _get_openai_client()
 
     # build user content: text + one block per image
@@ -108,7 +108,7 @@ def _call_openai_vision(images, system_prompt, user_prompt):
     return json.loads(response.choices[0].message.content)
 
 
-def _call_ollama_vision(images, system_prompt, user_prompt):
+def call_ollama_vision(images, system_prompt, user_prompt):
     payload = {
         "model": VISION_MODEL,
         "system": system_prompt,
@@ -148,9 +148,9 @@ def _call_ollama_vision(images, system_prompt, user_prompt):
 
 
 def call_vision_llm(images, system_prompt, user_prompt):
-    if _is_openai_model(VISION_MODEL):
-        return _call_openai_vision(images, system_prompt, user_prompt)
-    return _call_ollama_vision(images, system_prompt, user_prompt)
+    if is_openai_model(VISION_MODEL):
+        return call_openai_vision(images, system_prompt, user_prompt)
+    return call_ollama_vision(images, system_prompt, user_prompt)
 
 
 # -----------------------------------------------------------------------------

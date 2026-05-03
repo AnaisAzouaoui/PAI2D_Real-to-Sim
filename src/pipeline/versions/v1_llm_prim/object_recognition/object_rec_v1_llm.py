@@ -1,5 +1,5 @@
 from pipeline.utils.catalogue import objets_list, objects_desc
-from pipeline.utils.ollama_client import validate_json_response
+from pipeline.utils.ollama_client import call_llm
 
 
 #---------------------------------------------------------------------
@@ -37,16 +37,7 @@ def validate_matches(result, objects_data):
 
         Return ONLY: {"verdicts": [true, false, ...]} — one boolean per pair, in order."""
 
-  payload = {
-    "model": "llama3.1",
-    "system": system_prompt,
-    "prompt": pairs_desc,
-    "stream": False,
-    "format": "json",
-    "options": {"temperature": 0}
-  }
-
-  raw_verdicts = validate_json_response(payload).get("verdicts", [])
+  raw_verdicts = call_llm(system_prompt, pairs_desc).get("verdicts", [])
 
   # normaliser : le LLM retourne deds fois un bool au lieu d'une liste
   if isinstance(raw_verdicts, bool):
@@ -125,16 +116,7 @@ def object_rec(prompt=None):
   result = {}
 
   for attempt in range(3):  # 3 essais pour que le LLM tente de reconnaitre les objets
-    payload = {
-      "model": "llama3.1",
-      "system": system_prompt,
-      "prompt": user_prompt,
-      "stream": False,
-      "format": "json",
-      "options": {"temperature": 0}
-    }
-
-    result = validate_json_response(payload)
+    result = call_llm(system_prompt, user_prompt)
 
     invalid = [urdf for urdf in result.get("obj_reconnus", {}).values()
                if urdf not in valid_urdfs]

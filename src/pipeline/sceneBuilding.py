@@ -5,6 +5,9 @@ from .jsonParsing import simplifyRelations
 import xml.etree.ElementTree as ET
 import trimesh
 import genesis as gs
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+from simulation.simulationGenesis import make_morph
 
 
 '''
@@ -30,7 +33,7 @@ def initPosAndQuat(items,scene,entites):
         offset = 0.001 - float(aabb_min[2]) #qui est le lowest point
         item['pos'] = [0, 0, offset] #fait sortir les objets du sol
         item['lowest_point'] = 0.001
-        item['highest_point'] = aabb_max[2]+ offset
+        item['highest_point'] = float(aabb_max[2]) + offset
         item['parent_id'] = None 
     return items
 
@@ -181,8 +184,7 @@ def processRelations(items, relations):
                 progression = True
                 break  # repart depuis le debut pour que la relation suivante voie les positions a jour
         if not progression:
-            # second pass: the model sometimes inverts subject/object — if the subject
-            # is placed but the object is not, invert the relation direction to recover
+            # le model inverse des fois right(mug,banne) et right(banane,mug) 
             for rel in reste[:]:
                 obj_id = rel['object']
                 sub_id = rel['subject']
@@ -295,7 +297,7 @@ def buildScene(items, relations, orientations):
         item['path'] = getFilePath(item)
         item['quat'] = [0, 0, 0, 1]
         item['pos'] = [0, 0, 0]
-        ent = scene.add_entity(gs.morphs.URDF(file=item['path'], scale=item.get('scale', 1.0), pos=[0,0,0], fixed=True))
+        ent = scene.add_entity(make_morph(item['path'], scale=item.get('scale', 1.0), pos=[0,0,0], fixed=True))
         entites[item['id']] = ent
     scene.build()       
 

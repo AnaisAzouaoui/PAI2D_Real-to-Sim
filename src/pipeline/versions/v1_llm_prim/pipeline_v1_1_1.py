@@ -154,7 +154,7 @@ def _fix_orientations(orientations, valid_ids):
 # ---------------------------------------------------------------
 # PLACEMENT
 # ---------------------------------------------------------------
-def place_scene(prompt, obj_reconnus):
+def place_scene(prompt, obj_reconnus, build_scene_fn=None):
     """Root, relations, orientations depuis phi3-scene. Scales via phi3:mini"""
     phi3 = phi3_result(prompt)  # depuis le cache
     valid_ids = set(obj_reconnus.keys())
@@ -185,7 +185,8 @@ def place_scene(prompt, obj_reconnus):
         })
 
     print("[v1_1_1] items:", items, "| relations:", relations, "| orientations:", orientations)
-    items = buildScene(items, relations, orientations)
+    fn = build_scene_fn if build_scene_fn is not None else buildScene
+    items = fn(items, relations, orientations)
     for item in items:
         pos  = item.get("pos", (0, 0, 0))
         item["pos"] = list(pos)
@@ -195,7 +196,7 @@ def place_scene(prompt, obj_reconnus):
     return items
 
 
-def modify_scene(prompt, current_scene_json, obj_reconnus):
+def modify_scene(prompt, current_scene_json, obj_reconnus, build_scene_fn=None):
     """Meme interface que v1.1. Vide le cache pour forcer un nouvel appel phi3-scene"""
     phi3_cache.pop(prompt, None)
-    return place_scene(prompt, obj_reconnus)
+    return place_scene(prompt, obj_reconnus, build_scene_fn=build_scene_fn)

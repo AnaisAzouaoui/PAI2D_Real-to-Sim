@@ -1,4 +1,4 @@
-from pipeline.utils.ollama_client import validate_json_response
+from pipeline.utils.ollama_client import call_llm, validate_json_response
 from pipeline.utils.helpers import normalize, fuzzy_match
 from pipeline.sceneBuilding import buildScene
 from .placement_v1_distances_orientations import orientation
@@ -243,16 +243,7 @@ def object_relations(prompt=None, objets_rec=None):
   user_prompt = prompt
 
   for attempt in range(3):
-    payload = {
-      "model": "llama3.1",
-      "system": system_prompt,
-      "prompt": user_prompt,
-      "stream": False,
-      "format": "json",
-      "options": {"temperature": 0}
-    }
-
-    result = validate_json_response(payload)
+    result = call_llm(system_prompt, user_prompt)
     result = fix_ids_in_result(result, valid_ids)
     # verifier que toutes les relations sont valides apres correction
     all_ids_ok = all(
@@ -291,7 +282,7 @@ def final_json(objets, scales):
   return dict_obj
 
 
-def modify_scene(prompt, current_scene_json, objet_reconnus):
+def modify_scene(prompt, current_scene_json, objet_reconnus, build_scene_fn=None):
   """V1/V1.1 : meme interface que pipeline_v2_llm.modify_scene.
   current_scene_json est ignore — V1 re-run le placement complet depuis le prompt."""
   relations_data = object_relations(prompt, objet_reconnus)
@@ -311,7 +302,8 @@ def modify_scene(prompt, current_scene_json, objet_reconnus):
     })
 
   orientations_data = orientation(prompt, updated_objets)
-  items = buildScene(items, relations, orientations_data)
+  fn = build_scene_fn if build_scene_fn is not None else buildScene
+  items = fn(items, relations, orientations_data)
 
   for item in items:
     pos = item.get("pos", (0, 0, 0))
