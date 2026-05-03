@@ -49,6 +49,9 @@ def call_llm(system_prompt, user_prompt):
     """ (OpenAI) ou llama"""
     if is_openai_model(LLM_MODEL):
         print(f"[LLM] OpenAI")
+        # apparament openAI exige le mot "json" dans les messages quand response_format=json_object ce qui est con
+        if "json" not in system_prompt.lower() and "json" not in user_prompt.lower():
+            system_prompt = system_prompt + "\nReturn valid JSON."
         response = get_openai_client().chat.completions.create(
             model=LLM_MODEL,
             messages=[
