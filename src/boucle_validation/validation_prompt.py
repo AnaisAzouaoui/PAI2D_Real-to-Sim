@@ -62,15 +62,17 @@ def validation_semantique_prompt(original_prompt, data, image_path):
             You will receive:
                 - The current scene as a JSON object
                 - The position, dimensions , lowest point and highest point of each object
-                - a collage containing THREE images of the same scene:
+                - a collage containing FOUR images of the same scene:
                     1. PERSPECTIVE VIEW: General context.
                     2. TOP-DOWN VIEW: Best for X, Y coordinates and checking if objects are side-by-side.
                     3. SIDE VIEW: Best for Z coordinate (height) to check if objects are at the right height.
+                    4. LOWER SIDE VIEW
+
                         
             Spatial RULES:
             - Stacking (On Top): For Object A to be "on" Object B, X and Y must be within the space covered by object B. 
             Object A's lowest point must be 0.001 higher than object B highest point.
-            - Next to: for object A to be next to object B, they must have the same height (Z). X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
+            - Next to: for object A to be next to object B, they should be at the same level, so their lowest-point should be approximately equal. X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
             - Collisions: Objects must not occupy the same space. If they overlap in the Top-Down view, they must have different Z-heights to avoid clipping. If an object is explicitly inside another, this does not apply. However, meshes still shouldn’t intersect.
             - Ground Plane: No object's lowest point should be below 0.
             - DO NOT throw objects in the air! Objects should be placed on a surface (ground or other objects).
@@ -82,6 +84,7 @@ def validation_semantique_prompt(original_prompt, data, image_path):
                 - ONLY output the JSON object, nothing else
                 - NO markdown, NO backticks, NO explanations before or after
 
+            MOST IMPORTANTLY: Valid is TRUE if ALL objects match their described position in the prompt.
 
             You MUST respond with ONLY this JSON format:
             {

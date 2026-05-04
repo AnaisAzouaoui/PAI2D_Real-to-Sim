@@ -82,6 +82,8 @@ def validation_semantique_img(user_image_path, data, scene_image_path):
                 - ONLY output the JSON object, nothing else.
                 - NO markdown, NO backticks, NO explanations before or after.
 
+            IMPORTANT: Valid is True if the scene matches the image.
+
             You MUST respond with ONLY this JSON format:
             {
                 "valid": boolean,
