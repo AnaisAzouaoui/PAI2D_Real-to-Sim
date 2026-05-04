@@ -69,13 +69,10 @@ def validation_semantique_img(user_image_path, data, scene_image_path):
                 - Image 2: The CURRENT SIMULATION (a collage of Perspective, Top, and Side views).
                 - A JSON list with the current positions (pos) and dimensions of each object.
 
-            Spatial RULES:
-            - Goal: Adjust the X, Y, Z coordinates of the simulated objects so they match the relative positioning, stacking, and alignment shown in the REFERENCE image.
-            - Stacking (On Top): For Object A to be "on" Object B, X and Y must be within the space covered by object B. Object A's lowest point must be 0.001 higher than object B's highest point.
-            - Collisions: Objects must not intersect unless explicitly shown in the reference image. If they overlap in the Top-Down view, they must have different Z-heights to avoid clipping, or different X or Y.
-            - Ground Plane: No object's lowest point should be below 0.
 
-            Other RULES:
+            GOAL: Adjust the X, Y, Z coordinates of the simulated objects so they match the relative positioning, stacking, and alignment shown in the REFERENCE image.
+
+            RULES:
                 - ONLY change pos if needed to match the reference image.
                 - Maintain the original id for all objects.
                 - 'valid' is true ONLY if the current simulation perfectly matches the reference image arrangement AND has no illogical collisions.

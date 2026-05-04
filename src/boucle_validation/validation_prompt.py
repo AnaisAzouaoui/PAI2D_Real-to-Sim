@@ -72,10 +72,12 @@ def validation_semantique_prompt(original_prompt, data, image_path):
             Spatial RULES:
             - Stacking (On Top): For Object A to be "on" Object B, X and Y must be within the space covered by object B. 
             Object A's lowest point must be 0.001 higher than object B highest point.
-            - Next to: for object A to be next to object B, they should be at the same level, so their lowest-point should be approximately equal. X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
+            - Right of, left of, behind, in front of...: for object A to be in these relations to object B, they should be near each other but never touching or overlapping. Their lowest-point should be approximately equal. X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
             - Collisions: Objects must not occupy the same space. If they overlap in the Top-Down view, they must have different Z-heights to avoid clipping. If an object is explicitly inside another, this does not apply. However, meshes still shouldn’t intersect.
             - Ground Plane: No object's lowest point should be below 0.
             - DO NOT throw objects in the air! Objects should be placed on a surface (ground or other objects).
+            
+            ONLY move objects if they clearly violate a rule.
 
             Other RULES:
                 - ONLY change pos if needed
