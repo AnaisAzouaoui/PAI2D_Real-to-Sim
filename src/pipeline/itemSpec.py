@@ -20,7 +20,7 @@ def getFilePath(item):
     # si c'est un dossier on cherche un fichier qui existe
     if os.path.isdir(base):
         # objets PartNet : fichiers directement dans le dossier
-        for name in ["mobility.urdf", "kinbody.xml", "textured.obj", "nontextured.stl", "nontextured.ply"]:
+        for name in ["table.urdf","mobility.urdf", "kinbody.xml", "textured.obj", "nontextured.stl", "nontextured.ply"]:
             path = os.path.join(base, name)
             if os.path.exists(path):
                 return path

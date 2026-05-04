@@ -10,8 +10,9 @@ import json
 from dotenv import load_dotenv
 from openai import OpenAI
 from pipeline.utils.ollama_client import URL
+from pipeline.utils.groundingdino_detector import detect_contours
 from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_1_embedding import object_rec
-from pipeline.sceneBuilding import initPosAndQuat, processRelations, processOrientations
+from pipeline.sceneBuilding import initPosAndQuat, processRelations, processOrientations, get_genesis_dimensions
 
 load_dotenv(Path(__file__).resolve().parents[4] / ".env")
 
@@ -58,19 +59,29 @@ def is_openai_model(model):
 # IMAGE LOADING
 # -----------------------------------------------------------------------------
 
+def open_image(source):
+    img = Image.open(str(source))
+    if img.mode != "RGB":
+        img = img.convert("RGB")
+    w, h = img.size
+    if max(w, h) > MAX_IMAGE_SIZE:
+        scale = MAX_IMAGE_SIZE / max(w, h)
+        img = img.resize((int(w * scale), int(h * scale)), Image.LANCZOS)
+    return img
+
+
+def pil_to_base64(img):
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+
 def load_images(image_sources):
+    # garde la signature historique: retourne directement les base64 pour le VLM
     images = []
     for source in image_sources:
-        img = Image.open(str(source))
-        if img.mode != "RGB":
-            img = img.convert("RGB")
-        w, h = img.size
-        if max(w, h) > MAX_IMAGE_SIZE:
-            scale = MAX_IMAGE_SIZE / max(w, h)
-            img = img.resize((int(w * scale), int(h * scale)), Image.LANCZOS)
-        buf = io.BytesIO()
-        img.save(buf, format="PNG")
-        images.append(base64.b64encode(buf.getvalue()).decode("utf-8"))
+        img = open_image(source)
+        images.append(pil_to_base64(img))
         print(f"[load_images] {source} -> {img.size} RGB")
     return images
 
@@ -80,7 +91,7 @@ def load_images(image_sources):
 # -----------------------------------------------------------------------------
 
 def call_openai_vision(images, system_prompt, user_prompt):
-    client = _get_openai_client()
+    client = get_openai_client()
 
     # build user content: text + one block per image
     content = [{"type": "text", "text": user_prompt}]
@@ -94,11 +105,11 @@ def call_openai_vision(images, system_prompt, user_prompt):
         })
 
     print(f"[call_vision_llm] sending {len(images)} image(s) to {VISION_MODEL}...")
-    response = _get_openai_client().chat.completions.create(
+    response = get_openai_client().chat.completions.create(
         model=VISION_MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
-            {"role": "user",   "content": content},
+            {"role": "user","content": content},
         ],
         temperature=0,
         max_tokens=1024,
@@ -180,6 +191,8 @@ TASK:
        x = 0.0 -> left edge,  x = 1.0 -> right edge.
        y = 0.0 -> top edge,   y = 1.0 -> bottom edge.
        Be as precise as possible: use the actual centre of the object's bounding box.
+   - label_en: short English label for the same object (e.g. "washing machine", "mug", "banana").
+       Used by an English-only object detector. Keep it simple and generic.
    - orientation: choose ONE value that best describes the visible rotation:
        "default"      — normal upright, no visible rotation
        "turn_left"    — rotated 90 left around the vertical axis (seen from above)
@@ -208,6 +221,7 @@ OUTPUT FORMAT — return ONLY this JSON, nothing else:
   "objects": [
     {
       "label": "<nom en francais>",
+      "label_en": "<short english name>",
       "pos_norm": [<x 0.0-1.0>, <y 0.0-1.0>],
       "orientation": "<value from the list above>"
     }
@@ -321,6 +335,55 @@ def build_item_estimates(detected_objects, objet_reconnus, cat_by_base):
     return item_estimates
 
 
+def assign_contours(detected_objects, detections, image_size):
+    # Pour chaque objet detecte par le VLM, on cherche le contour GroundingDINO le plus proche
+    # de son pos_norm parmi ceux dont le label correspond. Le contour trouve est stocke
+    # dans obj["contour"] et son centre ecrase pos_norm (plus precis).
+    img_w, img_h = image_size
+    restantes = list(detections)
+    for obj in detected_objects:
+        label_en = (obj.get("label_en") or obj.get("label") or "").strip().lower()
+        if not label_en:
+            continue
+        candidates = [d for d in restantes if d["label"] in label_en or label_en in d["label"]]
+        if not candidates:
+            continue
+        px, py = obj.get("pos_norm", [0.5, 0.5])
+        cible = (px * img_w, py * img_h)
+        def dist_sq(d):
+            cx = (d["contour"][0] + d["contour"][2]) / 2
+            cy = (d["contour"][1] + d["contour"][3]) / 2
+            return (cx - cible[0])**2 + (cy - cible[1])**2
+        meilleure = min(candidates, key=dist_sq)
+        obj["contour"] = meilleure["contour"]
+        cx = (meilleure["contour"][0] + meilleure["contour"][2]) / 2
+        cy = (meilleure["contour"][1] + meilleure["contour"][3]) / 2
+        obj["pos_norm"] = [cx / img_w, cy / img_h]
+        restantes.remove(meilleure)
+
+
+def load_depth_map(path):
+    # accepte .npy (numpy) ou n'importe quelle image (PNG/JPG/EXR via PIL)
+    # convention: valeurs en metres, plus grand = plus loin de la camera
+    import numpy as np
+    if path.lower().endswith(".npy"):
+        return np.load(path)
+    img = Image.open(path)
+    arr = np.asarray(img, dtype=np.float32)
+    if arr.ndim == 3:
+        arr = arr[..., 0]
+    return arr
+
+
+def sample_depth_at_contour(depth_map, contour):
+    h, w = depth_map.shape[:2]
+    cx = int(round((contour[0] + contour[2]) / 2))
+    cy = int(round((contour[1] + contour[3]) / 2))
+    cx = max(0, min(w - 1, cx))
+    cy = max(0, min(h - 1, cy))
+    return float(depth_map[cy, cx])
+
+
 def remap_relations(relations, cat_by_base, valid_labels):
     remapped = []
     for rel in relations:
@@ -367,64 +430,69 @@ def resolve_path(path):
 # MAIN ENTRY POINT
 # -----------------------------------------------------------------------------
 
-def scene_from_image(image_paths):
-    """
-    Generate a 3D scene from one or more images.
-
-    Pipeline:
-      1. Load + resize images
-      2. Vision LLM (OpenAI or Ollama) -> view_type, objects, relations
-      3. Embedding object_rec -> catalogue mapping
-      4. build_item_estimates -> ordered, collision-free assignment
-      5. processOrientations -> quat + dimension swap
-      6. initPosAndQuat + processRelations (vertical only) -> z
-      7. pos_norm_to_world (view-aware) -> x, y
-      8. nudge_depth_from_relations -> depth ordering (frontal only)
-
-    Returns: list of dicts [{id, urdf, path, scale, quat, pos}, ...]
-    """
+def scene_from_image(image_paths, depth_map_paths=None, dims_fn=None):
+    # Pipeline complet:
+    #   1. Charge les images (PIL et base64)
+    #   2. VLM gpt-4o -> labels FR/EN, relations, orientations, view_type
+    #   3. GroundingDINO -> contours 2D pixel-accurate par label
+    #   4. Embedding -> mapping vers le catalogue
+    #   5. Genesis -> dimensions reelles 3D
+    #   6. Conversion image -> monde (centre du contour pour plus de precision)
+    #   7. Si depth_map fournie, on raffine world_x des objets racines
+    #   8. processRelations pour le z, puis on repositionne les enfants on/inside
+    #      avec leur position relative DANS le contour du parent
+    #
+    # depth_map_paths: liste optionnelle de chemins (un par image), meme resolution
+    # que les images apres open_image. Format: .npy ou image PIL, valeurs en metres.
     print(f"\n[scene_from_image] === debut du pipeline sur {len(image_paths)} image(s) ===")
-    images = load_images(image_paths)
+    images_pil = [open_image(p) for p in image_paths]
+    images_b64 = [pil_to_base64(img) for img in images_pil]
 
-    print("[scene_from_image] etape 1/5 - detection visuelle...")
-    detected_raw       = detect_and_estimate(images)
-    detected_objects   = detected_raw.get("objects", [])
+    print("[scene_from_image] etape 1/6 - detection visuelle (gpt-4o)...")
+    detected_raw = detect_and_estimate(images_b64)
+    detected_objects = detected_raw.get("objects", [])
     detected_relations = detected_raw.get("relations", [])
-    view_type          = detected_raw.get("view_type", "frontal")
-    print(f"[scene_from_image] view_type={view_type}, {len(detected_objects)} objects detected")
+    view_type = detected_raw.get("view_type", "frontal")
+    print(f"[scene_from_image] view_type={view_type}, {len(detected_objects)} objets detectes")
 
     if not detected_objects:
-        print("[scene_from_image] no objects detected.")
         return []
 
     labels = [o["label"] for o in detected_objects]
-    print(f"[scene_from_image] labels detectes: {labels}")
+    print(f"[scene_from_image] labels FR: {labels}")
 
-    print("[scene_from_image] etape 2/5 - reconnaissance des objets (embedding)...")
+    print("[scene_from_image] etape 2/6 - contours 2D (GroundingDINO)...")
+    labels_en = [o.get("label_en") or o.get("label") for o in detected_objects]
+    detections = detect_contours(images_pil[0], labels_en)
+    print(f"[scene_from_image] {len(detections)} contour(s) detecte(s)")
+    assign_contours(detected_objects, detections, images_pil[0].size)
+    nb_avec_contour = sum(1 for o in detected_objects if "contour" in o)
+    print(f"[scene_from_image] {nb_avec_contour}/{len(detected_objects)} objets associes a un contour")
+
+    print("[scene_from_image] etape 3/6 - reconnaissance catalogue (embedding)...")
     objet_reconnus, non_reconnus = object_rec(labels)
     print(f"[scene_from_image] {len(objet_reconnus)} objet(s) trouve(s) dans le catalogue")
     if non_reconnus:
         print(f"[scene_from_image] pas dans le catalogue: {non_reconnus}")
     if not objet_reconnus:
-        print("[scene_from_image] aucun objet reconnu, arret.")
         return []
 
-    valid_labels   = set(objet_reconnus.keys())
-    cat_by_base    = build_cat_by_base(objet_reconnus)
+    valid_labels = set(objet_reconnus.keys())
+    cat_by_base = build_cat_by_base(objet_reconnus)
     item_estimates = build_item_estimates(detected_objects, objet_reconnus, cat_by_base)
 
-    all_relations      = remap_relations(detected_relations, cat_by_base, valid_labels)
+    all_relations = remap_relations(detected_relations, cat_by_base, valid_labels)
     vertical_relations = [r for r in all_relations if r["type"] in VERTICAL_RELATIONS]
-    depth_relations    = [r for r in all_relations if r["type"] in DEPTH_RELATIONS]
-    print(f"[scene_from_image] {len(all_relations)} relation(s) remappee(s) ({len(vertical_relations)} verticales, {len(depth_relations)} profondeur)")
+    depth_relations = [r for r in all_relations if r["type"] in DEPTH_RELATIONS]
+    print(f"[scene_from_image] {len(all_relations)} relation(s) ({len(vertical_relations)} verticales, {len(depth_relations)} profondeur)")
 
     items = [
         {
-            "id":cat_label,
-            "urdf":info["urdf"],
-            "path":resolve_path(info["path"]),
+            "id": cat_label,
+            "urdf": info["urdf"],
+            "path": resolve_path(info["path"]),
             "dimensions": info.get("dimensions") or [1.0, 1.0, 1.0],
-            "scale":1.0,
+            "scale": 1.0,
         }
         for cat_label, info in objet_reconnus.items()
     ]
@@ -435,22 +503,91 @@ def scene_from_image(image_paths):
         if item_estimates.get(cat_label, {}).get("orientation", "default") != "default"
            and item_estimates.get(cat_label, {}).get("orientation") in VALID_ORIENTATIONS
     ]
-    print(f"[scene_from_image] etape 3/5 - orientations ({len(orientations)} non-default)...")
-    items = processOrientations(items, orientations)
+    print(f"[scene_from_image] etape 4/6 - orientations ({len(orientations)} non-default) + dimensions Genesis...")
+    items = (dims_fn or get_genesis_dimensions)(items, orientations)
 
-    print("[scene_from_image] etape 4/5 - initialisation des positions et relations verticales...")
-    items = initPosAndQuat(items)
-    items = processRelations(items, vertical_relations)
+    # Depth map optionnelle
+    depth_map = None
+    if depth_map_paths:
+        print(f"[scene_from_image] depth map fournie: {depth_map_paths[0]}")
+        depth_map = load_depth_map(depth_map_paths[0])
 
-    print(f"[scene_from_image] etape 5/5 - conversion coords image -> monde (vue={view_type})...")
+    print(f"[scene_from_image] etape 5/6 - conversion coords image -> monde (vue={view_type})...")
     for item in items:
-        pos_norm         = item_estimates.get(item["id"], {}).get("pos_norm", [0.5, 0.5])
+        est = item_estimates.get(item["id"], {})
+        pos_norm = est.get("pos_norm", [0.5, 0.5])
         world_x, world_y = pos_norm_to_world(pos_norm, view_type)
-        _, _, z          = item["pos"]
-        item["pos"]      = [world_x, world_y, z]
-        print(f"  {item['id']}: pos_norm={pos_norm} -> monde=({world_x:.3f}, {world_y:.3f}, {z:.3f})")
+        # Si on a une depth map et un contour, on remplace world_x par la mesure de profondeur
+        if depth_map is not None and "contour" in est:
+            world_x = round(sample_depth_at_contour(depth_map, est["contour"]), 3)
+        _, _, z = item["pos"]
+        item["pos"] = [world_x, world_y, z]
+        print(f"  {item['id']}: monde=({world_x:.3f}, {world_y:.3f}, {z:.3f})")
 
-    nudge_depth_from_relations(items, depth_relations, view_type)
+    print(f"[scene_from_image] etape 6/6 - placement vertical + repositionnement enfants...")
+    on_parent_map = {
+        r["subject"]: r["object"]
+        for r in vertical_relations
+        if r["type"] in ("on", "inside")
+    }
+    image_xy = {item["id"]: item["pos"][:2] for item in items}
+    items = processRelations(items, vertical_relations)
+    items_dict = {item["id"]: item for item in items}
+
+    # Pour les enfants on/inside: on utilise leur position relative DANS le contour du parent
+    # pour les placer precisement sur la surface du parent dans le monde 3D.
+    for item in items:
+        parent_id = on_parent_map.get(item["id"])
+        parent = items_dict.get(parent_id) if parent_id else None
+        if not parent:
+            # objet racine: on garde la position calculee depuis pos_norm_to_world
+            item["pos"][0], item["pos"][1] = image_xy[item["id"]]
+            continue
+
+        child_est = item_estimates.get(item["id"], {})
+        parent_est = item_estimates.get(parent_id, {})
+        child_contour = child_est.get("contour")
+        parent_contour = parent_est.get("contour")
+
+        parent_dx = parent["dimensions"][0]
+        parent_dy = parent["dimensions"][1]
+        # marge de securite de 4 cm : l'AABB Genesis n'est pas parfaitement alignee
+        # avec le rendu visuel, donc sans ca l'objet enfant depasse legerement le bord
+        SURFACE_MARGIN = 0.04
+        margin_x = max(0.0, (parent_dx - item["dimensions"][0]) / 2 - SURFACE_MARGIN)
+        margin_y = max(0.0, (parent_dy - item["dimensions"][1]) / 2 - SURFACE_MARGIN)
+
+        # Si on n'a pas les deux contours, fallback: meme profondeur que le parent, latera depuis pos_norm
+        if not (child_contour and parent_contour):
+            ix, iy = image_xy[item["id"]]
+            px, py = parent["pos"][0], parent["pos"][1]
+            item["pos"][1] = max(py - margin_y, min(iy, py + margin_y))
+            item["pos"][0] = px if view_type == "frontal" else max(px - margin_x, min(ix, px + margin_x))
+            continue
+
+        # Position relative du centre de l'enfant dans le contour du parent (clamp [0,1])
+        cx = (child_contour[0] + child_contour[2]) / 2
+        cy = (child_contour[1] + child_contour[3]) / 2
+        pw_img = max(1.0, parent_contour[2] - parent_contour[0])
+        ph_img = max(1.0, parent_contour[3] - parent_contour[1])
+        rel_x = max(0.0, min(1.0, (cx - parent_contour[0]) / pw_img))
+        rel_y = max(0.0, min(1.0, (cy - parent_contour[1]) / ph_img))
+
+        px, py = parent["pos"][0], parent["pos"][1]
+        if view_type == "frontal":
+            # image_x -> world_y (lateral). image_y encode la hauteur, pas la profondeur.
+            target_y = py - parent_dy / 2 + rel_x * parent_dy
+            item["pos"][1] = max(py - margin_y, min(target_y, py + margin_y))
+            item["pos"][0] = px
+        else:
+            # top_down: image_x -> world_x, image_y -> world_y (inverse)
+            target_x = px - parent_dx / 2 + rel_x * parent_dx
+            item["pos"][0] = max(px - margin_x, min(target_x, px + margin_x))
+            target_y = py + parent_dy / 2 - rel_y * parent_dy
+            item["pos"][1] = max(py - margin_y, min(target_y, py + margin_y))
+
+    if depth_map is None:
+        nudge_depth_from_relations(items, depth_relations, view_type)
 
     print(f"[scene_from_image] === pipeline termine: {len(items)} objet(s) place(s) ===\n")
     return items

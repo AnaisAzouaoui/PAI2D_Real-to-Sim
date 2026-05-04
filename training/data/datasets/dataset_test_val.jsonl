@@ -1,0 +1,1 @@
+{"input": "une clé sur une tasse sur une souris", "config": "stacking", "output": {"objets": ["cle", "tasse", "souris"], "relations": [{"type": "on", "subject": "cle", "object": "tasse"}, {"type": "on", "subject": "tasse", "object": "souris"}], "orientations": []}}

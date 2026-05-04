@@ -43,6 +43,30 @@ def build_scene_subprocess(items, relations, orientations):
             except OSError: pass
 
 
+def get_genesis_dims_subprocess(items, orientations):
+    """Lance get_genesis_dimensions dans un subprocess pour eviter le crash NSWindow sur macOS."""
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(items, f); items_path = f.name
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        json.dump(orientations, f); ori_path = f.name
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        out_path = f.name
+    try:
+        proc = subprocess.run(
+            [sys.executable, os.path.join(SRC_DIR, 'run_get_genesis_dims.py'),
+             items_path, ori_path, out_path],
+            cwd=SRC_DIR
+        )
+        if proc.returncode != 0:
+            raise RuntimeError("run_get_genesis_dims.py a echoue")
+        with open(out_path) as f:
+            return json.load(f)
+    finally:
+        for p in [items_path, ori_path, out_path]:
+            try: os.unlink(p)
+            except OSError: pass
+
+
 # "V1"     : object_rec via LLM, placement via sceneBuilding
 # "V1.1"   : object_rec via embeddings, placement via sceneBuilding
 # "V1.1.1" : object_rec + relations + orientations via phi3-scene (finetuned), scales via phi3:mini
@@ -295,7 +319,7 @@ class ImageSceneWorker(QObject):
             print("[ImageSceneWorker] Import du pipeline V3...")
             from pipeline.versions.v3_image.pipeline_v3_image import scene_from_image
             print("[ImageSceneWorker] Import OK, appel de scene_from_image...")
-            objetsList = scene_from_image(self.image_paths)
+            objetsList = scene_from_image(self.image_paths, dims_fn=get_genesis_dims_subprocess)
             if not objetsList:
                 self.error_occurred.emit("Aucun objet reconnu dans l'image.")
                 return

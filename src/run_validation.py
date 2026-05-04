@@ -1,6 +1,7 @@
 """
-Script lance en sous-processus par ValidationWorker
+Script lance en sous-processus par ValidationWorker (mac)
 Genesis tourne dans le main thread de ce processus 
+run_validation.py <mode> <json_file> <prompt_or_image>
 """
 import sys
 import os
@@ -15,14 +16,9 @@ load_dotenv(os.path.join(SRC_DIR, '..', '.env'))
 
 
 def main():
-    if len(sys.argv) < 4:
-        print("Usage: run_validation.py <mode> <json_file> <prompt_or_image>", file=sys.stderr)
-        sys.exit(1)
-
-    mode       = sys.argv[1]
+    mode= sys.argv[1]
     json_file  = sys.argv[2]
-    arg        = sys.argv[3]
-
+    arg  = sys.argv[3]
     if mode == 'prompt':
         from boucle_validation.validation_prompt import boucle_vlm_prompt
         result = boucle_vlm_prompt(arg, json_file)
@@ -32,7 +28,6 @@ def main():
     else:
         print(f"Mode inconnu : {mode}", file=sys.stderr)
         sys.exit(1)
-
     if result:
         with open(json_file, 'w', encoding='utf-8') as f:
             json.dump(result, f, indent=2, ensure_ascii=False)

@@ -1,38 +1,77 @@
 [
   {
-    "id": "11826_lave_linge",
+    "id": "lave-linge",
     "urdf": "11826_lave_linge",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/11826_lave_linge/mobility.urdf",
+    "dimensions": [
+      0.9967940449714661,
+      1.1075372695922852,
+      1.5320930480957031
+    ],
     "scale": 1.0,
     "quat": [
-      0.0,
-      0.0,
-      0.0,
-      1.0
+      0,
+      0,
+      0,
+      1
     ],
     "pos": [
-      0.0,
-      0.0,
-      0.4984
+      0.188,
+      -0.312,
+      0.7782189974784851
     ],
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/11826_lave_linge/mobility.urdf",
-    "root": false
+    "highest_point": 1.5330929884910582,
+    "lowest_point": 0.001,
+    "parent_id": null
   },
   {
-    "id": "025_mug",
+    "id": "mug",
     "urdf": "025_mug",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/025_mug/google_16k/textured.obj",
+    "dimensions": [
+      0.11834801733493805,
+      0.09429117292165756,
+      0.08318310976028442
+    ],
     "scale": 1.0,
     "quat": [
-      0.0,
-      0.0,
-      0.0,
-      1.0
+      0,
+      0,
+      0,
+      1
     ],
     "pos": [
-      0.0,
-      0.0,
-      0.53905
+      0.188,
+      -0.308625233128652,
+      1.535603054587729
     ],
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/025_mug/google_16k/textured.obj",
-    "root": false
+    "highest_point": 1.6172760982513426,
+    "lowest_point": 1.5340929884910581,
+    "parent_id": "lave-linge"
+  },
+  {
+    "id": "banane",
+    "urdf": "011_banane",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/011_banane/google_16k/textured.obj",
+    "dimensions": [
+      0.11155420541763306,
+      0.181467205286026,
+      0.039900653064250946
+    ],
+    "scale": 1.0,
+    "quat": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "pos": [
+      0.188,
+      0.1110350321531296,
+      1.5360407004114238
+    ],
+    "highest_point": 1.573993641555309,
+    "lowest_point": 1.5340929884910581,
+    "parent_id": "lave-linge"
   }
 ]

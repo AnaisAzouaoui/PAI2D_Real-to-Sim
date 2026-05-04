@@ -88,6 +88,19 @@ def load_meshes_from_urdf(urdf_path):
             mesh_tag = geom.find('mesh')
             if mesh_tag is None:
                 continue
+            
+            box_tag = geom.find('box')
+            if box_tag is not None:
+                size = [float(v) for v in box_tag.get('size').split()]
+                m = trimesh.creation.box(extents=size)
+            else:
+                mesh_tag = geom.find('mesh')
+                if mesh_tag is None:
+                    continue
+                mesh_path = os.path.join(urdf_dir, mesh_tag.get('filename', ''))
+                if not os.path.exists(mesh_path):
+                    continue
+                m = trimesh.load(mesh_path, force='mesh')
             mesh_path = os.path.join(urdf_dir, mesh_tag.get('filename', ''))
             if not os.path.exists(mesh_path):
                 continue
@@ -151,7 +164,7 @@ class SceneView3D(gl.GLViewWidget):
         super().__init__(parent)
         self._bg_color = (22, 22, 35, 255)
         self.setBackgroundColor(self._bg_color)
-        self.setCameraPosition(distance=5, elevation=25, azimuth=225)
+        self.setCameraPosition(distance=5, elevation=30, azimuth=45)
         self._add_ground()
 
     def set_background(self, bg_color):
@@ -213,5 +226,5 @@ class SceneView3D(gl.GLViewWidget):
                     drawEdges=False,
                     shader='shaded',
                 )
-                mesh_item.translate(pos[0], pos[1], pos[2])
+                mesh_item.translate(pos[0], -pos[1], pos[2])
                 self.addItem(mesh_item)

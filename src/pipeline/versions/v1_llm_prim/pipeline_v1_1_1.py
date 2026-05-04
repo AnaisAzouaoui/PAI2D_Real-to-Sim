@@ -26,18 +26,18 @@ from training.inference.extractor import extract_labels as _phi3_extract
 # ---------------------------------------------------------------
 # EMBEDDING
 # ---------------------------------------------------------------
-SEUIL = 0.55
+SEUIL = 0.40
 embed_model    = None
 catalogue_vecs = None
 catalogue_keys = None
 
 
-def _get_embed_model():
+def get_embed_model():
     global embed_model
     if embed_model is None:
         print("[v1_1_1] chargement modele embedding...")
         from sentence_transformers import SentenceTransformer
-        embed_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2', device='cpu')
+        embed_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2', device='cpu')
     return embed_model
 
 
@@ -47,7 +47,7 @@ def get_catalogue():
         data = objets_list()
         catalogue_keys = list(data.keys())
         names = [data[k]["name"].strip() for k in catalogue_keys]
-        catalogue_vecs = _get_embed_model().encode(names)
+        catalogue_vecs = get_embed_model().encode(names)
         print(f"[v1_1_1] catalogue encode : {len(catalogue_keys)} objets")
     return catalogue_vecs, catalogue_keys
 
@@ -102,7 +102,7 @@ def object_rec(prompt):
         label_id = str(label).lower().strip()
         base_query = SUFFIX_RE.sub('', label_id)  # "banane_2" -> "banane"
 
-        query_vec  = _get_embed_model().encode(base_query)
+        query_vec  = get_embed_model().encode(base_query)
         scores     = cosinus(query_vec, cat_vecs)
         best_idx   = int(np.argmax(scores))
         best_score = float(scores[best_idx])

@@ -20,10 +20,11 @@ def boucle_vlm_img(user_image_path, jsonFile, max_iter=5):
     with open(jsonFile, 'r') as file:
         data = json.load(file)
     itemsList = data if isinstance(data, list) else data.get('objets', [])
+    data = itemsList
 
     for iter in range(max_iter):
 
-        scene_image_path, corrected_objects = validation_physique(itemsList)
+        scene_image_path, corrected_objects = validation_physique(data)
 
         print("CORRECTED OBJECTS:", corrected_objects)
 

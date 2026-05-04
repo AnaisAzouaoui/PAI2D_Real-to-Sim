@@ -637,7 +637,8 @@ class MainWindow(QMainWindow):
         try:
             subprocess.Popen(
                 [sys.executable, launcher, SCENE_OUTPUT_FILE],
-                cwd=SRC_DIR
+                cwd=SRC_DIR,
+                start_new_session=True,
             )
             self._append_message("Simulation Genesis lancee dans une fenetre separee.", "system")
         except Exception as e:

@@ -17,20 +17,21 @@ import re
 import urllib.request
 import urllib.error
 
-OLLAMA_MODEL  = "phi3-scene"       # nom choisi lors de ollama create
+OLLAMA_MODEL  = "phi3-scene"
 OLLAMA_URL    = "http://localhost:11434/api/generate"
 
 SYSTEM_PROMPT = (
     "Tu es un assistant qui extrait les objets, relations spatiales, distances et orientations "
     "d'une description de scene. Reponds uniquement en JSON valide.\n"
-    'Format : {"objets": [...], "root": "...", '
+    'Format : {"objets": [...], '
     '"relations": [{"type": "...", "subject": "...", "object": "...", "distance": <float optionnel>}], '
     '"orientations": [{"id": "...", "turn": "..."}]}\n'
     "Types de relations : on, under, left_of, right_of, in_front_of, behind, against, inside\n"
     "Champ 'distance' (en metres) autorise UNIQUEMENT sur : left_of, right_of, in_front_of, behind\n"
     "Turns valides : tip_left, tip_right, tip_forward, tip_backward, upside_down, turn_left, turn_right, turn_around\n"
     "Convention : premiere instance = 'banane', deuxieme = 'banane_2'.\n"
-    "Si pas de distance mentionnee : ne pas inclure le champ. Si tout est debout : orientations = []."
+    "Si pas de distance mentionnee : ne pas inclure le champ. Si tout est debout : orientations = [].\n"
+    "Si plusieurs objets sont mentionnes sans relation explicite, deduis un positionnement lateral par defaut (left_of ou right_of)."
 )
 
 
@@ -69,13 +70,12 @@ def parse_output(text: str) -> dict | None:
 
 def extract_labels(prompt: str) -> dict:
     """
-    Extrait objets, root, relations (avec distances optionnelles) et orientations
+    Extrait objets, relations (avec distances optionnelles) et orientations
     depuis un prompt utilisateur.
 
     Retourne :
     {
         "objets"       : ["mug", "banane", "lave_linge", "banane_2"],
-        "root"         : "lave_linge",
         "relations"    : [{"type": "left_of", "subject": "mug", "object": "banane", "distance": 2.0}, ...],
         "orientations" : [{"id": "mug", "turn": "upside_down"}, ...]
     }
@@ -89,9 +89,11 @@ def extract_labels(prompt: str) -> dict:
 
     result = parse_output(raw)
     if result is None:
-        return {"objets": [], "root": None, "relations": [], "orientations": []}
-    # garantit la presence de la cle orientations
+        return {"objets": [], "relations": [], "orientations": []}
+
+    result.pop("root", None)
     result.setdefault("orientations", [])
+    result.setdefault("relations", [])
     return result
 
 
@@ -99,12 +101,13 @@ if __name__ == "__main__":
     test_prompts = [
         "je veux un mug a cote d'une banane",
         "un frigo contre le mur avec une poubelle a sa droite",
-        "je veux un mug a cote d'une banane, derriere cette banane un lave linge et sur ce lave linge une autre banane",
+        "un mug sur un livre lui-meme pose sur la table",
+        "sur le bureau : un ordinateur, une lampe et un mug",
+        "une chaise, puis une table, puis une lampe alignees de gauche a droite",
     ]
     for p in test_prompts:
         print(f"\nPrompt : {p}")
         result = extract_labels(p)
         print(f"  objets       : {result['objets']}")
-        print(f"  root         : {result['root']}")
         print(f"  relations    : {result['relations']}")
         print(f"  orientations : {result['orientations']}")

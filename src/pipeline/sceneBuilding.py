@@ -17,7 +17,7 @@ https://genesis-world.readthedocs.io/en/latest/user_guide/getting_started/conven
 '''
 
 
-def initPosAndQuat(items,scene,entites):
+def initPosAndQuat(items, scene=None, entites=None):
     '''
     Initialise les positions et orientations des objets, en prenant les infos sur la taille de l'objet de genesis en generant les objets plutot qu'en les parsant
     Donne des orientations et positions de base à tous les items, qui seront modifiées ensuite en fonction des relations.
@@ -26,15 +26,18 @@ def initPosAndQuat(items,scene,entites):
     :return: les items mais avec des positions et orientations de base.
     '''
     for item in items:
-        ent = entites[item['id']]
-        aabb_min, aabb_max = ent.get_AABB() #on get les limites de la bounding box
-        item['dimensions'] = [float(aabb_max[0] - aabb_min[0]), float(aabb_max[1] - aabb_min[1]),float(aabb_max[2] - aabb_min[2])]
-    
-        offset = 0.001 - float(aabb_min[2]) #qui est le lowest point
+        if entites is not None:
+            ent = entites[item['id']]
+            aabb_min, aabb_max = ent.get_AABB() #on get les limites de la bounding box
+            item['dimensions'] = [float(aabb_max[0] - aabb_min[0]), float(aabb_max[1] - aabb_min[1]),float(aabb_max[2] - aabb_min[2])]
+            offset = 0.001 - float(aabb_min[2]) #qui est le lowest point
+            item['highest_point'] = float(aabb_max[2]) + offset
+        else:
+            offset = 0.001
+            item['highest_point'] = item['dimensions'][2] + offset
         item['pos'] = [0, 0, offset] #fait sortir les objets du sol
         item['lowest_point'] = 0.001
-        item['highest_point'] = float(aabb_max[2]) + offset
-        item['parent_id'] = None 
+        item['parent_id'] = None
     return items
 
 
@@ -119,8 +122,8 @@ def apply_relation(rel, item, subject):
         new_x = x + w/2 + sw/2 + 0.01
         new_y = y
     elif rel_type in ['right_of', 'left_of', 'in_front_of', 'behind']:
-        new_z = z  # meme hauteur que l'objet de reference
-        offset = distance if isDistance else random.uniform(0.05, 0.2)
+        new_z = item_lowest + sub_z_offset  # meme niveau de surface que la reference
+        offset = distance if isDistance else random.uniform(0.15, 0.3)
         if rel_type == 'right_of':
             new_x = x
             new_y = y + d/2 + sd/2 + offset
@@ -155,8 +158,19 @@ def processRelations(items, relations):
     relations = simplifyRelations(relations)
     build_scene_graph(items_dict, relations)
 
-    # roots = objets sans parent (pas portes par un autre objet selon build_scene_graph)
-    placed_items = {item['id'] for item in items if items_dict[item['id']].get('parent_id') is None}
+    #  places en chaine, pas mis en root directement 
+    directional_types = {'right_of', 'left_of', 'in_front_of', 'behind', 'against'}
+    directional_subject_ids = {
+        rel['subject'] for rel in relations
+        if rel['type'] in directional_types and rel.get('subject') in items_dict
+    }
+
+    # roots = objets sans parent ET pas subjets d'une relation directionnelle (left and stuff)
+    placed_items = {
+        item['id'] for item in items
+        if items_dict[item['id']].get('parent_id') is None
+        and item['id'] not in directional_subject_ids
+    }
     if not placed_items:
         placed_items = {items[0]['id']}
     print(f"[sceneBuilding] roots : {placed_items}")
@@ -244,7 +258,8 @@ def changeQuatAndPosFromTurn(turn, item, ent):
 
     # le truc commenté, mais avec genesis instead hihi:
 
-    ent.set_quat(new_quat)
+    if ent is not None:
+        ent.set_quat(new_quat)
     # scene.build()
     
     # aabb_min, aabb_max = ent.get_AABB()
@@ -262,7 +277,7 @@ def changeQuatAndPosFromTurn(turn, item, ent):
     return item
 
 
-def processOrientations(items,orientations, entites):
+def processOrientations(items, orientations, entites=None):
     '''
     Adapte les quaternions des items en fonctions des changements d'orientation.
 
@@ -278,11 +293,30 @@ def processOrientations(items,orientations, entites):
             print(f"[processOrientations] ID inconnu ignore : '{id}'")
             continue
         item = items_dict[id]
-        ent = entites[id]
+        ent = entites[id] if entites is not None else None
         changeQuatAndPosFromTurn(turn, item, ent)
     return items
 
 
+
+
+def get_genesis_dimensions(items, orientations=None):
+    '''Charge les meshes dans Genesis pour obtenir les vraies AABB et dimensions (c'est pour v3 tkt)'''
+    if orientations is None:
+        orientations = []
+    gs.init(backend=gs.cpu)
+    scene = gs.Scene(show_viewer=False)
+    entites = {}
+    for item in items:
+        item['quat'] = [0, 0, 0, 1]
+        item['pos'] = [0, 0, 0]
+        ent = scene.add_entity(make_morph(item['path'], scale=item.get('scale', 1.0), pos=[0,0,0], fixed=True))
+        entites[item['id']] = ent
+    scene.build()
+    items = processOrientations(items, orientations, entites)
+    items = initPosAndQuat(items, scene, entites)
+    gs.destroy()
+    return items
 
 
 def buildScene(items, relations, orientations):

@@ -21,7 +21,7 @@ HELD_OUT_EN = {"banana", "remote", "wardrobe", "dishwasher"}
 def is_held_out(example):
     held_out = HELD_OUT_FR | HELD_OUT_EN
     for id_ in example["output"]["objets"]:
-        base = id_.rsplit("_", 1)[0] if id_[-1].isdigit() else id_
+        base = id_.rsplit("_", 1)[0] if (id_[-1].isdigit() and "_" in id_) else id_
         if base in held_out:
             return True
     return False
@@ -35,7 +35,6 @@ def load_existing(raw_path):
 
 
 def generate_batch(n_target, raw_path, max_workers=3):
-    # charge les exemples deja generes (resume)
     examples = load_existing(raw_path)
     already  = len(examples)
     if already >= n_target:
@@ -43,7 +42,8 @@ def generate_batch(n_target, raw_path, max_workers=3):
         return examples
 
     remaining = n_target - already
-    n_brut    = int(remaining * 1.6)
+    # genere plus de specs que necessaire pour compenser rejets + paraphrase (facteur 1.4)
+    n_brut = int(remaining * 1.4)
 
     specs = [generate_spec() for _ in range(n_brut)]
 
@@ -56,7 +56,7 @@ def generate_batch(n_target, raw_path, max_workers=3):
         base = random.choice(pool)
         if base not in spec["objets"]:
             spec["objets"] = [base] + spec["objets"]
-            if spec["config"] != "no_relation" and len(spec["objets"]) > 1:
+            if len(spec["objets"]) > 1:
                 partner = random.choice(spec["objets"][1:])
                 spec["relations"].append({
                     "type": random.choice(["left_of", "right_of", "in_front_of", "behind"]),
@@ -80,10 +80,14 @@ def generate_batch(n_target, raw_path, max_workers=3):
             for future in as_completed(futures):
                 result = future.result()
                 if result is not None:
-                    f_raw.write(json.dumps(result, ensure_ascii=False) + "\n")
-                    f_raw.flush()
-                    examples.append(result)
-                    bar.update(1)
+                    # generate_example retourne une liste d'entrees (paraphrase incluse)
+                    for entry in result:
+                        f_raw.write(json.dumps(entry, ensure_ascii=False) + "\n")
+                        f_raw.flush()
+                        examples.append(entry)
+                        bar.update(1)
+                        if len(examples) - already >= remaining:
+                            break
                 else:
                     rejected += 1
                     bar.set_postfix(rejetes=rejected)
@@ -110,8 +114,8 @@ def split_and_save(examples, base):
     n_val   = int(n * 0.10)
 
     train = normal[:n_train]
-    val = normal[n_train:n_train + n_val]
-    test = normal[n_train + n_val:] + held
+    val   = normal[n_train:n_train + n_val]
+    test  = normal[n_train + n_val:] + held
     random.shuffle(test)
 
     for split, data in [("train", train), ("val", val), ("test", test)]:
@@ -119,7 +123,7 @@ def split_and_save(examples, base):
         with open(path, "w", encoding="utf-8") as f:
             for ex in data:
                 f.write(json.dumps(ex, ensure_ascii=False) + "\n")
-        print(f"  {split:<6} : {len(data):>5} exemples → {path}")
+        print(f"  {split:<6} : {len(data):>5} exemples -> {path}")
 
     return train, val, test
 
@@ -128,7 +132,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--n", type=int, default=2000)
     parser.add_argument("--out", type=str, default="dataset.jsonl")
-    parser.add_argument("--workers",type=int, default=3)
+    parser.add_argument("--workers", type=int, default=3)
     parser.add_argument("--resume", action="store_true",
                         help="Reprend depuis le fichier raw existant")
     args = parser.parse_args()
@@ -137,7 +141,7 @@ def main():
     raw_path = f"{base}_raw.jsonl"
     if not args.resume and os.path.exists(raw_path):
         os.remove(raw_path)
-        
+
     t0 = time.time()
     examples = generate_batch(args.n, raw_path, max_workers=args.workers)
     elapsed = (time.time() - t0) / 60
