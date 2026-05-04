@@ -94,8 +94,13 @@ def validation_physique(objetsList):
                         target = j if centers_j[2] >= centers_i[2] else i
                         shift_object(target, 2, overlaps[2] + margin)
                     else:
-                        direction = 1.0 if centers_j[axis] >= centers_i[axis] else -1.0
-                        shift_object(j, axis, direction * (overlaps[axis] + margin))
+                        half = (overlaps[axis] + margin) / 2
+                        if centers_j[axis] >= centers_i[axis]:
+                            shift_object(j, axis, half)
+                            shift_object(i, axis, -half)
+                        else:
+                            shift_object(j, axis, -half)
+                            shift_object(i, axis, half)
                     moved = True
             if not moved:
                 break
