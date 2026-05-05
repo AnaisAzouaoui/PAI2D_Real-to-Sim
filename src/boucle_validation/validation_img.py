@@ -53,7 +53,8 @@ def boucle_vlm_img(user_image_path, jsonFile, max_iter=5):
 
     else:
         print("Nombre maximum d'itérations atteint.")
-        return data
+        scene_image_path, corrected_objects = validation_physique(data)
+        return corrected_objects
 
 
 def validation_semantique_img(user_image_path, data, scene_image_path):
@@ -66,13 +67,17 @@ def validation_semantique_img(user_image_path, data, scene_image_path):
 
             You will receive:
                 - Image 1: The REFERENCE image (what the scene must look like).
-                - Image 2: The CURRENT SIMULATION (a collage of Perspective, Top, and Side views).
+                - Image 2: The CURRENT SIMULATIONo
                 - A JSON list with the current positions (pos) and dimensions of each object.
 
+            Spatial RULES:
+            - GOAL: Adjust the X, Y, Z coordinates of the simulated objects so they match the relative positioning, stacking, and alignment shown in the REFERENCE image.
+            - Stacking (On Top): For Object A to be "on" Object B, X and Y must be within the space covered by object B. Object A's lowest point must be 0.001 higher than object B's highest point.
+            - Right of, left of, behind, in front of...: for object A to be in these relations to object B, they should be near each other but never touching or overlapping. Their lowest-point should be approximately equal. X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
+            - Collisions: Objects must not intersect unless explicitly shown in the reference image. If they overlap in the Top-Down view, they must have different Z-heights to avoid clipping, or different X or Y.
+            - Ground Plane: No object's lowest point should be below 0.
 
-            GOAL: Adjust the X, Y, Z coordinates of the simulated objects so they match the relative positioning, stacking, and alignment shown in the REFERENCE image.
-
-            RULES:
+            Other RULES:
                 - ONLY change pos if needed to match the reference image.
                 - Maintain the original id for all objects.
                 - 'valid' is true ONLY if the current simulation perfectly matches the reference image arrangement AND has no illogical collisions.

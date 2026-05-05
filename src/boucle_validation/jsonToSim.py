@@ -20,9 +20,9 @@ def validation_physique(objetsList):
     scene.add_entity(gs.morphs.Plane())
     cameras = {
         "perspective":scene.add_camera(res=(640, 480), pos=(3.5, 0.0, 2.5), lookat=(0, 0, 0.5), fov=30),
-        "top":scene.add_camera(res=(640, 480), pos=(0.0, 0.0, 4.0), lookat=(0, 0, 0),   fov=40),
-        "side":scene.add_camera(res=(640, 480), pos=(0.0, 3.5, 1.0), lookat=(0, 0, 0.5), fov=30),
-        "side2": scene.add_camera(res=(640, 480),pos=(3.5, 0.0, 0.5),lookat=(0, 0, 0.5),fov=30)
+        #"top":scene.add_camera(res=(640, 480), pos=(0.0, 0.0, 4.0), lookat=(0, 0, 0),   fov=40),
+        #"side":scene.add_camera(res=(640, 480), pos=(0.0, 3.5, 1.0), lookat=(0, 0, 0.5), fov=30),
+        #"side2": scene.add_camera(res=(640, 480),pos=(3.5, 0.0, 0.5),lookat=(0, 0, 0.5),fov=30)
     }
     entities = []
     for obj in corrected_objects:
@@ -125,7 +125,8 @@ def validation_physique(objetsList):
     base_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'images')
     os.makedirs(base_dir, exist_ok=True)
 
-    views = ["perspective", "top", "side", "side2"]
+    #views = ["perspective", "top", "side", "side2"]
+    views = ["perspective"]
     images = []
 
     try: 

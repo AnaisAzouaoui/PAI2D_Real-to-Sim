@@ -51,7 +51,9 @@ def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=5):
             print("echec: ", res.get("feedback"))
 
     else:
-        return data
+        itemsList = data if isinstance(data, list) else data.get('objets', [])
+        image_path, corrected_objects = validation_physique(itemsList)
+        return corrected_objects
 
 
 
@@ -62,17 +64,13 @@ def validation_semantique_prompt(original_prompt, data, image_path):
             You will receive:
                 - The current scene as a JSON object
                 - The position, dimensions , lowest point and highest point of each object
-                - a collage containing FOUR images of the same scene:
-                    1. PERSPECTIVE VIEW: General context.
-                    2. TOP-DOWN VIEW: Best for X, Y coordinates and checking if objects are side-by-side.
-                    3. SIDE VIEW: Best for Z coordinate (height) to check if objects are at the right height.
-                    4. LOWER SIDE VIEW
+                - An image of the scene
 
                         
             Spatial RULES:
             - Stacking (On Top): For Object A to be "on" Object B, X and Y must be within the space covered by object B. 
             Object A's lowest point must be 0.001 higher than object B highest point.
-            - Right of, left of, behind, in front of...: for object A to be in these relations to object B, they should be near each other but never touching or overlapping. Their lowest-point should be approximately equal. X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
+            - Right of, left of, behind, in front of...: for object A to be in these relations to object B, their lowest-point should be approximately equal. DO NOT CHANGE THEIR DISTANCE! X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
             - Collisions: Objects must not occupy the same space. If they overlap in the Top-Down view, they must have different Z-heights to avoid clipping. If an object is explicitly inside another, this does not apply. However, meshes still shouldn’t intersect.
             - Ground Plane: No object's lowest point should be below 0.
             - DO NOT throw objects in the air! Objects should be placed on a surface (ground or other objects).
@@ -81,7 +79,7 @@ def validation_semantique_prompt(original_prompt, data, image_path):
 
             Other RULES:
                 - ONLY change pos if needed
-                -  Maintain the original id for all objects.
+                - Maintain the original id for all objects.
                 - valid is true only if scene matches prompt AND no collisions
                 - ONLY output the JSON object, nothing else
                 - NO markdown, NO backticks, NO explanations before or after
