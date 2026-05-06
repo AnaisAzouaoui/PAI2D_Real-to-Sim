@@ -13,6 +13,7 @@ from pipeline.utils.ollama_client import URL
 from pipeline.utils.groundingdino_detector import detect_contours
 from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_1_embedding import object_rec
 from pipeline.sceneBuilding import initPosAndQuat, processRelations, processOrientations, get_genesis_dimensions
+from pipeline.itemSpec import loadScale
 
 load_dotenv(Path(__file__).resolve().parents[4] / ".env")
 
@@ -423,6 +424,10 @@ def resolve_path(path):
                 candidate = os.path.join(google_16k, name)
                 if os.path.exists(candidate):
                     return candidate
+        for ext in (".obj", ".stl", ".ply"):
+            for f in sorted(os.listdir(path)):
+                if f.endswith(ext) and "collision" not in f.lower():
+                    return os.path.join(path, f)
     return path
 
 
@@ -492,7 +497,7 @@ def scene_from_image(image_paths, depth_map_paths=None, dims_fn=None):
             "urdf": info["urdf"],
             "path": resolve_path(info["path"]),
             "dimensions": info.get("dimensions") or [1.0, 1.0, 1.0],
-            "scale": 1.0,
+            "scale": loadScale({"urdf": info["urdf"]})["scale"],
         }
         for cat_label, info in objet_reconnus.items()
     ]

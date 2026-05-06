@@ -1,0 +1,2249 @@
+{
+  "n_runs": 1,
+  "versions": {
+    "V1.1.1 (phi3-scene)": [
+      {
+        "id": "p01",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 11.806
+      },
+      {
+        "id": "p02",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.817
+      },
+      {
+        "id": "p03",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.949
+      },
+      {
+        "id": "p04",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 9.158
+      },
+      {
+        "id": "p05",
+        "aggregated": {
+          "precision_mean": 0.6667,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 9.254
+      },
+      {
+        "id": "p06",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.05
+      },
+      {
+        "id": "p07",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.755
+      },
+      {
+        "id": "p08",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.526
+      },
+      {
+        "id": "p09",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.139
+      },
+      {
+        "id": "p10",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.802
+      },
+      {
+        "id": "p11",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.602
+      },
+      {
+        "id": "p12",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.346
+      },
+      {
+        "id": "p13",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.174
+      },
+      {
+        "id": "p14",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.8
+      },
+      {
+        "id": "p15",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.188
+      },
+      {
+        "id": "p16",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 17.272
+      },
+      {
+        "id": "p17",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 15.432
+      },
+      {
+        "id": "p18",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 12.5
+      },
+      {
+        "id": "p19",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 17.641
+      },
+      {
+        "id": "p20",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 15.052
+      },
+      {
+        "id": "p21",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 11.933
+      },
+      {
+        "id": "p22",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 9.209
+      },
+      {
+        "id": "p23",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.898
+      },
+      {
+        "id": "p24",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 10.215
+      },
+      {
+        "id": "p25",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.918
+      },
+      {
+        "id": "p26",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.955
+      },
+      {
+        "id": "p27",
+        "aggregated": {
+          "precision_mean": 0.3333,
+          "precision_std": 0.0,
+          "recall_mean": 0.3333,
+          "recall_std": 0.0,
+          "f1_mean": 0.3333,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.664
+      },
+      {
+        "id": "p28",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.65
+      },
+      {
+        "id": "p29",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.087
+      },
+      {
+        "id": "p30",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.604
+      }
+    ],
+    "V2 (gpt-4o)": [
+      {
+        "id": "p01",
+        "aggregated": {
+          "precision_mean": 0.6667,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.918
+      },
+      {
+        "id": "p02",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.279
+      },
+      {
+        "id": "p03",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.628
+      },
+      {
+        "id": "p04",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.034
+      },
+      {
+        "id": "p05",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.23
+      },
+      {
+        "id": "p06",
+        "aggregated": {
+          "precision_mean": 0.8,
+          "precision_std": 0.4,
+          "recall_mean": 0.8,
+          "recall_std": 0.4,
+          "f1_mean": 0.8,
+          "f1_std": 0.4
+        },
+        "time_mean_s": 2.279
+      },
+      {
+        "id": "p07",
+        "aggregated": {
+          "precision_mean": 0.7334,
+          "precision_std": 0.1333,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6934,
+          "f1_std": 0.0533
+        },
+        "time_mean_s": 1.893
+      },
+      {
+        "id": "p08",
+        "aggregated": {
+          "precision_mean": 0.6,
+          "precision_std": 0.4899,
+          "recall_mean": 0.6,
+          "recall_std": 0.4899,
+          "f1_mean": 0.6,
+          "f1_std": 0.4899
+        },
+        "time_mean_s": 2.421
+      },
+      {
+        "id": "p09",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 1.852
+      },
+      {
+        "id": "p10",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 1.889
+      },
+      {
+        "id": "p11",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 1.955
+      },
+      {
+        "id": "p12",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 1.799
+      },
+      {
+        "id": "p13",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 1.871
+      },
+      {
+        "id": "p14",
+        "aggregated": {
+          "precision_mean": 0.8,
+          "precision_std": 0.4,
+          "recall_mean": 0.8,
+          "recall_std": 0.4,
+          "f1_mean": 0.8,
+          "f1_std": 0.4
+        },
+        "time_mean_s": 2.527
+      },
+      {
+        "id": "p15",
+        "aggregated": {
+          "precision_mean": 0.8,
+          "precision_std": 0.4,
+          "recall_mean": 0.8,
+          "recall_std": 0.4,
+          "f1_mean": 0.8,
+          "f1_std": 0.4
+        },
+        "time_mean_s": 2.352
+      },
+      {
+        "id": "p16",
+        "aggregated": {
+          "precision_mean": 0.92,
+          "precision_std": 0.098,
+          "recall_mean": 0.8,
+          "recall_std": 0.0,
+          "f1_mean": 0.8533,
+          "f1_std": 0.0436
+        },
+        "time_mean_s": 3.41
+      },
+      {
+        "id": "p17",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.456
+      },
+      {
+        "id": "p18",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.717
+      },
+      {
+        "id": "p19",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.8,
+          "recall_std": 0.0,
+          "f1_mean": 0.8889,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.419
+      },
+      {
+        "id": "p20",
+        "aggregated": {
+          "precision_mean": 0.2,
+          "precision_std": 0.4,
+          "recall_mean": 0.2,
+          "recall_std": 0.4,
+          "f1_mean": 0.2,
+          "f1_std": 0.4
+        },
+        "time_mean_s": 3.563
+      },
+      {
+        "id": "p21",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.994
+      },
+      {
+        "id": "p22",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.251
+      },
+      {
+        "id": "p23",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.045
+      },
+      {
+        "id": "p24",
+        "aggregated": {
+          "precision_mean": 0.8,
+          "precision_std": 0.4,
+          "recall_mean": 0.8,
+          "recall_std": 0.4,
+          "f1_mean": 0.8,
+          "f1_std": 0.4
+        },
+        "time_mean_s": 2.911
+      },
+      {
+        "id": "p25",
+        "aggregated": {
+          "precision_mean": 0.4,
+          "precision_std": 0.2,
+          "recall_mean": 0.2666,
+          "recall_std": 0.1333,
+          "f1_mean": 0.32,
+          "f1_std": 0.16
+        },
+        "time_mean_s": 2.689
+      },
+      {
+        "id": "p26",
+        "aggregated": {
+          "precision_mean": 0.9333,
+          "precision_std": 0.1333,
+          "recall_mean": 0.4,
+          "recall_std": 0.1334,
+          "f1_mean": 0.5333,
+          "f1_std": 0.0667
+        },
+        "time_mean_s": 2.514
+      },
+      {
+        "id": "p27",
+        "aggregated": {
+          "precision_mean": 0.4,
+          "precision_std": 0.4899,
+          "recall_mean": 0.2667,
+          "recall_std": 0.3266,
+          "f1_mean": 0.32,
+          "f1_std": 0.3919
+        },
+        "time_mean_s": 3.461
+      },
+      {
+        "id": "p28",
+        "aggregated": {
+          "precision_mean": 0.5334,
+          "precision_std": 0.2667,
+          "recall_mean": 0.5334,
+          "recall_std": 0.2667,
+          "f1_mean": 0.5334,
+          "f1_std": 0.2667
+        },
+        "time_mean_s": 2.791
+      },
+      {
+        "id": "p29",
+        "aggregated": {
+          "precision_mean": 0.8,
+          "precision_std": 0.4,
+          "recall_mean": 0.5334,
+          "recall_std": 0.2667,
+          "f1_mean": 0.64,
+          "f1_std": 0.32
+        },
+        "time_mean_s": 2.374
+      },
+      {
+        "id": "p30",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.544
+      }
+    ],
+    "V1 (gpt-4o)": [
+      {
+        "id": "p01",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.388
+      },
+      {
+        "id": "p02",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.9333,
+          "recall_std": 0.1333,
+          "f1_mean": 0.96,
+          "f1_std": 0.08
+        },
+        "time_mean_s": 2.347
+      },
+      {
+        "id": "p03",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.428
+      },
+      {
+        "id": "p04",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.8,
+          "recall_std": 0.1633,
+          "f1_mean": 0.88,
+          "f1_std": 0.098
+        },
+        "time_mean_s": 2.603
+      },
+      {
+        "id": "p05",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.114
+      },
+      {
+        "id": "p06",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.384
+      },
+      {
+        "id": "p07",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.517
+      },
+      {
+        "id": "p08",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.458
+      },
+      {
+        "id": "p09",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.259
+      },
+      {
+        "id": "p10",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.419
+      },
+      {
+        "id": "p11",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.371
+      },
+      {
+        "id": "p12",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.183
+      },
+      {
+        "id": "p13",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.025
+      },
+      {
+        "id": "p14",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.542
+      },
+      {
+        "id": "p15",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 2.92
+      },
+      {
+        "id": "p16",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.72,
+          "recall_std": 0.098,
+          "f1_mean": 0.8333,
+          "f1_std": 0.068
+        },
+        "time_mean_s": 3.918
+      },
+      {
+        "id": "p17",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.777
+      },
+      {
+        "id": "p18",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.908
+      },
+      {
+        "id": "p19",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.8,
+          "recall_std": 0.0,
+          "f1_mean": 0.8889,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.85
+      },
+      {
+        "id": "p20",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.046
+      },
+      {
+        "id": "p21",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.75,
+          "recall_std": 0.0,
+          "f1_mean": 0.8571,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.632
+      },
+      {
+        "id": "p22",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.927
+      },
+      {
+        "id": "p23",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.461
+      },
+      {
+        "id": "p24",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.737
+      },
+      {
+        "id": "p25",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.968
+      },
+      {
+        "id": "p26",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.734
+      },
+      {
+        "id": "p27",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.942
+      },
+      {
+        "id": "p28",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.844
+      },
+      {
+        "id": "p29",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.58
+      },
+      {
+        "id": "p30",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.712
+      }
+    ],
+    "V1.1 (gpt-4o)": [
+      {
+        "id": "p01",
+        "aggregated": {
+          "precision_mean": 0.75,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.8571,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 10.615
+      },
+      {
+        "id": "p02",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.442
+      },
+      {
+        "id": "p03",
+        "aggregated": {
+          "precision_mean": 0.6667,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.634
+      },
+      {
+        "id": "p04",
+        "aggregated": {
+          "precision_mean": 0.6667,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.549
+      },
+      {
+        "id": "p05",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.418
+      },
+      {
+        "id": "p06",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.645
+      },
+      {
+        "id": "p07",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.5714,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.444
+      },
+      {
+        "id": "p08",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.08
+      },
+      {
+        "id": "p09",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.078
+      },
+      {
+        "id": "p10",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.073
+      },
+      {
+        "id": "p11",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.189
+      },
+      {
+        "id": "p12",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.352
+      },
+      {
+        "id": "p13",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.119
+      },
+      {
+        "id": "p14",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.595
+      },
+      {
+        "id": "p15",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.87
+      },
+      {
+        "id": "p16",
+        "aggregated": {
+          "precision_mean": 0.8333,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.9091,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.337
+      },
+      {
+        "id": "p17",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.75,
+          "recall_std": 0.0,
+          "f1_mean": 0.8571,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.364
+      },
+      {
+        "id": "p18",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.172
+      },
+      {
+        "id": "p19",
+        "aggregated": {
+          "precision_mean": 0.8,
+          "precision_std": 0.0,
+          "recall_mean": 0.8,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 7.658
+      },
+      {
+        "id": "p20",
+        "aggregated": {
+          "precision_mean": 0.8,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.8889,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 8.965
+      },
+      {
+        "id": "p21",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.75,
+          "recall_std": 0.0,
+          "f1_mean": 0.8571,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 8.126
+      },
+      {
+        "id": "p22",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.269
+      },
+      {
+        "id": "p23",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 3.977
+      },
+      {
+        "id": "p24",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.484
+      },
+      {
+        "id": "p25",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.649
+      },
+      {
+        "id": "p26",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.478
+      },
+      {
+        "id": "p27",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.634
+      },
+      {
+        "id": "p28",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 5.062
+      },
+      {
+        "id": "p29",
+        "aggregated": {
+          "precision_mean": 0.6667,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 4.029
+      },
+      {
+        "id": "p30",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 6.193
+      }
+    ],
+    "V1 (llama3.1)": [
+      {
+        "id": "p01",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 46.11
+      },
+      {
+        "id": "p02",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 36.136
+      },
+      {
+        "id": "p03",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 33.957
+      },
+      {
+        "id": "p04",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.3333,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 34.016
+      },
+      {
+        "id": "p05",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 38.576
+      },
+      {
+        "id": "p06",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 39.435
+      },
+      {
+        "id": "p07",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 42.093
+      },
+      {
+        "id": "p08",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 43.448
+      },
+      {
+        "id": "p09",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 42.498
+      },
+      {
+        "id": "p10",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 44.42
+      },
+      {
+        "id": "p11",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 38.13
+      },
+      {
+        "id": "p12",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 44.66
+      },
+      {
+        "id": "p13",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 41.628
+      },
+      {
+        "id": "p14",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 40.435
+      },
+      {
+        "id": "p15",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 50.528
+      },
+      {
+        "id": "p16",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6,
+          "recall_std": 0.0,
+          "f1_mean": 0.75,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 66.327
+      },
+      {
+        "id": "p17",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.75,
+          "recall_std": 0.0,
+          "f1_mean": 0.8571,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 48.051
+      },
+      {
+        "id": "p18",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.25,
+          "recall_std": 0.0,
+          "f1_mean": 0.4,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 56.923
+      },
+      {
+        "id": "p19",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6,
+          "recall_std": 0.0,
+          "f1_mean": 0.75,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 43.899
+      },
+      {
+        "id": "p20",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.75,
+          "recall_std": 0.0,
+          "f1_mean": 0.8571,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 45.754
+      },
+      {
+        "id": "p21",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 46.013
+      },
+      {
+        "id": "p22",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 48.73
+      },
+      {
+        "id": "p23",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 42.43
+      },
+      {
+        "id": "p24",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 48.845
+      },
+      {
+        "id": "p25",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 42.276
+      },
+      {
+        "id": "p26",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 46.34
+      },
+      {
+        "id": "p27",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.3333,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 52.104
+      },
+      {
+        "id": "p28",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 46.122
+      },
+      {
+        "id": "p29",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 53.29
+      },
+      {
+        "id": "p30",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 53.755
+      }
+    ],
+    "V2 (llama3.1)": [
+      {
+        "id": "p01",
+        "aggregated": {
+          "precision_mean": 0.6667,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 73.143
+      },
+      {
+        "id": "p02",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 44.961
+      },
+      {
+        "id": "p03",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 25.184
+      },
+      {
+        "id": "p04",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 42.146
+      },
+      {
+        "id": "p05",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 38.076
+      },
+      {
+        "id": "p06",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 39.987
+      },
+      {
+        "id": "p07",
+        "aggregated": {
+          "precision_mean": 0.6667,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 38.989
+      },
+      {
+        "id": "p08",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 39.639
+      },
+      {
+        "id": "p09",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 26.288
+      },
+      {
+        "id": "p10",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 27.45
+      },
+      {
+        "id": "p11",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 28.267
+      },
+      {
+        "id": "p12",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 300.178
+      },
+      {
+        "id": "p13",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 28.326
+      },
+      {
+        "id": "p14",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 28.034
+      },
+      {
+        "id": "p15",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 28.808
+      },
+      {
+        "id": "p16",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.8,
+          "recall_std": 0.0,
+          "f1_mean": 0.8889,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 51.802
+      },
+      {
+        "id": "p17",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 56.711
+      },
+      {
+        "id": "p18",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 58.136
+      },
+      {
+        "id": "p19",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.8,
+          "recall_std": 0.0,
+          "f1_mean": 0.8889,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 56.036
+      },
+      {
+        "id": "p20",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 55.855
+      },
+      {
+        "id": "p21",
+        "aggregated": {
+          "precision_mean": 0.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.0,
+          "recall_std": 0.0,
+          "f1_mean": 0.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 56.735
+      },
+      {
+        "id": "p22",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 25.292
+      },
+      {
+        "id": "p23",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.5,
+          "recall_std": 0.0,
+          "f1_mean": 0.6667,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 15.978
+      },
+      {
+        "id": "p24",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 1.0,
+          "recall_std": 0.0,
+          "f1_mean": 1.0,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 27.439
+      },
+      {
+        "id": "p25",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.3333,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 28.082
+      },
+      {
+        "id": "p26",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.3333,
+          "recall_std": 0.0,
+          "f1_mean": 0.5,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 30.366
+      },
+      {
+        "id": "p27",
+        "aggregated": {
+          "precision_mean": 0.5,
+          "precision_std": 0.0,
+          "recall_mean": 0.3333,
+          "recall_std": 0.0,
+          "f1_mean": 0.4,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 43.523
+      },
+      {
+        "id": "p28",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 26.694
+      },
+      {
+        "id": "p29",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 27.109
+      },
+      {
+        "id": "p30",
+        "aggregated": {
+          "precision_mean": 1.0,
+          "precision_std": 0.0,
+          "recall_mean": 0.6667,
+          "recall_std": 0.0,
+          "f1_mean": 0.8,
+          "f1_std": 0.0
+        },
+        "time_mean_s": 27.927
+      }
+    ]
+  },
+  "synonym_results": [
+    {
+      "user_label": "frigidaire",
+      "expected": "frigo",
+      "matched": false
+    },
+    {
+      "user_label": "réfrigérateur",
+      "expected": "frigo",
+      "matched": false
+    },
+    {
+      "user_label": "machine à laver",
+      "expected": "lave_linge",
+      "matched": false
+    },
+    {
+      "user_label": "sofa",
+      "expected": "canape",
+      "matched": false
+    },
+    {
+      "user_label": "ordi",
+      "expected": "ordinateur",
+      "matched": false
+    },
+    {
+      "user_label": "laptop",
+      "expected": "ordinateur",
+      "matched": false
+    },
+    {
+      "user_label": "télé",
+      "expected": "television",
+      "matched": false
+    },
+    {
+      "user_label": "cafetière",
+      "expected": "machine_cafe",
+      "matched": false
+    },
+    {
+      "user_label": "tasse à café",
+      "expected": "tasse",
+      "matched": false
+    },
+    {
+      "user_label": "armoire à vêtements",
+      "expected": "armoire",
+      "matched": false
+    }
+  ],
+  "threshold_results": [
+    {
+      "user_label": "truc",
+      "should_match": false,
+      "did_match": true,
+      "correct": false
+    },
+    {
+      "user_label": "objet",
+      "should_match": false,
+      "did_match": true,
+      "correct": false
+    },
+    {
+      "user_label": "mug",
+      "should_match": true,
+      "did_match": true,
+      "correct": true
+    }
+  ]
+}

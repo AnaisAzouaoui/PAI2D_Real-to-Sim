@@ -1,4 +1,5 @@
 import os
+import json
 import trimesh
 import xml.etree.ElementTree as ET
 
@@ -38,7 +39,11 @@ def getFilePath(item):
             if f.endswith(".urdf"):
                 return os.path.join(base, f)"""
         
-        raise FileNotFoundError(f"Aucun fichier exploitable trouvé dans {base}")
+        for ext in (".obj", ".stl", ".ply"):
+            for f in sorted(os.listdir(base)):
+                if f.endswith(ext) and "collision" not in f.lower():
+                    return os.path.join(base, f)
+        raise FileNotFoundError(f"Aucun fichier exploitable trouve dans {base}")
 
     return base
 
@@ -93,14 +98,13 @@ def getOriginalDimensions(item):
     return item
 
 
-def processScale(item): #TODO: is it going to be un indice de multiplication? are we adding a scale attribute to the item, that we can then give to the simulation?
-    #TODO: check what scale actually does in the genesis simul: it seems like it makes it do weird stuff
-    '''
-    Gets the dimension of the item and compares them to the dimensions that the item needs to have in the simulation.
-    Defines the scale at which the object will be displayed. Give new dimensions to the items so that positions can be processed accordingly.
-    '''
-    (item_w, item_d, item_h) = item['dimensions']
-    if item['mesures']:
-        (new_w, new_d, new_h) = item['mesures'] #TODO: 'mesures' à rajouter au prompt ou autre, c'est les mesures de l'objet ajoutées par l'utilisateur 
-        item['scale'] # = scale such that item * scale = new
+def loadScale(item):
+    # lit scale.json dans le dossier de l'objet et met item['scale']
+    objets_folder = os.path.join(os.path.dirname(__file__), '..', '..', 'objets')
+    scale_path = os.path.join(objets_folder, item['urdf'], 'scale.json')
+    if os.path.exists(scale_path):
+        with open(scale_path) as f:
+            item['scale'] = json.load(f).get('scale', 1.0)
+    else:
+        item['scale'] = 1.0
     return item

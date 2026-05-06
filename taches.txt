@@ -162,3 +162,36 @@ basic                  249 (24.9%)
     dense                0.0%  [...............]  (6 ex)
     multi_instance       0.0%  [...............]  (19 ex)
 (venv_genesis) (base) anaisazouaoui@MacBook-Air-de-Anais PAI2D_Real-to-Sim % 
+
+
+introduction : problematique
+etat de l'art : ce qui existait deja, brique deja utilisées (ca particulierement), alternatives a notre approche (tableaux cases cochées). Presenter les papiers des models LLM VLM utilisés
+contribution : Notre methode, tester plusieurs element 
+
+
+
+
+
+
+Introduction : CAROLINE
+
+Etat de l'art : ANA
+
+Contribution : ANA
+
+Methodes : 
+    differente pipelines  : ANA
+        finetuning and stuff 
+    genesis : CAROLINE
+    boucle de validation : CAROLINE
+    
+    pipeline complete : juste les resultats du questionnaire et les resultats overall (je peux m'en charger)
+        + exemples 
+
+Discussion : ANA + CAROLINE
+
+Conclusion :  
+
+Bibliographie : (je vais juste mettre les liens github et des papiers que j'ai lu)
+
+

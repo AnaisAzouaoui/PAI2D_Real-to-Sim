@@ -1,6 +1,7 @@
 import json
 from pipeline.utils.catalogue import objects_desc
 from pipeline.utils.ollama_client import call_llm
+from pipeline.itemSpec import loadScale
 
 
 #--------------------------
@@ -10,14 +11,23 @@ from pipeline.utils.ollama_client import call_llm
 # DIMENSION ET QUATERNIONS
 def object_dim_quat(prompt, objet_reconnus):
     """Retourne la liste des objets avec les dimensions et quaternions."""
+    for info in objet_reconnus.values():
+        loadScale(info)
 
     catalogue_desc = objects_desc()
+    fixed_scales = "\n".join(
+        f"  - {lbl}: {info.get('scale', 1.0)}"
+        for lbl, info in objet_reconnus.items()
+    )
 
     system_prompt = f"""You are a strict JSON API. You place 3D objects in a simulation scene.
   All dimensions are in meters. The floor is at z = 0.
 
   OBJECTS TO PLACE:
   {catalogue_desc}
+
+  FIXED SCALES (use these exact values, do not change):
+{fixed_scales}
 
   OUTPUT FORMAT — return ONLY this JSON object:
   {{
@@ -34,10 +44,16 @@ def object_dim_quat(prompt, objet_reconnus):
 
   STRICT RULES:
   - "id" and "urdf" must be copied verbatim from the objects list above
-  - scale: adjust so the object looks realistic in the scene (1.0 = use real dimensions as-is)
-  - quat: orientation as [w, x, y, z] — default orientation = [1.0,0.0,0.0,0]
-  - pos z for objects resting on the FLOOR: dimensions[2] * scale / 2
-  - pos z for objects placed ON another object: parent_pos_z + parent_dimensions[2] * parent_scale / 2 + this_dimensions[2] * this_scale / 2
+  - scale: use the FIXED SCALE value provided above (do not modify)
+  - quat: orientation as [w, x, y, z]
+    * upright (default): [1.0, 0.0, 0.0, 0.0]
+    * lying along X axis (on its side): [0.707, 0.0, 0.707, 0.0]
+    * lying along Y axis (on its side): [0.707, 0.707, 0.0, 0.0]
+    * For elongated objects (dimensions[2] >> dimensions[0]), if the scene description or context implies it is lying flat on a surface (e.g. a screwdriver, knife, pen, ruler), use a lying quat. Choose the axis that best matches the described orientation.
+  - For an upright object: effective_height = dimensions[2] * scale
+  - For a lying object: effective_height = dimensions[0] * scale  (the smallest cross-section becomes the height)
+  - pos z for objects resting on the FLOOR: effective_height / 2
+  - pos z for objects placed ON another object: parent_pos_z + parent_dimensions[2] * parent_scale / 2 + effective_height / 2
   - IMPORTANT: always compute parent object position first, then compute child position on top of it
   - objects must NOT overlap — space them according to the scene description
   - output raw JSON only, no markdown, no comments, no explanation"""
@@ -54,6 +70,9 @@ def object_dim_quat(prompt, objet_reconnus):
 #------- modifier la scene
 def modify_scene(prompt, current_objects_json, objet_reconnus):
     """Modifie une scene existante selon le prompt utilisateur."""
+    for info in objet_reconnus.values():
+        loadScale(info)
+
     catalog_desc = objects_desc()
 
     # convert scene quats from [x,y,z,w] (scipy) to [w,x,y,z] so the LLM sees a consistent format
@@ -68,7 +87,7 @@ def modify_scene(prompt, current_objects_json, objet_reconnus):
         pass
 
     objects_info = "\n".join(
-        f'- id: "{id_}" | urdf: "{info["urdf"]}" | dimensions: {info["dimensions"]} m'
+        f'- id: "{id_}" | urdf: "{info["urdf"]}" | dimensions: {info["dimensions"]} m | scale: {info.get("scale", 1.0)}'
         for id_, info in objet_reconnus.items()
     )
 
@@ -78,7 +97,7 @@ def modify_scene(prompt, current_objects_json, objet_reconnus):
         CURRENT SCENE (JSON):
         {current_objects_json}
 
-        KNOWN OBJECTS:
+        KNOWN OBJECTS (with fixed scales):
         {objects_info}
 
         FULL CATALOGUE (for adding new objects):
@@ -93,7 +112,8 @@ def modify_scene(prompt, current_objects_json, objet_reconnus):
         - Small movements = ~0.3m, medium = ~0.6m, large = ~1.0m
         - For "remove": delete the object from the list
         - For "replace X with Y": change the urdf and id, keep similar pos/scale
-        - For "add": add a new object with appropriate pos (no overlap)
+        - For "add": add a new object with appropriate pos (no overlap) and use its fixed scale
+        - scale: use the fixed scale from KNOWN OBJECTS (do not change it)
         - pos z for objects on the floor: dimensions[2] * scale / 2
         - pos z for objects ON another: parent_pos_z + parent_dimensions[2] * parent_scale / 2 + this_dimensions[2] * this_scale / 2
 

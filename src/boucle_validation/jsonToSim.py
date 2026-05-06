@@ -11,23 +11,35 @@ if SRC_DIR not in sys.path:
 from simulation.simulationGenesis import make_morph
 
 
-def validation_physique(objetsList):
+def validation_physique(objetsList, fixed_ids=None):
+    """
+    fixed_ids : ensemble d'IDs d'objets correctement places a ne pas bouger 
+    ils sont mis en fixed=True dans Genesis et ignores par la resolution de collision apre 
+    """
+    fixed_ids = set(fixed_ids) if fixed_ids else set()
     steps = 150
     dt = 0.01
     corrected_objects = copy.deepcopy(objetsList)
     gs.init(backend=gs.cpu)
     scene = gs.Scene(show_viewer=False, sim_options=gs.options.SimOptions(dt=dt))
     scene.add_entity(gs.morphs.Plane())
+
+    # camera centree sur les objets, vue de face et du dessus (parceque le LLM hallucinais a cause de l'angle pas ouf a la base)
+    xs = [obj['pos'][0] for obj in corrected_objects]
+    ys = [obj['pos'][1] for obj in corrected_objects]
+    zs = [obj['pos'][2] for obj in corrected_objects]
+    cx, cy, cz = sum(xs)/len(xs), sum(ys)/len(ys), sum(zs)/len(zs)
+    spread = max(max(xs) - min(xs), max(ys) - min(ys), 1.0)
+    dist = spread * 1.5 + 2.5
+
     cameras = {
-        "perspective":scene.add_camera(res=(640, 480), pos=(3.5, 0.0, 2.5), lookat=(0, 0, 0.5), fov=30),
-        #"top":scene.add_camera(res=(640, 480), pos=(0.0, 0.0, 4.0), lookat=(0, 0, 0),   fov=40),
-        #"side":scene.add_camera(res=(640, 480), pos=(0.0, 3.5, 1.0), lookat=(0, 0, 0.5), fov=30),
-        #"side2": scene.add_camera(res=(640, 480),pos=(3.5, 0.0, 0.5),lookat=(0, 0, 0.5),fov=30)
+        "perspective": scene.add_camera(res=(640, 480), pos=(cx + dist, cy, cz + dist * 0.8), lookat=(cx, cy, cz), fov=45),
     }
     entities = []
     for obj in corrected_objects:
+        is_fixed = obj['id'] in fixed_ids
         ent = scene.add_entity(
-            make_morph(obj['path'], pos=tuple(obj['pos']), quat=tuple(obj.get('quat', [0.0, 1.0, 1.0, 0.0])), scale=obj.get('scale', 1.0), fixed=False),
+            make_morph(obj['path'], pos=tuple(obj['pos']), quat=tuple(obj.get('quat', [0.0, 1.0, 1.0, 0.0])), scale=obj.get('scale', 1.0), fixed=is_fixed),
             material=gs.materials.Rigid(rho=1000)
         )
         entities.append(ent)
@@ -35,6 +47,10 @@ def validation_physique(objetsList):
 
 
     for i, ent in enumerate(entities):
+        # les objets fixes gardent leur AABB de l'iteration precedente 
+        if corrected_objects[i]['id'] in fixed_ids:
+            continue
+
         aabb_min, aabb_max = ent.get_AABB()
         corrected_objects[i]['lowest_point'] = float(aabb_min[2])
         corrected_objects[i]['highest_point'] = float(aabb_max[2])
@@ -62,6 +78,8 @@ def validation_physique(objetsList):
             aabb_maxs.append([float(aabb_max[0]), float(aabb_max[1]), float(aabb_max[2])])
 
         def shift_object(index, axis, amount):
+            if corrected_objects[index]['id'] in fixed_ids:
+                return
             corrected_objects[index]['pos'][axis] += amount
             aabb_mins[index][axis] += amount
             aabb_maxs[index][axis] += amount
@@ -90,10 +108,15 @@ def validation_physique(objetsList):
                     centers_i = [(aabb_mins[i][k] + aabb_maxs[i][k]) * 0.5 for k in range(3)]
                     centers_j = [(aabb_mins[j][k] + aabb_maxs[j][k]) * 0.5 for k in range(3)]
 
-                    if axis == 2:
+                    # c'est a ce niveau que ca mettait les objets au milieu somehow dcp j'ai change le seuil de
+                    # chevauchement lateral < 5cm : les objets sont juste proches, pas besoin de les ecarter lateralement
+                    #  on les souleve uniquement (deepseek a aider a trouver ce raisonnement et jusque la ca marche)
+                    LATERAL_THRESHOLD = 0.05
+                    if axis == 2 or overlaps[axis] < LATERAL_THRESHOLD:
                         target = j if centers_j[2] >= centers_i[2] else i
                         shift_object(target, 2, overlaps[2] + margin)
                     else:
+                        # chevauchement lateral reel genre les deux objets occupent vraiment le meme espace
                         half = (overlaps[axis] + margin) / 2
                         if centers_j[axis] >= centers_i[axis]:
                             shift_object(j, axis, half)
@@ -111,6 +134,8 @@ def validation_physique(objetsList):
 
     z_final = [float(ent.get_pos()[2]) for ent in entities]
     for i, obj in enumerate(corrected_objects):
+        if obj['id'] in fixed_ids:
+            continue
         delta_z = z_final[i] - z_init[i]
         v_z = delta_z / (steps * dt)
         if v_z > 0.5: #l'objet a été expulsé vers le haut, donc il était trop bas

@@ -1,0 +1,107 @@
+{
+  "images": [
+    {
+      "id": "img_calib",
+      "paths": [""],
+      "description": "calibration: un seul objet a position connue",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {
+        "REMPLIR_id": {"x": 0.0,"y": 0.0,"z": 0.0}
+      },
+      "is_calibration": true
+    },
+    {
+      "id": "img01",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    },
+    {
+      "id": "img02",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    },
+    {
+      "id": "img03",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false,
+      "note": ""
+    },
+    {
+      "id": "img04",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false,
+      "note": ""
+    },
+    {
+      "id": "img05",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    },
+    {
+      "id": "img06",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    },
+    {
+      "id": "img07",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    },
+    {
+      "id": "img08",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    },
+    {
+      "id": "img09",
+      "paths": [""],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    },
+    {
+      "id": "img10",
+      "paths": [],
+      "description": "",
+      "expected_objects": [],
+      "expected_relations": [],
+      "ground_truth_positions": {},
+      "is_calibration": false
+    }
+  ]
+}

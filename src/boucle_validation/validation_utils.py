@@ -1,8 +1,17 @@
 import os
+import sys
 from datetime import datetime
 import json
 import shutil
 import re
+
+_SRC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
+from pipeline.sceneBuilding import apply_relation
+
+SURFACE_MARGIN = 0.04
+DEFAULT_LATERAL_DISTANCE = 0.2
 
 
 def getFilePath(item):
@@ -51,7 +60,56 @@ def correct_list(data, corrections, field):
         if item['id'] in corrections:
             old_value = item[field]
             item[field] = corrections[item['id']]
-            print(f"CORRECTION: {field} corrigée pour {item['id']}: {old_value} → {item[field]}")
+            print(f"CORRECTION: {field} corrigee pour {item['id']}: {old_value} -> {item[field]}")
+            if field == 'pos' and 'dimensions' in item:
+                h = item['dimensions'][2]
+                new_z = item['pos'][2]
+                item['lowest_point'] = new_z - h / 2
+                item['highest_point'] = new_z + h / 2
+    return data
+
+
+def apply_semantic_corrections(data, corrections):
+    """Applique les corrections semantiques du VLM en utilisant apply_relation
+    Le VLM retourne des types de relations, le code calcule les coordonnees exactes
+    sans se fier aux chiffres hallucinés par le VLM """
+    items_dict = {item['id']: item for item in data}
+    for corr in corrections:
+        subject_id = corr.get('subject')
+        obj_id = corr.get('object')
+        rel_type = corr.get('type')
+        if not subject_id or not rel_type or subject_id not in items_dict:
+            print(f"[apply_semantic_corrections] correction ignoree (subject ou type manquant somehow): {corr}")
+            continue
+        subject = items_dict[subject_id]
+        if not obj_id or obj_id not in items_dict:
+            print(f"[apply_semantic_corrections] objet de reference introuvable: {obj_id}")
+            continue
+        ref = items_dict[obj_id]
+        if rel_type in ('on', 'inside'):
+            # sauvegarder X/Y avant apply_relation qui les randomise
+            prev_x, prev_y = subject['pos'][0], subject['pos'][1]
+            apply_relation({'type': rel_type}, ref, subject)
+            if 'rel_x' in corr or 'rel_y' in corr:
+                # position explicite sur la surface demandee par le VLM
+                pw, pd, _ = ref['dimensions']
+                sw, sd, _ = subject['dimensions']
+                margin_x = max(0.0, (pw - sw) / 2 - SURFACE_MARGIN)
+                margin_y = max(0.0, (pd - sd) / 2 - SURFACE_MARGIN)
+                rel_x = corr.get('rel_x', 0.5)
+                rel_y = corr.get('rel_y', 0.5)
+                px, py = ref['pos'][0], ref['pos'][1]
+                target_x = px - pw / 2 + rel_x * pw
+                target_y = py - pd / 2 + rel_y * pd
+                subject['pos'][0] = max(px - margin_x, min(target_x, px + margin_x))
+                subject['pos'][1] = max(py - margin_y, min(target_y, py + margin_y))
+            else:
+                # on ne corrige que Z : X/Y deja corrects, ne pas les perdre
+                subject['pos'][0] = prev_x
+                subject['pos'][1] = prev_y
+        else:
+            apply_relation({'type': rel_type, 'distance': DEFAULT_LATERAL_DISTANCE}, ref, subject)
+        print(f"[apply_semantic_corrections] {rel_type}({subject_id}, {obj_id}) -> pos={subject['pos']}")
     return data
 
 

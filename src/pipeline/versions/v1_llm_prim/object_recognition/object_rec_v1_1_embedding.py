@@ -1,4 +1,4 @@
-from pipeline.utils.ollama_client import validate_json_response
+from pipeline.utils.ollama_client import validate_json_response, call_llm
 from pipeline.utils.catalogue import objets_list
 import numpy as np
 
@@ -35,7 +35,7 @@ def model():
         print("[embedding] chargement du modele...")
         # force CPU : le GPU Metal est sature par Ollama, et MiniLM 384D
         # tourne en quelques ms sur CPU (25 objets + 1 query par appel)
-        embed_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2', device='cpu')
+        embed_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2', device='cpu')
     return embed_model
 
 
@@ -106,16 +106,7 @@ def extract_labels(prompt):
 
     Raw JSON only, no markdown, no comments."""
 
-    payload = {
-        "model": "llama3.1",
-        "system": system_prompt,
-        "prompt": prompt,
-        "stream": False,
-        "format": "json",
-        "options": {"temperature": 0}
-    }
-    result = validate_json_response(payload)
-    # .get("objects", []) : si la cle "objects" n'existe pas dans le resultat, on retourne une liste vide
+    result = call_llm(system_prompt, prompt)
     return result.get("objects", [])
 
 

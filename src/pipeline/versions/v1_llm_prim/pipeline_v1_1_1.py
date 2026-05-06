@@ -10,9 +10,8 @@ import os
 import numpy as np
 
 from pipeline.utils.catalogue import objets_list
-from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import (
-    fix_ids_in_result, scale, final_json,
-)
+from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import fix_ids_in_result
+from pipeline.itemSpec import loadScale
 from pipeline.utils.helpers import fuzzy_match
 from pipeline.sceneBuilding import buildScene
 
@@ -169,19 +168,14 @@ def place_scene(prompt, obj_reconnus, build_scene_fn=None):
     # orientations depuis phi3-scene
     orientations = _fix_orientations(phi3.get("orientations", []), valid_ids)
 
-    # scales via phi3:mini (desactive temporairement — scale=1.0 pour tous)
-    # scales_result = scale(prompt, obj_reconnus)
-    # obj_reconnus  = final_json(obj_reconnus, scales_result)
-
-    # construction des items
     items = []
     for label, info in obj_reconnus.items():
         items.append({
             "id": label,
             "urdf": info["urdf"],
-            "path":info.get("path", ""),
+            "path": info.get("path", ""),
             "dimensions": info.get("dimensions"),
-            "scale": 1.0,
+            "scale": loadScale({"urdf": info["urdf"]})["scale"],
         })
 
     print("[v1_1_1] items:", items, "| relations:", relations, "| orientations:", orientations)

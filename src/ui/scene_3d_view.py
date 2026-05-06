@@ -215,6 +215,8 @@ class SceneView3D(gl.GLViewWidget):
 
             for m in meshes:
                 vertex_colors = _get_vertex_colors(m, fallback)
+                # ambient lift so shaded faces stay visible
+                vertex_colors[:, :3] = np.clip(vertex_colors[:, :3] * 1.35 + 0.15, 0, 1)
                 verts = np.array(m.vertices, dtype=np.float32) * scale
                 if rot_matrix is not None:
                     verts = verts @ rot_matrix.T

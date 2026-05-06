@@ -10,7 +10,8 @@ from pipeline.versions.v1_llm_prim.pipeline_v1_1_1 import (object_rec as _object
 from pipeline.utils.catalogue import objets_list, OBJETS_DIR
 from pipeline.utils.ollama_client import suggest_alternatives, classify_intent
 from pipeline.versions.v2_llm_only.pipeline_v2_llm import object_dim_quat, modify_scene as modify_scene_v2
-from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import object_relations, scale, final_json, modify_scene as modify_scene_v1
+from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import object_relations, modify_scene as modify_scene_v1
+from pipeline.itemSpec import loadScale
 from pipeline.versions.v1_llm_prim.placement.placement_v1_distances_orientations import orientation
 import tempfile
 
@@ -67,10 +68,10 @@ def get_genesis_dims_subprocess(items, orientations):
             except OSError: pass
 
 
-# "V1"     : object_rec via LLM, placement via sceneBuilding
-# "V1.1"   : object_rec via embeddings, placement via sceneBuilding
+# "V1" : object_rec via LLM, placement via sceneBuilding
+# "V1.1" : object_rec via embeddings, placement via sceneBuilding
 # "V1.1.1" : object_rec + relations + orientations via phi3-scene (finetuned), scales via phi3:mini
-# "V2"     : placement et modification 100% LLM direct (sans sceneBuilding)
+# "V2": placement et modification 100% LLM direct (sans sceneBuilding)
 PIPELINE_VERSION = "V1.1.1"
 
 # on choisit object_rec selon la version
@@ -117,18 +118,15 @@ def _place_objects(prompt, objet_reconnus, relations_corrigees=None):
         root_id = relations_data.get("root", "")
         relations = relations_data.get("relations", [])
 
-        scales_result = scale(prompt, objet_reconnus)
-        objet_reconnus = final_json(objet_reconnus, scales_result)
-
         items = []
         for label, info in objet_reconnus.items():
             items.append({
-                "id":label,
-                "urdf":info["urdf"],
+                "id": label,
+                "urdf": info["urdf"],
                 "path": info.get("path", ""),
                 "dimensions": info.get("dimensions"),
-                "scale":info.get("scale", 1.0),
-                "root":(label == root_id),
+                "scale": loadScale({"urdf": info["urdf"]})["scale"],
+                "root": (label == root_id),
             })
 
         # Si le root retourné ne correspond à aucun item, marquer le premier
@@ -162,7 +160,7 @@ def _modify_scene(prompt, current_objects_json, objet_reconnus):
 
 
 def resolve_urdf_path(path):
-    """Resout le chemin vers le fichier exploitable (urdf ou mesh)."""
+    """Resout le chemin vers le fichier exploitable (urdf ou mesh)"""
     if os.path.isfile(path):
         return path
     if os.path.isdir(path):

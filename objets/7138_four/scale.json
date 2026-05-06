@@ -1,0 +1,8 @@
+{
+  "scale": 0.9595,
+  "real_world_dimensions_m": {
+    "width": 0.6,
+    "depth": 0.6,
+    "height": 0.9
+  }
+}

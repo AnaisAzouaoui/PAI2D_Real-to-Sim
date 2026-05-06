@@ -1,0 +1,436 @@
+{
+  "prompts": [
+    {
+      "id": "p01",
+      "prompt": "Une table avec un mug dessus et une banane à droite du mug.",
+      "expected_objects": [
+        {"id": "table", "urdf": "001_table"},
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "banane", "urdf": "011_banane"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "mug", "object": "table"},
+        {"type": "right_of", "subject": "banane", "object": "mug"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p02",
+      "prompt": "A refrigerator with a toaster in front of it and a trashcan to its left.",
+      "expected_objects": [
+        {"id": "refrigerator", "urdf": "10143_refrigerateur"},
+        {"id": "toaster", "urdf": "103477_toaster"},
+        {"id": "trashcan", "urdf": "10357_poubelle"}
+      ],
+      "expected_relations": [
+        {"type": "left_of", "subject": "trashcan", "object": "refrigerator"},
+        {"type": "in_front_of", "subject": "toaster", "object": "refrigerator"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p03",
+      "prompt": "Un ordinateur portable sur une table, avec une clé USB à gauche de celui ci",
+      "expected_objects": [
+        {"id": "ordinateur", "urdf": "10211_ordinateur_portable"},
+        {"id": "table", "urdf": "001_table"},
+        {"id": "cle_usb", "urdf": "100073_cle_usb"}
+      ],
+      "expected_relations": [
+        {"type": "on",  "subject": "ordinateur", "object": "table"},
+        {"type": "left_of", "subject": "cle_usb", "object": "ordinateur"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p04",
+      "prompt": "A washing machine with a cardboard box on top of it and scissors underneath.",
+      "expected_objects": [
+        {"id": "washing_machine", "urdf": "11826_lave_linge"},
+        {"id": "scissors", "urdf": "037_scissors"},
+        {"id": "carboard_box", "urdf": "100658_boite_carton_ouverte"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "carboard_box", "object": "lave_linge"},
+        {"type": "under", "subject": "scissors", "object": "lave_linge"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p05",
+      "prompt": "Un four contre un porte coulissante, avec une poubelle devant.",
+      "expected_objects": [
+        {"id": "four", "urdf": "7138_four"},
+        {"id": "porte_coulissante", "urdf": "9032_porte_coulissante"},
+        {"id": "poubelle", "urdf": "10357_poubelle"}
+      ],
+      "expected_relations": [
+        {"type": "in_front_of", "subject": "poubelle", "object": "four"},
+        {"type": "against", "subject": "porte_coulissante", "object": "four"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p06",
+      "prompt": "A drawer-cabinet with a mug inside and a banana on the right of it.",
+      "expected_objects": [
+        {"id": "commode", "urdf": "44817_meuble_tiroirs"},
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "banane", "urdf": "011_banane"}
+      ],
+      "expected_relations": [
+        {"type": "inside", "subject": "mug",  "object": "commode"},
+        {"type": "right_of", "subject": "banane", "object": "commode"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p07",
+      "prompt": "Une table avec des ciseaux sous la table et un mug dessus.",
+      "expected_objects": [
+        {"id": "table", "urdf": "001_table"},
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "scissors", "urdf": "037_scissors"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "mug", "object": "table"},
+        {"type": "under", "subject": "scissors", "object": "table"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p08",
+      "prompt": "A dishwasher with a toaster on it and a banana behind it.",
+      "expected_objects": [
+        {"id": "dishwasher", "urdf": "103369_lave_vaisselle"},
+        {"id": "banana", "urdf": "011_banane"},
+        {"id": "toaster", "urdf": "103477_toaster"}
+      ],
+      "expected_relations": [
+        {"type": "behind", "subject": "banana", "object": "dishwasher"},
+        {"type": "on", "subject": "toaster", "object": "dishwasher"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p09",
+      "prompt": "Une poubelle à 50 cm à gauche d'un réfrigérateur.",
+      "expected_objects": [
+        {"id": "poubelle", "urdf": "10357_poubelle"},
+        {"id": "frigo", "urdf": "10143_refrigerateur"}
+      ],
+      "expected_relations": [
+        {"type": "left_of", "subject": "poubelle", "object": "frigo", "distance": 0.5}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p10",
+      "prompt": "A mug is 30 cm in front of a laptop.",
+      "expected_objects": [
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "ordinateur", "urdf": "10211_ordinateur_portable"}
+      ],
+      "expected_relations": [
+        {"type": "in_front_of", "subject": "mug", "object": "ordinateur", "distance": 0.3}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p11",
+      "prompt": "Une banane à 1 mètre derrière une table",
+      "expected_objects": [
+        {"id": "banane", "urdf": "011_banane"},
+        {"id": "table", "urdf": "001_table"}
+      ],
+      "expected_relations": [
+        {"type": "behind", "subject": "banane", "object": "table", "distance": 1.0}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p12",
+      "prompt": "A toaster is 70 cm to the right of an oven.",
+      "expected_objects": [
+        {"id": "oven", "urdf": "7138_four"},
+        {"id": "toaster", "urdf": "103477_toaster"}
+      ],
+      "expected_relations": [
+        {"type": "right_of", "subject": "toaster", "object": "oven", "distance": 0.7}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p13",
+      "prompt": "Une boîte carton à 40 cm devant un lave-linge.",
+      "expected_objects": [
+        {"id": "carton", "urdf": "100658_boite_carton_ouverte"},
+        {"id": "lave_linge", "urdf": "11826_lave_linge"}
+      ],
+      "expected_relations": [
+        {"type": "in_front_of", "subject": "carton", "object": "lave_linge", "distance": 0.4}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p14",
+      "prompt": "A USB drive is 20 cm to the left of a mug.",
+      "expected_objects": [
+        {"id": "USB_drive", "urdf": "100073_cle_usb"},
+        {"id": "mug", "urdf": "025_mug"}
+      ],
+      "expected_relations": [
+        {"type": "left_of", "subject": "USB_drive", "object": "mug", "distance": 0.2}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p15",
+      "prompt": "Un meuble à tiroirs à 2 mètres derrière un réfrigérateur.",
+      "expected_objects": [
+        {"id": "meuble_tiroirs", "urdf": "44817_meuble_tiroirs"},
+        {"id": "frigo", "urdf": "10143_refrigerateur"}
+      ],
+      "expected_relations": [
+        {"type": "behind", "subject": "meuble_tiroirs", "object": "frigo", "distance": 2.0}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p16",
+      "prompt": "Une table avec un ordinateur portable et des crackers dessus, un mug à 20 cm à droite de l'ordinateur portable, et une banane couchée devant le mug.",
+      "expected_objects": [
+        {"id": "table", "urdf": "001_table"},
+        {"id": "ordinateur", "urdf": "10211_ordinateur_portable"},
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "banane",  "urdf": "011_banane"},
+        {"id": "crackers", "urdf": "003_cracker_box"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "ordinateur", "object": "table"},
+        {"type": "right_of",  "subject": "mug", "object": "ordinateur", "distance": 0.2},
+        {"type": "in_front_of", "subject": "banane",  "object": "mug"},
+        {"type": "on", "subject": "crackers",  "object": "table"}
+
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p17",
+      "prompt": "A refrigerator with a toaster on top, a trash can 50 cm to the left of it, and a cardboard box turned to the right in front of the trash can.",
+      "expected_objects": [
+        {"id": "refrigerator", "urdf": "10143_refrigerateur"},
+        {"id": "toaster", "urdf": "103477_toaster"},
+        {"id": "trash_can", "urdf": "10357_poubelle"},
+        {"id": "carboard_box",   "urdf": "100658_boite_carton_ouverte"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "toaster", "object": "refrigerator"},
+        {"type": "left_of", "subject": "poubelle", "object": "frigo",    "distance": 0.5},
+        {"type": "in_front_of", "subject": "carton",   "object": "poubelle"}
+      ],
+      "expected_orientations": [
+        {"id": "carboard_box", "turn": "turn_right"}
+      ]
+    },
+    {
+      "id": "p18",
+      "prompt": "Un lave-linge avec une boîte carton ouverte dessus, des ciseaux à 30 cm devant le lave-linge, et une perceuse couchée à droite des ciseaux.",
+      "expected_objects": [
+        {"id": "lave_linge", "urdf": "11826_lave_linge"},
+        {"id": "carton", "urdf": "100658_boite_carton_ouverte"},
+        {"id": "perceuse", "urdf": "035_power_drill"},
+        {"id": "ciseaux", "urdf": "037_scissors"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "carton", "object": "lave_linge"},
+        {"type": "in_front_of", "subject": "lave_linge", "object": "ciseaux","distance": 0.5},
+         {"type": "left_of", "subject": "perceuse", "object": "ciseaux"}
+      ],
+      "expected_orientations": [
+        {"id": "perceuse", "turn": "tip_forward"}
+      ]
+    },
+    {
+      "id": "p19",
+      "prompt": "A table with a laptop facing left on top , a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
+      "expected_objects": [
+        {"id": "table",  "urdf": "001_table"},
+        {"id": "laptop", "urdf": "10211_ordinateur_portable"},
+        {"id": "USB_drive", "urdf": "100073_cle_usb"},
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "banana", "urdf": "011_banane"}
+      ],
+      "expected_relations": [
+        {"type": "on",  "subject": "laptop", "object": "table"},
+        {"type": "behind", "subject": "cle", "object": "laptop", "distance": 0.1},
+        {"type": "right_of", "subject": "mug","object": "laptop"},
+        {"type": "in_front_of", "subject": "banana", "object": "mug"}
+      ],
+      "expected_orientations": [
+          {"id": "mug", "turn": "upside_down"},
+          {"id": "mug", "turn": "turn_left"}
+      ]
+    },
+    {
+      "id": "p20",
+      "prompt": "Un four avec un toaster dessus, une poubelle à 60 cm devant le four, et un mug de dos sur la poubelle.",
+      "expected_objects": [
+        {"id": "four", "urdf": "7138_four"},
+         {"id": "toaster", "urdf": "103477_toaster"},
+        {"id": "poubelle", "urdf": "10357_poubelle"},
+        {"id": "mug", "urdf": "025_mug"}
+      ],
+      "expected_relations": [
+        {"type": "in_front_of", "subject": "poubelle", "object": "four", "distance": 0.6},
+        {"type": "on", "subject": "mug", "object": "poubelle"},
+        {"type": "on", "subject": "toaster", "object": "four"}
+      ],
+      "expected_orientations": [
+        {"id": "mug", "turn": "tip_backward"}
+      ]
+    },
+    {
+      "id": "p21",
+      "prompt": "A drawer-cabinet with a banana inside, a mug 25 cm to the right of the cabinet, and scissors lying in front of the mug facing right.",
+      "expected_objects": [
+        {"id": "drawer_cabinet", "urdf": "44817_meuble_tiroirs"},
+        {"id": "banana","urdf": "011_banane"},
+        {"id": "mug","urdf": "025_mug"},
+        {"id": "scissors", "urdf": "037_scissors"}
+      ],
+      "expected_relations": [
+        {"type": "inside",   "subject": "banana", "object": "drawer_cabinet"},
+        {"type": "right_of", "subject": "mug", "object": "drawer_cabinet", "distance": 0.25},
+        {"type": "in_front_of", "subject": "scissors", "object": "mug"}
+      ],
+      "expected_orientations": [
+        {"id": "scissors", "turn": "turn_right"}
+      ]
+    },
+    {
+      "id": "p22",
+      "prompt": "Un mug à l'envers sur un lave linge.",
+      "expected_objects": [
+        {"id": "mug",  "urdf": "025_mug"},
+        {"id": "lave_linge", "urdf": "11826_lave_linge"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "mug", "object": "lave_linge"}
+      ],
+      "expected_orientations": [
+        {"id": "mug", "turn": "upside_down"}
+      ]
+    },
+    {
+      "id": "p23",
+      "prompt": "A laptop turned to the right on a table.",
+      "expected_objects": [
+        {"id": "laptop", "urdf": "10211_ordinateur_portable"},
+        {"id": "table", "urdf": "001_table"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "ordinateur", "object": "table"}
+      ],
+      "expected_orientations": [
+        {"id": "laptop", "turn": "turn_right"}
+      ]
+    },
+    {
+      "id": "p24",
+      "prompt": "Une perceuse couchée devant un réfrigérateur.",
+      "expected_objects": [
+        {"id": "refrigerateur", "urdf": "10143_refrigerateur"},
+        {"id": "perceuse", "urdf": "035_power_drill"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "perceuse", "object": "refrigerateur"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p25",
+      "prompt": "Un mug sur une table et un autre mug à sa gauche.",
+      "expected_objects": [
+        {"id": "table", "urdf": "001_table"},
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "mug_2", "urdf": "025_mug"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "mug", "object": "table"},
+        {"type": "left_of", "subject": "mug_2", "object": "mug"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p26",
+      "prompt": "A banana on a table and a second banana 20 cm behind it.",
+      "expected_objects": [
+        {"id": "table",  "urdf": "001_table"},
+        {"id": "banana", "urdf": "011_banane"},
+        {"id": "banana_2", "urdf": "011_banane"}
+      ],
+      "expected_relations": [
+        {"type": "on",  "subject": "banana", "object": "table"},
+        {"type": "behind", "subject": "banana_2", "object": "banana", "distance": 0.2}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p27",
+      "prompt": "Une boîte carton devant un four et une autre boîte carton à droite de la première.",
+      "expected_objects": [
+        {"id": "four", "urdf": "7138_four"},
+        {"id": "carton", "urdf": "100658_boite_carton_ouverte"},
+        {"id": "carton_2", "urdf": "100658_boite_carton_ouverte"}
+      ],
+      "expected_relations": [
+        {"type": "in_front_of","subject": "carton", "object": "four"},
+        {"type": "right_of", "subject": "carton_2", "object": "carton"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p28",
+      "prompt": "Je veux une banane sur une table. Derrière cette banane, il y a un mug.",
+      "expected_objects": [
+        {"id": "banane", "urdf": "011_banane"},
+        {"id": "table", "urdf": "001_table"},
+        {"id": "mug", "urdf": "025_mug"}
+      ],
+      "expected_relations": [
+        {"type": "on",  "subject": "banane", "object": "table"},
+        {"type": "behind", "subject": "mug",  "object": "banane"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p29",
+      "prompt": "Place a laptop on a table. To the left of this laptop, put a USB drive.",
+      "expected_objects": [
+        {"id": "laptop", "urdf": "10211_ordinateur_portable"},
+        {"id": "table", "urdf": "001_table"},
+        {"id": "USB_drive", "urdf": "100073_cle_usb"}
+      ],
+      "expected_relations": [
+        {"type": "on", "subject": "laptop", "object": "table"},
+        {"type": "left_of", "subject": "USB_drive",  "object": "laptop"}
+      ],
+      "expected_orientations": []
+    },
+    {
+      "id": "p30",
+      "prompt": "Un mug est devant un réfrigérateur. Sur ce mug, pose une banane",
+      "expected_objects": [
+        {"id": "mug", "urdf": "025_mug"},
+        {"id": "refrigerateur", "urdf": "10143_refrigerateur"},
+        {"id": "banane", "urdf": "011_banane"}
+      ],
+      "expected_relations": [
+        {"type": "in_front_of", "subject": "mug",  "object": "refrigerateur"},
+        {"type": "on", "subject": "banane",  "object": "mug"}
+      ],
+      "expected_orientations": []
+    }
+  ]
+}

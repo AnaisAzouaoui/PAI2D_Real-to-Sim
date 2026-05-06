@@ -11,7 +11,7 @@ device = None
 
 def get_device():
     global device
-    if device is None:
+    if device is None :
         if torch.cuda.is_available(): # pour les bon pc comme celui de l'isir ce sera encore plus rapide >:D
             device = "cuda"
         else:

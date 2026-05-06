@@ -5,10 +5,8 @@ import ollama
 import openai
 import json
 from .jsonToSim import validation_physique
-from .validation_utils import create_run_dir, correct_list, clean_reponse, save_iteration_scene
-import json
+from .validation_utils import create_run_dir, clean_reponse, save_iteration_scene, apply_semantic_corrections
 import copy
-
 import sys
 import os
 import json
@@ -19,78 +17,84 @@ def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=5):
 
     run_dir = create_run_dir()
     history = []
+    fixed_ids = set()
 
     with open(jsonFile, 'r') as file:
-            data = json.load(file)
+        data = json.load(file)
 
     for iter in range(max_iter):
         itemsList = data if isinstance(data, list) else data.get('objets', [])
-        image_path, corrected_objects = validation_physique(itemsList)
+        image_path, corrected_objects = validation_physique(itemsList, fixed_ids=fixed_ids)
 
         save_iteration_scene(image_path, iter, run_dir, itemsList)
         res, data = validation_semantique_prompt(user_prompt, corrected_objects, image_path)
         #print(f"DEBUG: les res keys sont {res.keys()} et le contenu est {res}")
         #print(f"DATA2: {data}")
-
+        
         history.append(copy.deepcopy({
             'iteration': iter,
             'feedback': res.get('feedback', ''),
-            'corrections': res.get('corrections',''),
+            'corrections': res.get('corrections', ''),
             'valid': res.get('valid', False),
             'scene': data
         }))
 
         with open(os.path.join(run_dir, 'history.json'), 'w') as f:
-            print("history:", history)
             json.dump(history, f, indent=4)
 
-        if res.get("valid")==True:
-            print("scene validée")
+        if res.get("valid") == True:
+            print("scène validée")
             return data
-        else:
-            print("echec: ", res.get("feedback"))
+
+        corrections = res.get('corrections', [])
+        all_ids = {item['id'] for item in data}
+        fixed_ids = all_ids  # tout fixer 
+        print(f"objets fixes pour iter suivante: {fixed_ids}")
 
     else:
         itemsList = data if isinstance(data, list) else data.get('objets', [])
-        image_path, corrected_objects = validation_physique(itemsList)
+        image_path, corrected_objects = validation_physique(itemsList, fixed_ids=fixed_ids)
         return corrected_objects
 
 
-
 def validation_semantique_prompt(original_prompt, data, image_path):
-    pos_and_dims = [{'id': item['id'], 'pos': item['pos'], 'dimensions':item['dimensions'], 'lowest_point':item['lowest_point'],'highest_point':item['highest_point']} for item in data]
-    prompt = """ You are a 3D Scene Validator and Spatial Coordinator. Your goal is to ensure objects are logically placed and match the prompt's description.
+    pos_and_dims = [
+        {'id': item['id'], 'pos': item['pos'], 'dimensions': item['dimensions'],
+         'lowest_point': item['lowest_point'], 'highest_point': item['highest_point']}
+        for item in data
+    ]
 
-            You will receive:
-                - The current scene as a JSON object
-                - The position, dimensions , lowest point and highest point of each object
-                - An image of the scene
+    prompt = """You are a 3D scene validator. Identify violated spatial relations between the rendered scene and the user's prompt.
 
-                        
-            Spatial RULES:
-            - Stacking (On Top): For Object A to be "on" Object B, X and Y must be within the space covered by object B. 
-            Object A's lowest point must be 0.001 higher than object B highest point.
-            - Right of, left of, behind, in front of...: for object A to be in these relations to object B, their lowest-point should be approximately equal. DO NOT CHANGE THEIR DISTANCE! X and Y may vary depending on if they are at the right, left, in front, behind each other… For example, if the prompt says "Object A is next to Object B", ensure they have the same Z-base but different X or Y.
-            - Collisions: Objects must not occupy the same space. If they overlap in the Top-Down view, they must have different Z-heights to avoid clipping. If an object is explicitly inside another, this does not apply. However, meshes still shouldn’t intersect.
-            - Ground Plane: No object's lowest point should be below 0.
-            - DO NOT throw objects in the air! Objects should be placed on a surface (ground or other objects).
-            
-            ONLY move objects if they clearly violate a rule.
+            You receive:
+            - The user prompt describing the desired scene.
+            - A JSON list of objects with their current positions and dimensions.
+            - A screenshot of the current simulation.
 
-            Other RULES:
-                - ONLY change pos if needed
-                - Maintain the original id for all objects.
-                - valid is true only if scene matches prompt AND no collisions
-                - ONLY output the JSON object, nothing else
-                - NO markdown, NO backticks, NO explanations before or after
+            Coordinate system (context only — do NOT output coordinates):
+            X = depth (positive toward camera), Y = lateral (positive = right), Z = vertical (positive = up).
+            Camera is at (3.5, 0, 2.5) looking at origin, FOV=30.
 
-            MOST IMPORTANTLY: Valid is TRUE if ALL objects match their described position in the prompt.
+            Supported correction types: "on", "inside", "right_of", "left_of", "in_front_of", "behind"
+            For "on" and "inside": you may also provide rel_x and rel_y in [0.0, 1.0] to indicate WHERE on the surface
+            (rel_x: 0=left side, 0.5=center, 1=right side / rel_y: 0=front side, 0.5=center, 1=back side).
+            Omit rel_x/rel_y if centering on the surface is acceptable.
 
-            You MUST respond with ONLY this JSON format:
+            RULES:
+            - Set valid=true if the scene matches the prompt with no obvious violations.
+            - Only add a correction if a spatial relation is clearly violated.
+            - NEVER output coordinate numbers. Use relation types and optional ratios only.
+            - "corrections": [] if everything is correct.
+            - Empty corrections list means valid must be true.
+
+            You MUST respond with ONLY this JSON, nothing else:
             {
-                "valid": boolean,
-                "feedback":  "Reasoning for changes (e.g., 'Moving mug to be centered on table and fixing ground clipping')",
-                "corrections": [{"id": "string", "pos": [x, y, z]}]
+            "valid": boolean,
+            "feedback": "brief description of what is wrong or why it is valid",
+            "corrections": [
+                {"subject": "<object_id>", "type": "<relation>", "object": "<reference_id>"},
+                {"subject": "<object_id>", "type": "on", "object": "<reference_id>", "rel_x": 0.2, "rel_y": 0.8}
+            ]
             }
     """
 
@@ -111,28 +115,30 @@ def validation_semantique_prompt(original_prompt, data, image_path):
     
     client = openai.OpenAI()
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[
             {'role': 'system', 'content': prompt},
             {'role': 'user', 'content': [
-                {'type': 'text', 'text': f"Prompt: {original_prompt}\nObjects and positions: {json.dumps(pos_and_dims)}"},
+                {'type': 'text', 'text': f"Prompt: {original_prompt}\nObjects: {json.dumps(pos_and_dims)}"},
                 {'type': 'image_url', 'image_url': {'url': f"data:image/png;base64,{image_b64}"}}
             ]}
-        ]
+        ],
+        response_format={"type": "json_object"},
     )
     clean = clean_reponse(response.choices[0].message.content)
-    
+
 
     #clean = clean_reponse(resultat['message']['content'])
     #print("CLEAN: ", clean)
-
+    
     try:
         resultat = json.loads(clean)
     except json.JSONDecodeError:
-        print("json invalide pour etapes_validation")
-        return {"valid": False, "feedback": "json invalide"}
-    if 'corrections' in resultat:
-        corrections = {c['id']: c['pos'] for c in resultat['corrections']}
-        data = correct_list(data, corrections, 'pos')
-        #print("CORRECTED DATA:", data)
+        print("json invalide pour validation_semantique_prompt")
+        return {"valid": False, "feedback": "json invalide", "corrections": []}, data
+    corrections = resultat.get('corrections', [])
+    if not corrections:
+        resultat['valid'] = True
+    if corrections:
+        data = apply_semantic_corrections(data, corrections)
     return resultat, data
