@@ -10,18 +10,51 @@ from simulation.simulationGenesis import make_morph
 import genesis as gs
 from PIL import Image
 
-CAMERAS = [
-    ("perspective", dict(pos=(3.5, 0.0, 2.5), lookat=(0, 0, 0.5), fov=30)),
-    ("top",dict(pos=(0.0, 0.0, 4.0), lookat=(0, 0, 0), fov=40)),
-    ("side",dict(pos=(0.0, 3.5, 1.0), lookat=(0, 0, 0.5),fov=30)),
-    ("side2",dict(pos=(3.5, 0.0, 0.5), lookat=(0, 0, 0.5), fov=30)),
-]
-
 PHYSICS_STEPS = 80
+
+
+def compute_camera_params(objects_list):
+    """Calcule distance et hauteur camera selon l'etendue de la scene."""
+    if not objects_list:
+        return 0.0, 0.0, 3.5, 1.5, 0.8
+
+    xs, ys, zs = [], [], []
+    for obj in objects_list:
+        pos = obj.get("pos", [0, 0, 0])
+        dims = obj.get("dimensions", [0.3, 0.3, 0.3])
+        scale = obj.get("scale", 1.0)
+        r = max(dims) * scale
+        xs += [pos[0] - r, pos[0] + r]
+        ys += [pos[1] - r, pos[1] + r]
+        zs += [pos[2] - r, pos[2] + r]
+
+    cx = (min(xs) + max(xs)) / 2
+    cy = (min(ys) + max(ys)) / 2
+    max_z = max(zs)
+    spread = max(max(xs) - min(xs), max(ys) - min(ys), max_z)
+    dist = max(spread * 2.2, 2.5)
+    cam_height = max(max_z * 1.3, 1.2)
+    lookat_z = max_z / 2
+    return cx, cy, dist, cam_height, lookat_z
+
+
+def make_cameras(cx, cy, dist, cam_height, lookat_z):
+    return [
+        ("front", dict(pos=(cx + dist, cy,        cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+        ("back",  dict(pos=(cx - dist, cy,        cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+        ("left",  dict(pos=(cx,        cy + dist, cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+        ("right", dict(pos=(cx,        cy - dist, cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+    ]
+
+
 def render_screenshots(scene_json_path, output_dir):
     with open(scene_json_path, encoding="utf-8") as f:
         objects_list = json.load(f)
     os.makedirs(output_dir, exist_ok=True)
+
+    cx, cy, dist, cam_height, lookat_z = compute_camera_params(objects_list)
+    cameras_def = make_cameras(cx, cy, dist, cam_height, lookat_z)
+
     gs.init(backend=gs.cpu)
     scene = gs.Scene(
         show_viewer=False,
@@ -34,7 +67,7 @@ def render_screenshots(scene_json_path, output_dir):
     scene.add_entity(gs.morphs.Plane())
 
     cameras = {}
-    for name, cam_kwargs in CAMERAS:
+    for name, cam_kwargs in cameras_def:
         cameras[name] = scene.add_camera(res=(640, 480), **cam_kwargs)
 
     for obj in objects_list:
@@ -55,7 +88,7 @@ def render_screenshots(scene_json_path, output_dir):
     for _ in range(PHYSICS_STEPS):
         scene.step()
 
-    for name, _ in CAMERAS:
+    for name, _ in cameras_def:
         rgb, _, _, _ = cameras[name].render(rgb=True)
         img = Image.fromarray(rgb)
         out_path = os.path.join(output_dir, f"{name}.png")

@@ -134,7 +134,7 @@ VALID_TURNS = {
 }
 
 
-def _fix_orientations(orientations, valid_ids):
+def fix_orientations(orientations, valid_ids):
     fixed = []
     for o in orientations:
         id_val = o.get("id", "")
@@ -166,7 +166,7 @@ def place_scene(prompt, obj_reconnus, build_scene_fn=None):
     relations = relations_data["relations"]
 
     # orientations depuis phi3-scene
-    orientations = _fix_orientations(phi3.get("orientations", []), valid_ids)
+    orientations = fix_orientations(phi3.get("orientations", []), valid_ids)
 
     items = []
     for label, info in obj_reconnus.items():
