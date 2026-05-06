@@ -1,6 +1,8 @@
 import genesis as gs
 import os
 import sys
+import base64
+import openai
 from PIL import Image, ImageDraw, ImageFont #https://pillow.readthedocs.io/en/stable/
 import copy
 
@@ -11,7 +13,98 @@ if SRC_DIR not in sys.path:
 from simulation.simulationGenesis import make_morph
 
 
-def validation_physique(objetsList, fixed_ids=None):
+# (ox, oy, oz) sont des multiplicateurs appliques a dist
+CAMERA_ANGLES = [
+    {"name": "front",       "off": ( 1.0,  0.0, 0.8)},
+    {"name": "front_left",  "off": ( 0.7, -0.7, 0.8)},
+    {"name": "front_right", "off": ( 0.7,  0.7, 0.8)},
+    {"name": "back",        "off": (-1.0,  0.0, 0.8)},
+    {"name": "back_left",   "off": (-0.7, -0.7, 0.8)},
+    {"name": "back_right",  "off": (-0.7,  0.7, 0.8)},
+    {"name": "top_front",   "off": ( 0.3,  0.0, 1.5)},
+    {"name": "top",         "off": ( 0.0,  0.0, 2.0)},
+]
+
+
+def select_best_camera_angle(objetsList, user_image_path):
+    """
+    Construit la scene initiale, rend 8 angles de camera, envoie tout a GPT-4o
+    avec la photo de reference, et retourne l'offset de l'angle le plus proche.
+    Retourne un dict {"offset": (ox, oy, oz), "fov": 45}.
+    """
+    xs = [obj['pos'][0] for obj in objetsList]
+    ys = [obj['pos'][1] for obj in objetsList]
+    zs = [obj['pos'][2] for obj in objetsList]
+    cx, cy, cz = sum(xs)/len(xs), sum(ys)/len(ys), sum(zs)/len(zs)
+    spread = max(max(xs) - min(xs), max(ys) - min(ys), 1.0)
+    dist = spread * 1.5 + 2.5
+
+    gs.init(backend=gs.cpu)
+    scene = gs.Scene(show_viewer=False, sim_options=gs.options.SimOptions(dt=0.01))
+    scene.add_entity(gs.morphs.Plane())
+
+    cameras = {}
+    for ang in CAMERA_ANGLES:
+        ox, oy, oz = ang["off"]
+        pos = (cx + ox * dist, cy + oy * dist, cz + oz * dist)
+        cameras[ang["name"]] = scene.add_camera(res=(640, 480), pos=pos, lookat=(cx, cy, cz), fov=45)
+
+    for obj in objetsList:
+        scene.add_entity(
+            make_morph(obj['path'], pos=tuple(obj['pos']), quat=tuple(obj.get('quat', [0.0, 1.0, 1.0, 0.0])), scale=obj.get('scale', 1.0), fixed=True),
+            material=gs.materials.Rigid(rho=1000)
+        )
+    scene.build()
+
+    base_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'images', 'angle_selection')
+    os.makedirs(base_dir, exist_ok=True)
+
+    rendered = {}
+    for name, cam in cameras.items():
+        rgb, _, _, _ = cam.render(rgb=True)
+        img_path = os.path.join(base_dir, f"angle_{name}.png")
+        Image.fromarray(rgb).save(img_path)
+        rendered[name] = img_path
+
+    gs.destroy()
+
+    def encode(path):
+        with open(path, 'rb') as f:
+            return base64.b64encode(f.read()).decode('utf-8')
+
+    names = list(rendered.keys())
+    content = [
+        {"type": "text", "text": (
+            "Image 0 is the REFERENCE photo of a real scene.\n"
+            f"Images 1 to {len(names)} are screenshots of its 3D simulation from different camera angles.\n"
+            "Angles: " + ", ".join(f"{i+1}={n}" for i, n in enumerate(names)) + ".\n"
+            "Which simulation angle (give its name exactly as listed) looks most similar to the "
+            "reference photo in terms of viewpoint and perspective? "
+            "Reply with ONLY the angle name, nothing else."
+        )},
+        {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encode(user_image_path)}"}},
+    ]
+    for name in names:
+        content.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encode(rendered[name])}"}})
+
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": content}],
+        max_tokens=20,
+        temperature=0,
+    )
+    best_name = response.choices[0].message.content.strip().lower().replace(" ", "_")
+    if best_name not in rendered:
+        print(f"[select_best_camera_angle] reponse invalide '{best_name}', fallback sur 'front'")
+        best_name = "front"
+    print(f"[select_best_camera_angle] meilleur angle: {best_name}")
+
+    ang = next(a for a in CAMERA_ANGLES if a["name"] == best_name)
+    return {"offset": ang["off"], "fov": 45}
+
+
+def validation_physique(objetsList, fixed_ids=None, camera_params=None):
     """
     fixed_ids : ensemble d'IDs d'objets correctement places a ne pas bouger 
     ils sont mis en fixed=True dans Genesis et ignores par la resolution de collision apre 
@@ -32,8 +125,15 @@ def validation_physique(objetsList, fixed_ids=None):
     spread = max(max(xs) - min(xs), max(ys) - min(ys), 1.0)
     dist = spread * 1.5 + 2.5
 
+    if camera_params:
+        ox, oy, oz = camera_params["offset"]
+        cam_pos = (cx + ox * dist, cy + oy * dist, cz + oz * dist)
+        cam_fov = camera_params.get("fov", 45)
+    else:
+        cam_pos = (cx + dist, cy, cz + dist * 0.8)
+        cam_fov = 45
     cameras = {
-        "perspective": scene.add_camera(res=(640, 480), pos=(cx + dist, cy, cz + dist * 0.8), lookat=(cx, cy, cz), fov=45),
+        "perspective": scene.add_camera(res=(640, 480), pos=cam_pos, lookat=(cx, cy, cz), fov=cam_fov),
     }
     entities = []
     for obj in corrected_objects:

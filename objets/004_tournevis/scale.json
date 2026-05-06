@@ -1,5 +1,6 @@
 {
   "scale": 0.001,
+  "default_quat": [0.707, 0, 0, 0.707],
   "real_world_dimensions_m": {
     "width": 0.034,
     "depth": 0.034,

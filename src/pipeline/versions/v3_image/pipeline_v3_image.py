@@ -497,7 +497,7 @@ def scene_from_image(image_paths, depth_map_paths=None, dims_fn=None):
             "urdf": info["urdf"],
             "path": resolve_path(info["path"]),
             "dimensions": info.get("dimensions") or [1.0, 1.0, 1.0],
-            "scale": loadScale({"urdf": info["urdf"]})["scale"],
+            **{k: v for k, v in loadScale({"urdf": info["urdf"]}).items() if k in ("scale", "default_quat")},
         }
         for cat_label, info in objet_reconnus.items()
     ]

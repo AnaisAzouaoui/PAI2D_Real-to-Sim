@@ -4,7 +4,7 @@ import base64
 import ollama
 import openai
 import json
-from .jsonToSim import validation_physique
+from .jsonToSim import validation_physique, select_best_camera_angle
 from .validation_utils import create_run_dir, clean_reponse, save_iteration_scene, apply_semantic_corrections
 from PIL import Image
 import xml.etree.ElementTree as ET
@@ -24,9 +24,12 @@ def boucle_vlm_img(user_image_path, jsonFile, max_iter=10):
     itemsList = data if isinstance(data, list) else data.get('objets', [])
     data = itemsList
 
+    print("[boucle_vlm_img] selection du meilleur angle de camera...")
+    camera_params = select_best_camera_angle(data, user_image_path)
+
     for iter in range(max_iter):
 
-        scene_image_path, corrected_objects = validation_physique(data, fixed_ids=fixed_ids)
+        scene_image_path, corrected_objects = validation_physique(data, fixed_ids=fixed_ids, camera_params=camera_params)
 
         save_iteration_scene(scene_image_path, iter, run_dir, data)
 
@@ -59,7 +62,7 @@ def boucle_vlm_img(user_image_path, jsonFile, max_iter=10):
 
     else:
         print("Nombre maximum d'iterations atteint")
-        scene_image_path, corrected_objects = validation_physique(data, fixed_ids=fixed_ids)
+        scene_image_path, corrected_objects = validation_physique(data, fixed_ids=fixed_ids, camera_params=camera_params)
         return corrected_objects
 
 

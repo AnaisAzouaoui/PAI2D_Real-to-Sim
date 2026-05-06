@@ -308,9 +308,9 @@ def get_genesis_dimensions(items, orientations=None):
     scene = gs.Scene(show_viewer=False)
     entites = {}
     for item in items:
-        item['quat'] = [0, 0, 0, 1]
+        item['quat'] = item.get('default_quat', [0, 0, 0, 1])
         item['pos'] = [0, 0, 0]
-        ent = scene.add_entity(make_morph(item['path'], scale=item.get('scale', 1.0), pos=[0,0,0], fixed=True))
+        ent = scene.add_entity(make_morph(item['path'], scale=item.get('scale', 1.0), pos=[0,0,0], quat=item['quat'], fixed=True))
         entites[item['id']] = ent
     scene.build()
     items = processOrientations(items, orientations, entites)

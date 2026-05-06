@@ -104,7 +104,10 @@ def loadScale(item):
     scale_path = os.path.join(objets_folder, item['urdf'], 'scale.json')
     if os.path.exists(scale_path):
         with open(scale_path) as f:
-            item['scale'] = json.load(f).get('scale', 1.0)
+            data = json.load(f)
+        item['scale'] = data.get('scale', 1.0)
+        if 'default_quat' in data:
+            item['default_quat'] = data['default_quat']
     else:
         item['scale'] = 1.0
     return item

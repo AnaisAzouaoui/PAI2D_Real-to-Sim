@@ -4,7 +4,7 @@
     "urdf": "006_boite_carton",
     "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/006_boite_carton/google_16k/textured.obj",
     "dimensions": [
-      0.4000000059604645,
+      0.40000003576278687,
       0.30000001192092896,
       0.30000001192092896
     ],
@@ -18,10 +18,10 @@
     "pos": [
       -0.479,
       -0.0,
-      0.15100000596046448
+      0.1498904675245285
     ],
-    "highest_point": 0.30100001192092896,
-    "lowest_point": 0.001,
+    "highest_point": 0.3009999990463257,
+    "lowest_point": 0.0010000020265579224,
     "parent_id": null
   },
   {
@@ -29,9 +29,9 @@
     "urdf": "005_boite_de_conserve",
     "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/005_boite_de_conserve/google_16k/textured.obj",
     "dimensions": [
-      0.06791099905967712,
-      0.06770544499158859,
-      0.10182566940784454
+      0.06791096925735474,
+      0.067705437541008,
+      0.10182568430900574
     ],
     "scale": 1.0,
     "quat": [
@@ -42,11 +42,11 @@
     ],
     "pos": [
       -0.479,
-      -0.013898490456528384,
-      0.3019346803917433
+      0.0,
+      0.32736042952537536
     ],
-    "highest_point": 0.4038256813287735,
-    "lowest_point": 0.30200001192092896,
+    "highest_point": 0.4038256833553314,
+    "lowest_point": 0.3019999990463257,
     "parent_id": "boîte en plastique"
   },
   {
@@ -55,8 +55,8 @@
     "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/037_scissors/google_16k/textured.obj",
     "dimensions": [
       0.09810465574264526,
-      0.203750878572464,
-      0.01870022341609001
+      0.2037508636713028,
+      0.018700242042541504
     ],
     "scale": 1.0,
     "quat": [
@@ -66,12 +66,12 @@
       1
     ],
     "pos": [
-      -0.479,
-      -0.008124566674232482,
-      0.30390503038465977
+      -0.5899476900100707,
+      0.008124574124813079,
+      0.3088154921531677
     ],
-    "highest_point": 0.32070023533701897,
-    "lowest_point": 0.30200001192092896,
+    "highest_point": 0.3207002410888672,
+    "lowest_point": 0.3019999990463257,
     "parent_id": "boîte en plastique"
   },
   {
@@ -79,24 +79,30 @@
     "urdf": "004_tournevis",
     "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/004_tournevis/screwdriver.obj",
     "dimensions": [
-      0.03730233758687973,
       0.03750273585319519,
+      0.03730233758687973,
       0.2184332013130188
     ],
     "scale": 0.001,
+    "default_quat": [
+      0.707,
+      0,
+      0,
+      0.707
+    ],
     "quat": [
+      0.707,
       0,
       0,
-      0,
-      1
+      0.707
     ],
     "pos": [
-      -0.479,
-      0.09096268003586097,
-      0.46237913858890534
+      -0.3589999892711639,
+      0.09000000357627869,
+      0.3177094886302948
     ],
-    "highest_point": 0.302218445122242,
-    "lowest_point": 0.30200001192092896,
+    "highest_point": 0.3022184322476387,
+    "lowest_point": 0.3019999990463257,
     "parent_id": "boîte en plastique"
   }
 ]
