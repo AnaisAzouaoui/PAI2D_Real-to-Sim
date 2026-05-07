@@ -2,14 +2,14 @@
   "prompts": [
     {
       "id": "p01",
-      "prompt": "Une table avec un mug dessus et une banane à droite du mug.",
+      "prompt": "Un lave linge avec un mug dessus et une banane à droite du mug.",
       "expected_objects": [
-        {"id": "table", "urdf": "001_table"},
+        {"id": "lave_linge", "urdf": "11826_lave_linge"},
         {"id": "mug", "urdf": "025_mug"},
         {"id": "banane", "urdf": "011_banane"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "mug", "object": "table"},
+        {"type": "on", "subject": "mug", "object": "lave_linge"},
         {"type": "right_of", "subject": "banane", "object": "mug"}
       ],
       "expected_orientations": []
@@ -86,15 +86,15 @@
     },
     {
       "id": "p07",
-      "prompt": "Une table avec des ciseaux sous la table et un mug dessus.",
+      "prompt": "Un lave linge avec des ciseaux sous la table et un mug dessus.",
       "expected_objects": [
-        {"id": "table", "urdf": "001_table"},
+        {"id": "lave_linge", "urdf": "11826_lave_linge"},
         {"id": "mug", "urdf": "025_mug"},
         {"id": "scissors", "urdf": "037_scissors"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "mug", "object": "table"},
-        {"type": "under", "subject": "scissors", "object": "table"}
+        {"type": "on", "subject": "mug", "object": "lave_linge"},
+        {"type": "under", "subject": "scissors", "object": "lave_linge"}
       ],
       "expected_orientations": []
     },
@@ -138,13 +138,13 @@
     },
     {
       "id": "p11",
-      "prompt": "Une banane à 1 mètre derrière une table",
+      "prompt": "Une banane à 1 mètre derrière un lave linge",
       "expected_objects": [
         {"id": "banane", "urdf": "011_banane"},
-        {"id": "table", "urdf": "001_table"}
+        {"id": "lave_linge", "urdf": "11826_lave_linge"}
       ],
       "expected_relations": [
-        {"type": "behind", "subject": "banane", "object": "table", "distance": 1.0}
+        {"type": "behind", "subject": "banane", "object": "lave_linge", "distance": 1.0}
       ],
       "expected_orientations": []
     },
@@ -198,19 +198,19 @@
     },
     {
       "id": "p16",
-      "prompt": "Une table avec un ordinateur portable et des crackers dessus, un mug à 20 cm à droite de l'ordinateur portable, et une banane couchée devant le mug.",
+      "prompt": "Une lave linge avec un ordinateur portable et des crackers dessus, un mug à 20 cm à droite de l'ordinateur portable, et une banane couchée devant le mug.",
       "expected_objects": [
-        {"id": "table", "urdf": "001_table"},
+        {"id": "lave_linge", "urdf": "11826_lave_linge"},
         {"id": "ordinateur", "urdf": "10211_ordinateur_portable"},
         {"id": "mug", "urdf": "025_mug"},
         {"id": "banane",  "urdf": "011_banane"},
         {"id": "crackers", "urdf": "003_cracker_box"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "ordinateur", "object": "table"},
+        {"type": "on", "subject": "ordinateur", "object": "lave_linge"},
         {"type": "right_of",  "subject": "mug", "object": "ordinateur", "distance": 0.2},
         {"type": "in_front_of", "subject": "banane",  "object": "mug"},
-        {"type": "on", "subject": "crackers",  "object": "table"}
+        {"type": "on", "subject": "crackers",  "object": "lave_linge"}
 
       ],
       "expected_orientations": []
@@ -253,16 +253,16 @@
     },
     {
       "id": "p19",
-      "prompt": "A table with a laptop facing left on top , a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
+      "prompt": "A washing machine with a laptop facing left on top , a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
       "expected_objects": [
-        {"id": "table",  "urdf": "001_table"},
+        {"id": "washing_machine", "urdf": "11826_lave_linge"},
         {"id": "laptop", "urdf": "10211_ordinateur_portable"},
         {"id": "USB_drive", "urdf": "100073_cle_usb"},
         {"id": "mug", "urdf": "025_mug"},
         {"id": "banana", "urdf": "011_banane"}
       ],
       "expected_relations": [
-        {"type": "on",  "subject": "laptop", "object": "table"},
+        {"type": "on",  "subject": "laptop", "object": "dishwasher"},
         {"type": "behind", "subject": "cle", "object": "laptop", "distance": 0.1},
         {"type": "right_of", "subject": "mug","object": "laptop"},
         {"type": "in_front_of", "subject": "banana", "object": "mug"}
@@ -324,13 +324,13 @@
     },
     {
       "id": "p23",
-      "prompt": "A laptop turned to the right on a table.",
+      "prompt": "A laptop turned to the right on a washing machine.",
       "expected_objects": [
         {"id": "laptop", "urdf": "10211_ordinateur_portable"},
-        {"id": "table", "urdf": "001_table"}
+        {"id": "washing_machine", "urdf": "11826_lave_linge"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "ordinateur", "object": "table"}
+        {"type": "on", "subject": "ordinateur", "object": "washing_machine"}
       ],
       "expected_orientations": [
         {"id": "laptop", "turn": "turn_right"}
@@ -350,28 +350,28 @@
     },
     {
       "id": "p25",
-      "prompt": "Un mug sur une table et un autre mug à sa gauche.",
+      "prompt": "Un mug sur une lave linge et un autre mug à sa gauche.",
       "expected_objects": [
-        {"id": "table", "urdf": "001_table"},
+        {"id": "lave_linge", "urdf": "11826_lave_linge"},
         {"id": "mug", "urdf": "025_mug"},
         {"id": "mug_2", "urdf": "025_mug"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "mug", "object": "table"},
+        {"type": "on", "subject": "mug", "object": "lave_linge"},
         {"type": "left_of", "subject": "mug_2", "object": "mug"}
       ],
       "expected_orientations": []
     },
     {
       "id": "p26",
-      "prompt": "A banana on a table and a second banana 20 cm behind it.",
+      "prompt": "A banana on a washing machine and a second banana 20 cm behind it.",
       "expected_objects": [
-        {"id": "table",  "urdf": "001_table"},
+        {"id": "washing_machine", "urdf": "11826_lave_linge"},
         {"id": "banana", "urdf": "011_banane"},
         {"id": "banana_2", "urdf": "011_banane"}
       ],
       "expected_relations": [
-        {"type": "on",  "subject": "banana", "object": "table"},
+        {"type": "on",  "subject": "banana", "object": "washing_machine"},
         {"type": "behind", "subject": "banana_2", "object": "banana", "distance": 0.2}
       ],
       "expected_orientations": []
@@ -392,28 +392,28 @@
     },
     {
       "id": "p28",
-      "prompt": "Je veux une banane sur une table. Derrière cette banane, il y a un mug.",
+      "prompt": "Je veux une banane sur un lave linge. Derrière cette banane, il y a un mug.",
       "expected_objects": [
         {"id": "banane", "urdf": "011_banane"},
-        {"id": "table", "urdf": "001_table"},
+        {"id": "lave_linge", "urdf": "11826_lave_linge"},
         {"id": "mug", "urdf": "025_mug"}
       ],
       "expected_relations": [
-        {"type": "on",  "subject": "banane", "object": "table"},
+        {"type": "on",  "subject": "banane", "object": "lave_linge"},
         {"type": "behind", "subject": "mug",  "object": "banane"}
       ],
       "expected_orientations": []
     },
     {
       "id": "p29",
-      "prompt": "Place a laptop on a table. To the left of this laptop, put a USB drive.",
+      "prompt": "Place a laptop on a washing machine. To the left of this laptop, put a USB drive.",
       "expected_objects": [
         {"id": "laptop", "urdf": "10211_ordinateur_portable"},
-        {"id": "table", "urdf": "001_table"},
+        {"id": "washing_machine", "urdf": "11826_lave_linge"},
         {"id": "USB_drive", "urdf": "100073_cle_usb"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "laptop", "object": "table"},
+        {"type": "on", "subject": "laptop", "object": "washing_machine"},
         {"type": "left_of", "subject": "USB_drive",  "object": "laptop"}
       ],
       "expected_orientations": []

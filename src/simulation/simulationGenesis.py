@@ -91,7 +91,7 @@ def patch_urdf(urdf_path):
             except Exception:
                 mass, ixx, iyy, izz = 0.1, 0.001, 0.001, 0.001
         else:
-            mass, ixx, iyy, izz = 0.001, 1e-6, 1e-6, 1e-6
+            mass, ixx, iyy, izz = 0.5, 0.001, 0.001, 0.001
 
         old = link.find('inertial')
         if old is not None:
@@ -144,8 +144,9 @@ def create_scene(objetsList):
         show_viewer=True,
         viewer_options=viewer_options,
         rigid_options=gs.options.RigidOptions(
-            dt=0.001,
+            dt=0.01,
             integrator=gs.integrator.Euler,
+           #integrator=gs.integrator.implicitfast,
         ),
         vis_options=gs.options.VisOptions(
             show_world_frame=True,
