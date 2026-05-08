@@ -99,7 +99,7 @@ def object_rec(prompt):
 
     for label in raw_labels:
         label_id = str(label).lower().strip()
-        base_query = SUFFIX_RE.sub('', label_id)  # "banane_2" -> "banane"
+        base_query = SUFFIX_RE.sub('', label_id).replace('_', ' ')  # "banane_2" -> "banane", "lave_linge" -> "lave linge"
 
         query_vec  = get_embed_model().encode(base_query)
         scores     = cosinus(query_vec, cat_vecs)

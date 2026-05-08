@@ -1,0 +1,19 @@
+{
+  "pairs": [
+    {"user_label": "frigidaire",           "expected_urdf": "frigo"},
+    {"user_label": "réfrigérateur",        "expected_urdf": "frigo"},
+    {"user_label": "machine à laver",      "expected_urdf": "lave_linge"},
+    {"user_label": "sofa",                 "expected_urdf": "canape"},
+    {"user_label": "ordi",                 "expected_urdf": "ordinateur"},
+    {"user_label": "laptop",               "expected_urdf": "ordinateur"},
+    {"user_label": "télé",                 "expected_urdf": "television"},
+    {"user_label": "cafetière",            "expected_urdf": "machine_cafe"},
+    {"user_label": "tasse à café",         "expected_urdf": "tasse"},
+    {"user_label": "armoire à vêtements",  "expected_urdf": "armoire"}
+  ],
+  "threshold_boundary_pairs": [
+    {"user_label": "truc",   "should_match": false, "note": "trop generique, sous le seuil 0.55"},
+    {"user_label": "objet",  "should_match": false, "note": "hors catalogue"},
+    {"user_label": "mug",    "should_match": true,  "expected_urdf": "mug"}
+  ]
+}

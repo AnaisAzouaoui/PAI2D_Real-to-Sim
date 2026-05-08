@@ -6,9 +6,9 @@ import numpy as np
 # ---------------------------------------------------------------------
 # EMBEDDING MATCHER
 # ---------------------------------------------------------------------
-# Principe : on represente chaque objet du catalogue par un vecteur de 384 nombres
-# => paraphrase-multilingual-MiniLM-L12-v2 est une version plus petite de BERT(de google >:D, 768D)
-# et en gros il compresse a 384 dimensions d'ou le nombre
+# Principe : on represente chaque objet du catalogue par un vecteur de 768 nombres
+# => multilingual-e5-base (Microsoft) est entraine pour la recuperation cross-lingue
+# "four" (fr) et "oven" (en) donnent des vecteurs tres proches grace aux prefixes query/passage
 # Quand on recoit un label (du type "frigo"), on le convertit aussi en vecteur,
 # puis on mesure la proximite entre ce vecteur et chaque vecteur du catalogue.
 # L'objet avec le vecteur le plus proche gagne.
@@ -23,7 +23,7 @@ SEUIL = 0.55
 # cn  charge le modele qu'une seule fois et on le garde en memoire pour les appels suivants
 # histoire de ralentir nos 15 minutes de temps d'exec >:D
 embed_model = None  # modele SentenceTransformer
-catalogue_vecs = None  # matrice (N_objets, 384), un vecteur par objet du catalogue
+catalogue_vecs = None  # matrice (N_objets, 768), un vecteur par objet du catalogue
 catalogue_keys = None  # liste des cles URDF, dans le meme ordre que les lignes de _catalogue_vecs pour le lien
 
 def model():
@@ -35,7 +35,7 @@ def model():
         print("[embedding] chargement du modele...")
         # force CPU : le GPU Metal est sature par Ollama, et MiniLM 384D
         # tourne en quelques ms sur CPU (25 objets + 1 query par appel)
-        embed_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2', device='cpu')
+        embed_model = SentenceTransformer('intfloat/multilingual-e5-base', device='cpu')
     return embed_model
 
 
@@ -52,9 +52,8 @@ def catalogue_embeddings():
         # on encode les noms lisibles ("refrigerateur", "banane"...)
         names = [data[k]["name"].strip() for k in catalogue_keys]
 
-        # encode() prend une liste de textes et retourne une matrice (N, 384)
-        # chaque ligne est le vecteur du texte correspondant
-        catalogue_vecs = model().encode(names)
+        # e5 : prefixe "passage: " pour les documents du catalogue
+        catalogue_vecs = model().encode(["passage: " + n for n in names])
 
         print(f"[embedding] catalogue encode : {len(catalogue_keys)} objets")
     return catalogue_vecs, catalogue_keys
@@ -70,11 +69,11 @@ def cosinus_score(query_vec, catalogue_vecs):
     cosinus = 0.0 si les vecteurs sont perpendiculaires (pas de lien)
     cosinus = -1.0 si les vecteurs pointent en sens oppose"""
 
-    q = query_vec / np.linalg.norm(query_vec)  # (384,)
+    q = query_vec / np.linalg.norm(query_vec)  # (768,)
     # keepdims=True garde la dimension pour que la division broadcast correctement
-    c = catalogue_vecs / np.linalg.norm(catalogue_vecs, axis=1, keepdims=True)  # shape (N, 384)
+    c = catalogue_vecs / np.linalg.norm(catalogue_vecs, axis=1, keepdims=True)  # shape (N, 768)
 
-    # (N, 384) @ (384,) = (N,)
+    # (N, 768) @ (768,) = (N,)
     return c @ q # donne un score de similarite par objet du catalogue
 
 
@@ -146,7 +145,8 @@ def object_rec(prompt=None):
 
     for label in labels:
         # etape 2 : on encode le label en vecteur et on cherche le plus proche dans le catalogue
-        query_vec  = model().encode(label)
+        # e5 : prefixe "query: " pour les requetes
+        query_vec  = model().encode("query: " + label)
         scores = cosinus_score(query_vec, catalogue_vecs)
         indice_correspondant = int(np.argmax(scores))
         best_score = float(scores[indice_correspondant])

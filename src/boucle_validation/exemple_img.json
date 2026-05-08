@@ -24,8 +24,8 @@
         },
         {
             "id": "banane",
-            "urdf": "011_banane/google_16k/model.urdf",
-            "path": "/home/invite/PAI2D_Real-to-Sim/src/version2/../../objets/011_banane/google_16k/model.urdf",
+            "urdf": "banane/google_16k/model.urdf",
+            "path": "/home/invite/PAI2D_Real-to-Sim/src/version2/../../objets/banane/google_16k/model.urdf",
             "scale": 1,
             "pos": [
                 0.2,

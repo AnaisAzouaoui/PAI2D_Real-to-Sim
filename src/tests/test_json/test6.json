@@ -1,10 +1,10 @@
 {
   "objets": [
-    {"id": "robinet", "urdf": "154_robinet/mobility.urdf", "root": "true", "scale": 0.1},
+    {"id": "robinet", "urdf": "robinet/mobility.urdf", "root": "true", "scale": 0.1},
     {"id": "mug", "urdf": "ycb_mug.urdf", "root": "false"},
-    {"id": "banane", "urdf": "011_banane/google_16k/model.urdf", "root": "false"},
-    {"id": "ciseaux", "urdf": "037_ciseaux/google_16k/model.urdf", "root": "true"},
-    {"id": "perceuse", "urdf": "035_perceuse/google_16k/model.urdf", "root": "true"}
+    {"id": "banane", "urdf": "banane/google_16k/model.urdf", "root": "false"},
+    {"id": "ciseaux", "urdf": "ciseaux/google_16k/model.urdf", "root": "true"},
+    {"id": "perceuse", "urdf": "perceuse/google_16k/model.urdf", "root": "true"}
   ],
   "relations": [
     {"type": "right_of", "subject": "mug", "object": "robinet", "distance": 0.3},

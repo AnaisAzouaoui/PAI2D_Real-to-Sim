@@ -1,6 +1,6 @@
 {
   "objets": [
-    {"id": "banane", "urdf": "011_banane/google_16k/model.urdf", "root": "true"},
+    {"id": "banane", "urdf": "banane/google_16k/model.urdf", "root": "true"},
     {"id": "mug", "urdf": "ycb_mug.urdf", "root": "false"}
   ],
   "relations": [

@@ -1,6 +1,6 @@
 {
   "objets": [
-    {"id": "ciseaux", "urdf": "037_ciseaux/google_16k/model.urdf", "root": "false"},
+    {"id": "ciseaux", "urdf": "ciseaux/google_16k/model.urdf", "root": "false"},
     {"id": "mug", "urdf": "ycb_mug.urdf", "root": "true"}
   ],
   "relations": [

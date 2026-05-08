@@ -2,9 +2,9 @@
   "objets": [
     {"id": "table", "urdf": "table.urdf", "root": "true"},
     {"id": "mug", "urdf": "ycb_mug.urdf", "root": "false"},
-    {"id": "banane", "urdf": "011_banane/google_16k/model.urdf", "root": "false"},
-    {"id": "ciseaux", "urdf": "037_ciseaux/google_16k/model.urdf", "root": "false"},
-    {"id": "perceuse", "urdf": "035_perceuse/google_16k/model.urdf", "root": "false"}
+    {"id": "banane", "urdf": "banane/google_16k/model.urdf", "root": "false"},
+    {"id": "ciseaux", "urdf": "ciseaux/google_16k/model.urdf", "root": "false"},
+    {"id": "perceuse", "urdf": "perceuse/google_16k/model.urdf", "root": "false"}
   ],
   "relations": [
     {"type": "on", "subject": "mug", "object": "table"},

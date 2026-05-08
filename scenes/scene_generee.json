@@ -1,56 +1,64 @@
-[
-  {
-    "id": "10143_refrigerateur",
-    "urdf": "10143_refrigerateur",
-    "scale": 1.114,
-    "quat": [
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "pos": [
-      0.0,
-      0.0,
-      0.8493
-    ],
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/10143_refrigerateur/mobility.urdf",
-    "root": false
-  },
-  {
-    "id": "025_mug",
-    "urdf": "025_mug",
-    "scale": 1.0,
-    "quat": [
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "pos": [
-      0.0,
-      -0.2,
-      0.04065
-    ],
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/025_mug/google_16k/textured.obj",
-    "root": false
-  },
-  {
-    "id": "011_banane",
-    "urdf": "011_banane",
-    "scale": 1.0,
-    "quat": [
-      0.707,
-      0.0,
-      0.0,
-      0.707
-    ],
-    "pos": [
-      0.0,
-      -0.2,
-      0.12115
-    ],
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/011_banane/google_16k/textured.obj",
-    "root": false
-  }
-]
+{
+  "objets": [
+    {
+      "id": "meuble",
+      "urdf": "meuble_tiroirs",
+      "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/meuble_tiroirs/mobility.urdf",
+      "dimensions": [
+        0.4500851035118103,
+        0.5564690828323364,
+        0.7999244928359985
+      ],
+      "scale": 0.534,
+      "quat": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "pos": [
+        -2.6923668044209483,
+        0,
+        0.44080133533477783
+      ],
+      "highest_point": 0.42815967917442327,
+      "lowest_point": 0.0010000000000000009,
+      "parent_id": null,
+      "root": false
+    },
+    {
+      "id": "refrigerator",
+      "urdf": "refrigerateur",
+      "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/refrigerateur/mobility.urdf",
+      "dimensions": [
+        1.0272784233093262,
+        0.9567588567733765,
+        1.6998759508132935
+      ],
+      "scale": 1.114,
+      "quat": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "pos": [
+        0,
+        0,
+        0.8985843191146851
+      ],
+      "highest_point": 1.7008759508132933,
+      "lowest_point": 0.001,
+      "parent_id": null,
+      "root": false
+    }
+  ],
+  "relations": [
+    {
+      "type": "behind",
+      "subject": "meuble",
+      "object": "refrigerator",
+      "distance": 2.0
+    }
+  ]
+}

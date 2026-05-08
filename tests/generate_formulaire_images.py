@@ -76,11 +76,6 @@ def process_version(pid, prompt, version_label, run_fn):
     out_dir = os.path.join(IMAGES_BASE_DIR, pid, version_label)
     os.makedirs(out_dir, exist_ok=True)
 
-    existing = [f for f in os.listdir(out_dir) if f.endswith(".png")]
-    if len(existing) >= 4:
-        print(f"  [{pid}/{version_label}] deja 4 images presentes, skip")
-        return True
-
     print(f"  [{pid}/{version_label}] pipeline...")
     try:
         items = run_fn(prompt)

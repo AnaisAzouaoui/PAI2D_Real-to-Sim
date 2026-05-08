@@ -1,12 +1,8 @@
 import os
 import json
-import re
 import functools
 
 OBJETS_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "objets"))
-
-# regexes compilees une seule fois au chargement du module
-RE_STRIP = re.compile(r'[@#$%^&*\d]')
 
 
 #---------------------------------------------------------------------
@@ -63,7 +59,7 @@ def objets_list(dirpath=OBJETS_DIR):
     for entry in it:
       if entry.name.startswith(".") or not entry.is_dir():
         continue
-      nom_obj = RE_STRIP.sub('', entry.name.replace("_", " "))
+      nom_obj = entry.name.replace("_", " ")
       result[entry.name] = {
         "name": nom_obj,
         "path": entry.path,

@@ -83,16 +83,16 @@ def object_rec(prompt=None):
 
         EXAMPLES:
         Input: "un frigo et une machine à laver côte à côte"
-        Output: {{"objets_non_reconnus": [], "obj_reconnus": {{"frigo": "10143_refrigerateur", "machine à laver": "11826_lave_linge"}}}}
+        Output: {{"objets_non_reconnus": [], "obj_reconnus": {{"frigo": "refrigerateur", "machine à laver": "lave_linge"}}}}
 
         Input: "une chaise et un four"
-        Output: {{"objets_non_reconnus": ["chaise"], "obj_reconnus": {{"four": "7138_four"}}}}
+        Output: {{"objets_non_reconnus": ["chaise"], "obj_reconnus": {{"four": "four"}}}}
 
         Input: "deux toasters derriere une machine a laver"
-        Output: {{"objets_non_reconnus": [], "obj_reconnus": {{"toaster_1": "103477_toaster","toaster_2": "103477_toaster","machine à laver": "11826_lave_linge"}}}}
+        Output: {{"objets_non_reconnus": [], "obj_reconnus": {{"toaster_1": "toaster","toaster_2": "toaster","machine à laver": "lave_linge"}}}}
 
         Input: "une baignoire à côté d'un lave-linge"
-        Output: {{"objets_non_reconnus": ["baignoire"], "obj_reconnus": {{"lave-linge": "11826_lave_linge"}}}}
+        Output: {{"objets_non_reconnus": ["baignoire"], "obj_reconnus": {{"lave-linge": "lave_linge"}}}}
         IMPORTANT: if "baignoire" does NOT exist in the catalogue — it must go in objets_non_reconnus, NOT be mapped to an unrelated object.
 
         OUTPUT FORMAT — return ONLY this JSON:
@@ -162,16 +162,16 @@ def object_rec(prompt=None):
 """
 {
   "id": "lave_linge",
-  "urdf": "11826_lave_linge",
-  "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/11826_lave_linge/mobility.urdf",
+  "urdf": "lave_linge",
+  "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/lave_linge/mobility.urdf",
   "scale": 0.55,
   "quat": [0.7071,0.0,0.0,0.7071],
   "pos": [0.0,0.0,0.43]
 }
 {
   "id": "poubelle",
-  "urdf": "10357_poubelle",
-  "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/10357_poubelle/mobility.urdf",
+  "urdf": "poubelle",
+  "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/poubelle/mobility.urdf",
   "scale": 0.26,
   "quat": [0.7071,0.0,0.0,0.7071],
   "pos": [0.0,0.0,1.07]

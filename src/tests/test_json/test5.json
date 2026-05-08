@@ -1,8 +1,8 @@
 {
   "objets": [
-    {"id": "ciseaux", "urdf": "037_ciseaux/google_16k/model.urdf", "root": "true"},
+    {"id": "ciseaux", "urdf": "ciseaux/google_16k/model.urdf", "root": "true"},
     {"id": "mug", "urdf": "ycb_mug.urdf", "root": "false"},
-    {"id": "banane", "urdf": "011_banane/google_16k/model.urdf", "root": "false"}
+    {"id": "banane", "urdf": "banane/google_16k/model.urdf", "root": "false"}
   ],
   "relations": [
     {"type": "right_of", "subject": "mug", "object": "ciseaux", "distance": 0.2},

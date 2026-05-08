@@ -3,12 +3,12 @@
     {"id": "table", "urdf": "table.urdf", "root": "true"},
     {"id": "boite", "urdf": "boite_ouverte.urdf", "root": "false"},
     {"id": "mug", "urdf": "ycb_mug.urdf", "root": "false"},
-    {"id": "gelatine", "urdf": "009_boite_gelatine/google_16k/model.urdf", "root": "false"},
-    {"id": "viande", "urdf": "010_conserve_viande/google_16k/model.urdf", "root": "false"},
-    {"id": "banane", "urdf": "011_banane/google_16k/model.urdf", "root": "false"},
-    {"id": "ciseaux", "urdf": "037_ciseaux/google_16k/model.urdf", "root": "false"},
-    {"id": "perceuse", "urdf": "035_perceuse/google_16k/model.urdf", "root": "false"},
-    {"id": "porte", "urdf": "9032_porte_coulissante/mobility.urdf", "root": "false"}
+    {"id": "gelatine", "urdf": "boite_gelatine/google_16k/model.urdf", "root": "false"},
+    {"id": "viande", "urdf": "conserve_viande/google_16k/model.urdf", "root": "false"},
+    {"id": "banane", "urdf": "banane/google_16k/model.urdf", "root": "false"},
+    {"id": "ciseaux", "urdf": "ciseaux/google_16k/model.urdf", "root": "false"},
+    {"id": "perceuse", "urdf": "perceuse/google_16k/model.urdf", "root": "false"},
+    {"id": "porte", "urdf": "porte_coulissante/mobility.urdf", "root": "false"}
   ],
   "relations": [
     {"type": "on", "subject": "boite", "object": "table"},

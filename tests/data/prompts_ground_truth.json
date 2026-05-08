@@ -4,9 +4,9 @@
       "id": "p01",
       "prompt": "Un lave linge avec un mug dessus et une banane à droite du mug.",
       "expected_objects": [
-        {"id": "lave_linge", "urdf": "11826_lave_linge"},
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "banane", "urdf": "011_banane"}
+        {"id": "lave_linge", "urdf": "lave_linge"},
+        {"id": "mug", "urdf": "mug"},
+        {"id": "banane", "urdf": "banane"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "mug", "object": "lave_linge"},
@@ -18,9 +18,9 @@
       "id": "p02",
       "prompt": "A refrigerator with a toaster in front of it and a trashcan to its left.",
       "expected_objects": [
-        {"id": "refrigerator", "urdf": "10143_refrigerateur"},
-        {"id": "toaster", "urdf": "103477_toaster"},
-        {"id": "trashcan", "urdf": "10357_poubelle"}
+        {"id": "refrigerator", "urdf": "refrigerateur"},
+        {"id": "toaster", "urdf": "toaster"},
+        {"id": "trashcan", "urdf": "poubelle"}
       ],
       "expected_relations": [
         {"type": "left_of", "subject": "trashcan", "object": "refrigerator"},
@@ -32,9 +32,9 @@
       "id": "p03",
       "prompt": "Un ordinateur portable sur une table, avec une clé USB à gauche de celui ci",
       "expected_objects": [
-        {"id": "ordinateur", "urdf": "10211_ordinateur_portable"},
-        {"id": "table", "urdf": "001_table"},
-        {"id": "cle_usb", "urdf": "100073_cle_usb"}
+        {"id": "ordinateur", "urdf": "ordinateur_portable"},
+        {"id": "table", "urdf": "table"},
+        {"id": "cle_usb", "urdf": "cle_usb"}
       ],
       "expected_relations": [
         {"type": "on",  "subject": "ordinateur", "object": "table"},
@@ -46,9 +46,9 @@
       "id": "p04",
       "prompt": "A washing machine with a cardboard box on top of it and scissors underneath.",
       "expected_objects": [
-        {"id": "washing_machine", "urdf": "11826_lave_linge"},
-        {"id": "scissors", "urdf": "037_scissors"},
-        {"id": "carboard_box", "urdf": "100658_boite_carton_ouverte"}
+        {"id": "washing_machine", "urdf": "lave_linge"},
+        {"id": "scissors", "urdf": "scissors"},
+        {"id": "carboard_box", "urdf": "boite_carton_ouverte"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "carboard_box", "object": "lave_linge"},
@@ -60,9 +60,9 @@
       "id": "p05",
       "prompt": "Un four contre un porte coulissante, avec une poubelle devant.",
       "expected_objects": [
-        {"id": "four", "urdf": "7138_four"},
-        {"id": "porte_coulissante", "urdf": "9032_porte_coulissante"},
-        {"id": "poubelle", "urdf": "10357_poubelle"}
+        {"id": "four", "urdf": "four"},
+        {"id": "porte_coulissante", "urdf": "porte_coulissante"},
+        {"id": "poubelle", "urdf": "poubelle"}
       ],
       "expected_relations": [
         {"type": "in_front_of", "subject": "poubelle", "object": "four"},
@@ -74,9 +74,9 @@
       "id": "p06",
       "prompt": "A drawer-cabinet with a mug inside and a banana on the right of it.",
       "expected_objects": [
-        {"id": "commode", "urdf": "44817_meuble_tiroirs"},
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "banane", "urdf": "011_banane"}
+        {"id": "commode", "urdf": "meuble_tiroirs"},
+        {"id": "mug", "urdf": "mug"},
+        {"id": "banane", "urdf": "banane"}
       ],
       "expected_relations": [
         {"type": "inside", "subject": "mug",  "object": "commode"},
@@ -86,11 +86,11 @@
     },
     {
       "id": "p07",
-      "prompt": "Un lave linge avec des ciseaux sous la table et un mug dessus.",
+      "prompt": "Une table avec des ciseaux sous la table et un mug dessus.",
       "expected_objects": [
-        {"id": "lave_linge", "urdf": "11826_lave_linge"},
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "scissors", "urdf": "037_scissors"}
+        {"id": "lave_linge", "urdf": "lave_linge"},
+        {"id": "mug", "urdf": "mug"},
+        {"id": "scissors", "urdf": "scissors"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "mug", "object": "lave_linge"},
@@ -102,9 +102,9 @@
       "id": "p08",
       "prompt": "A dishwasher with a toaster on it and a banana behind it.",
       "expected_objects": [
-        {"id": "dishwasher", "urdf": "103369_lave_vaisselle"},
-        {"id": "banana", "urdf": "011_banane"},
-        {"id": "toaster", "urdf": "103477_toaster"}
+        {"id": "dishwasher", "urdf": "lave_vaisselle"},
+        {"id": "banana", "urdf": "banane"},
+        {"id": "toaster", "urdf": "toaster"}
       ],
       "expected_relations": [
         {"type": "behind", "subject": "banana", "object": "dishwasher"},
@@ -116,8 +116,8 @@
       "id": "p09",
       "prompt": "Une poubelle à 50 cm à gauche d'un réfrigérateur.",
       "expected_objects": [
-        {"id": "poubelle", "urdf": "10357_poubelle"},
-        {"id": "frigo", "urdf": "10143_refrigerateur"}
+        {"id": "poubelle", "urdf": "poubelle"},
+        {"id": "frigo", "urdf": "refrigerateur"}
       ],
       "expected_relations": [
         {"type": "left_of", "subject": "poubelle", "object": "frigo", "distance": 0.5}
@@ -128,8 +128,8 @@
       "id": "p10",
       "prompt": "A mug is 30 cm in front of a laptop.",
       "expected_objects": [
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "ordinateur", "urdf": "10211_ordinateur_portable"}
+        {"id": "mug", "urdf": "mug"},
+        {"id": "ordinateur", "urdf": "ordinateur_portable"}
       ],
       "expected_relations": [
         {"type": "in_front_of", "subject": "mug", "object": "ordinateur", "distance": 0.3}
@@ -140,8 +140,8 @@
       "id": "p11",
       "prompt": "Une banane à 1 mètre derrière un lave linge",
       "expected_objects": [
-        {"id": "banane", "urdf": "011_banane"},
-        {"id": "lave_linge", "urdf": "11826_lave_linge"}
+        {"id": "banane", "urdf": "banane"},
+        {"id": "lave_linge", "urdf": "lave_linge"}
       ],
       "expected_relations": [
         {"type": "behind", "subject": "banane", "object": "lave_linge", "distance": 1.0}
@@ -152,8 +152,8 @@
       "id": "p12",
       "prompt": "A toaster is 70 cm to the right of an oven.",
       "expected_objects": [
-        {"id": "oven", "urdf": "7138_four"},
-        {"id": "toaster", "urdf": "103477_toaster"}
+        {"id": "oven", "urdf": "four"},
+        {"id": "toaster", "urdf": "toaster"}
       ],
       "expected_relations": [
         {"type": "right_of", "subject": "toaster", "object": "oven", "distance": 0.7}
@@ -164,8 +164,8 @@
       "id": "p13",
       "prompt": "Une boîte carton à 40 cm devant un lave-linge.",
       "expected_objects": [
-        {"id": "carton", "urdf": "100658_boite_carton_ouverte"},
-        {"id": "lave_linge", "urdf": "11826_lave_linge"}
+        {"id": "carton", "urdf": "boite_carton_ouverte"},
+        {"id": "lave_linge", "urdf": "lave_linge"}
       ],
       "expected_relations": [
         {"type": "in_front_of", "subject": "carton", "object": "lave_linge", "distance": 0.4}
@@ -176,8 +176,8 @@
       "id": "p14",
       "prompt": "A USB drive is 20 cm to the left of a mug.",
       "expected_objects": [
-        {"id": "USB_drive", "urdf": "100073_cle_usb"},
-        {"id": "mug", "urdf": "025_mug"}
+        {"id": "USB_drive", "urdf": "cle_usb"},
+        {"id": "mug", "urdf": "mug"}
       ],
       "expected_relations": [
         {"type": "left_of", "subject": "USB_drive", "object": "mug", "distance": 0.2}
@@ -188,8 +188,8 @@
       "id": "p15",
       "prompt": "Un meuble à tiroirs à 2 mètres derrière un réfrigérateur.",
       "expected_objects": [
-        {"id": "meuble_tiroirs", "urdf": "44817_meuble_tiroirs"},
-        {"id": "frigo", "urdf": "10143_refrigerateur"}
+        {"id": "meuble_tiroirs", "urdf": "meuble_tiroirs"},
+        {"id": "frigo", "urdf": "refrigerateur"}
       ],
       "expected_relations": [
         {"type": "behind", "subject": "meuble_tiroirs", "object": "frigo", "distance": 2.0}
@@ -198,13 +198,13 @@
     },
     {
       "id": "p16",
-      "prompt": "Une lave linge avec un ordinateur portable et des crackers dessus, un mug à 20 cm à droite de l'ordinateur portable, et une banane couchée devant le mug.",
+      "prompt": "Une table avec un ordinateur portable et des crackers dessus, un mug à 20 cm à droite de l'ordinateur portable, et une banane couchée devant le mug.",
       "expected_objects": [
-        {"id": "lave_linge", "urdf": "11826_lave_linge"},
-        {"id": "ordinateur", "urdf": "10211_ordinateur_portable"},
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "banane",  "urdf": "011_banane"},
-        {"id": "crackers", "urdf": "003_cracker_box"}
+        {"id": "lave_linge", "urdf": "lave_linge"},
+        {"id": "ordinateur", "urdf": "ordinateur_portable"},
+        {"id": "mug", "urdf": "mug"},
+        {"id": "banane",  "urdf": "banane"},
+        {"id": "crackers", "urdf": "cracker_box"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "ordinateur", "object": "lave_linge"},
@@ -219,10 +219,10 @@
       "id": "p17",
       "prompt": "A refrigerator with a toaster on top, a trash can 50 cm to the left of it, and a cardboard box turned to the right in front of the trash can.",
       "expected_objects": [
-        {"id": "refrigerator", "urdf": "10143_refrigerateur"},
-        {"id": "toaster", "urdf": "103477_toaster"},
-        {"id": "trash_can", "urdf": "10357_poubelle"},
-        {"id": "carboard_box",   "urdf": "100658_boite_carton_ouverte"}
+        {"id": "refrigerator", "urdf": "refrigerateur"},
+        {"id": "toaster", "urdf": "toaster"},
+        {"id": "trash_can", "urdf": "poubelle"},
+        {"id": "carboard_box",   "urdf": "boite_carton_ouverte"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "toaster", "object": "refrigerator"},
@@ -235,12 +235,12 @@
     },
     {
       "id": "p18",
-      "prompt": "Un lave-linge avec une boîte carton ouverte dessus, des ciseaux à 30 cm devant le lave-linge, et une perceuse couchée à droite des ciseaux.",
+      "prompt": "Une table avec une boîte carton ouverte dessus, des ciseaux à 30 cm devant le lave-linge, et une perceuse couchée à droite des ciseaux.",
       "expected_objects": [
-        {"id": "lave_linge", "urdf": "11826_lave_linge"},
-        {"id": "carton", "urdf": "100658_boite_carton_ouverte"},
-        {"id": "perceuse", "urdf": "035_power_drill"},
-        {"id": "ciseaux", "urdf": "037_scissors"}
+        {"id": "lave_linge", "urdf": "lave_linge"},
+        {"id": "carton", "urdf": "boite_carton_ouverte"},
+        {"id": "perceuse", "urdf": "perceuse"},
+        {"id": "ciseaux", "urdf": "scissors"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "carton", "object": "lave_linge"},
@@ -253,13 +253,13 @@
     },
     {
       "id": "p19",
-      "prompt": "A washing machine with a laptop facing left on top , a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
+      "prompt": "A table with a laptop facing left on top , a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
       "expected_objects": [
-        {"id": "washing_machine", "urdf": "11826_lave_linge"},
-        {"id": "laptop", "urdf": "10211_ordinateur_portable"},
-        {"id": "USB_drive", "urdf": "100073_cle_usb"},
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "banana", "urdf": "011_banane"}
+        {"id": "washing_machine", "urdf": "lave_linge"},
+        {"id": "laptop", "urdf": "ordinateur_portable"},
+        {"id": "USB_drive", "urdf": "cle_usb"},
+        {"id": "mug", "urdf": "mug"},
+        {"id": "banana", "urdf": "banane"}
       ],
       "expected_relations": [
         {"type": "on",  "subject": "laptop", "object": "dishwasher"},
@@ -276,10 +276,10 @@
       "id": "p20",
       "prompt": "Un four avec un toaster dessus, une poubelle à 60 cm devant le four, et un mug de dos sur la poubelle.",
       "expected_objects": [
-        {"id": "four", "urdf": "7138_four"},
-         {"id": "toaster", "urdf": "103477_toaster"},
-        {"id": "poubelle", "urdf": "10357_poubelle"},
-        {"id": "mug", "urdf": "025_mug"}
+        {"id": "four", "urdf": "four"},
+         {"id": "toaster", "urdf": "toaster"},
+        {"id": "poubelle", "urdf": "poubelle"},
+        {"id": "mug", "urdf": "mug"}
       ],
       "expected_relations": [
         {"type": "in_front_of", "subject": "poubelle", "object": "four", "distance": 0.6},
@@ -294,10 +294,10 @@
       "id": "p21",
       "prompt": "A drawer-cabinet with a banana inside, a mug 25 cm to the right of the cabinet, and scissors lying in front of the mug facing right.",
       "expected_objects": [
-        {"id": "drawer_cabinet", "urdf": "44817_meuble_tiroirs"},
-        {"id": "banana","urdf": "011_banane"},
-        {"id": "mug","urdf": "025_mug"},
-        {"id": "scissors", "urdf": "037_scissors"}
+        {"id": "drawer_cabinet", "urdf": "meuble_tiroirs"},
+        {"id": "banana","urdf": "banane"},
+        {"id": "mug","urdf": "mug"},
+        {"id": "scissors", "urdf": "scissors"}
       ],
       "expected_relations": [
         {"type": "inside",   "subject": "banana", "object": "drawer_cabinet"},
@@ -312,8 +312,8 @@
       "id": "p22",
       "prompt": "Un mug à l'envers sur un lave linge.",
       "expected_objects": [
-        {"id": "mug",  "urdf": "025_mug"},
-        {"id": "lave_linge", "urdf": "11826_lave_linge"}
+        {"id": "mug",  "urdf": "mug"},
+        {"id": "lave_linge", "urdf": "lave_linge"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "mug", "object": "lave_linge"}
@@ -324,10 +324,10 @@
     },
     {
       "id": "p23",
-      "prompt": "A laptop turned to the right on a washing machine.",
+      "prompt": "A laptop turned to the right on a table.",
       "expected_objects": [
-        {"id": "laptop", "urdf": "10211_ordinateur_portable"},
-        {"id": "washing_machine", "urdf": "11826_lave_linge"}
+        {"id": "laptop", "urdf": "ordinateur_portable"},
+        {"id": "washing_machine", "urdf": "lave_linge"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "ordinateur", "object": "washing_machine"}
@@ -338,10 +338,10 @@
     },
     {
       "id": "p24",
-      "prompt": "Une perceuse couchée devant un réfrigérateur.",
+      "prompt": "Une perceuse devant un réfrigérateur.",
       "expected_objects": [
-        {"id": "refrigerateur", "urdf": "10143_refrigerateur"},
-        {"id": "perceuse", "urdf": "035_power_drill"}
+        {"id": "refrigerateur", "urdf": "refrigerateur"},
+        {"id": "perceuse", "urdf": "perceuse"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "perceuse", "object": "refrigerateur"}
@@ -352,9 +352,9 @@
       "id": "p25",
       "prompt": "Un mug sur une lave linge et un autre mug à sa gauche.",
       "expected_objects": [
-        {"id": "lave_linge", "urdf": "11826_lave_linge"},
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "mug_2", "urdf": "025_mug"}
+        {"id": "lave_linge", "urdf": "lave_linge"},
+        {"id": "mug", "urdf": "mug"},
+        {"id": "mug_2", "urdf": "mug"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "mug", "object": "lave_linge"},
@@ -366,9 +366,9 @@
       "id": "p26",
       "prompt": "A banana on a washing machine and a second banana 20 cm behind it.",
       "expected_objects": [
-        {"id": "washing_machine", "urdf": "11826_lave_linge"},
-        {"id": "banana", "urdf": "011_banane"},
-        {"id": "banana_2", "urdf": "011_banane"}
+        {"id": "washing_machine", "urdf": "lave_linge"},
+        {"id": "banana", "urdf": "banane"},
+        {"id": "banana_2", "urdf": "banane"}
       ],
       "expected_relations": [
         {"type": "on",  "subject": "banana", "object": "washing_machine"},
@@ -380,9 +380,9 @@
       "id": "p27",
       "prompt": "Une boîte carton devant un four et une autre boîte carton à droite de la première.",
       "expected_objects": [
-        {"id": "four", "urdf": "7138_four"},
-        {"id": "carton", "urdf": "100658_boite_carton_ouverte"},
-        {"id": "carton_2", "urdf": "100658_boite_carton_ouverte"}
+        {"id": "four", "urdf": "four"},
+        {"id": "carton", "urdf": "boite_carton_ouverte"},
+        {"id": "carton_2", "urdf": "boite_carton_ouverte"}
       ],
       "expected_relations": [
         {"type": "in_front_of","subject": "carton", "object": "four"},
@@ -394,9 +394,9 @@
       "id": "p28",
       "prompt": "Je veux une banane sur un lave linge. Derrière cette banane, il y a un mug.",
       "expected_objects": [
-        {"id": "banane", "urdf": "011_banane"},
-        {"id": "lave_linge", "urdf": "11826_lave_linge"},
-        {"id": "mug", "urdf": "025_mug"}
+        {"id": "banane", "urdf": "banane"},
+        {"id": "lave_linge", "urdf": "lave_linge"},
+        {"id": "mug", "urdf": "mug"}
       ],
       "expected_relations": [
         {"type": "on",  "subject": "banane", "object": "lave_linge"},
@@ -408,9 +408,9 @@
       "id": "p29",
       "prompt": "Place a laptop on a washing machine. To the left of this laptop, put a USB drive.",
       "expected_objects": [
-        {"id": "laptop", "urdf": "10211_ordinateur_portable"},
-        {"id": "washing_machine", "urdf": "11826_lave_linge"},
-        {"id": "USB_drive", "urdf": "100073_cle_usb"}
+        {"id": "laptop", "urdf": "ordinateur_portable"},
+        {"id": "washing_machine", "urdf": "lave_linge"},
+        {"id": "USB_drive", "urdf": "cle_usb"}
       ],
       "expected_relations": [
         {"type": "on", "subject": "laptop", "object": "washing_machine"},
@@ -422,9 +422,9 @@
       "id": "p30",
       "prompt": "Un mug est devant un réfrigérateur. Sur ce mug, pose une banane",
       "expected_objects": [
-        {"id": "mug", "urdf": "025_mug"},
-        {"id": "refrigerateur", "urdf": "10143_refrigerateur"},
-        {"id": "banane", "urdf": "011_banane"}
+        {"id": "mug", "urdf": "mug"},
+        {"id": "refrigerateur", "urdf": "refrigerateur"},
+        {"id": "banane", "urdf": "banane"}
       ],
       "expected_relations": [
         {"type": "in_front_of", "subject": "mug",  "object": "refrigerateur"},

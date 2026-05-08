@@ -1,14 +1,14 @@
 [
   {
     "id": "poubelle",
-    "urdf": "10357_poubelle",
+    "urdf": "poubelle",
     "dimensions": [
       1.1516,
       1.7345,
       1.1516
     ],
     "root": false,
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/10357_poubelle/mobility.urdf",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/poubelle/mobility.urdf",
     "pos": [
       0.09023035400685311,
       -0.007693927585227939,
@@ -24,14 +24,14 @@
   },
   {
     "id": "refrigerateur",
-    "urdf": "10143_refrigerateur",
+    "urdf": "refrigerateur",
     "dimensions": [
       0.8589,
       1.5259,
       0.9222
     ],
     "root": true,
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/10143_refrigerateur/mobility.urdf",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/refrigerateur/mobility.urdf",
     "pos": [
       0,
       0,
@@ -47,14 +47,14 @@
   },
   {
     "id": "machine à laver",
-    "urdf": "11826_lave_linge",
+    "urdf": "lave_linge",
     "dimensions": [
       1.1075,
       1.5321,
       0.9968
     ],
     "root": false,
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/11826_lave_linge/mobility.urdf",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/lave_linge/mobility.urdf",
     "pos": [
       -1.4167517216468484,
       0,
@@ -70,14 +70,14 @@
   },
   {
     "id": "toaster",
-    "urdf": "103477_toaster",
+    "urdf": "toaster",
     "dimensions": [
       1.0363,
       1.0794,
       1.5112
     ],
     "root": false,
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/103477_toaster/mobility.urdf",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/../objets/toaster/mobility.urdf",
     "pos": [
       -1.445773973205416,
       0.1904001915292442,

@@ -1,7 +1,7 @@
 {
   "objets": [
     {"id": "mug", "urdf": "ycb_mug.urdf", "root": "true"},
-    {"id": "robinet", "urdf": "154_robinet/mobility.urdf", "root": "false", "scale": 0.1}
+    {"id": "robinet", "urdf": "robinet/mobility.urdf", "root": "false", "scale": 0.1}
   ],
   "relations": [
     {"type": "against", "subject": "robinet", "object": "mug", "distance": 0.8}
