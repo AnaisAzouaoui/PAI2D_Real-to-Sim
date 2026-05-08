@@ -235,7 +235,7 @@
     },
     {
       "id": "p18",
-      "prompt": "Une table avec une boîte carton ouverte dessus, des ciseaux à 30 cm devant le lave-linge, et une perceuse couchée à droite des ciseaux.",
+      "prompt": "Un lave linge avec une boîte carton ouverte dessus, des ciseaux à 30 cm devant le lave-linge, et une perceuse couchée à droite des ciseaux.",
       "expected_objects": [
         {"id": "lave_linge", "urdf": "lave_linge"},
         {"id": "carton", "urdf": "boite_carton_ouverte"},

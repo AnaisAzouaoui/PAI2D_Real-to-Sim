@@ -1,64 +1,106 @@
-{
-  "objets": [
-    {
-      "id": "meuble",
-      "urdf": "meuble_tiroirs",
-      "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/meuble_tiroirs/mobility.urdf",
-      "dimensions": [
-        0.4500851035118103,
-        0.5564690828323364,
-        0.7999244928359985
-      ],
-      "scale": 0.534,
-      "quat": [
-        0,
-        0,
-        0,
-        1
-      ],
-      "pos": [
-        -2.6923668044209483,
-        0,
-        0.44080133533477783
-      ],
-      "highest_point": 0.42815967917442327,
-      "lowest_point": 0.0010000000000000009,
-      "parent_id": null,
-      "root": false
-    },
-    {
-      "id": "refrigerator",
-      "urdf": "refrigerateur",
-      "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/refrigerateur/mobility.urdf",
-      "dimensions": [
-        1.0272784233093262,
-        0.9567588567733765,
-        1.6998759508132935
-      ],
-      "scale": 1.114,
-      "quat": [
-        0,
-        0,
-        0,
-        1
-      ],
-      "pos": [
-        0,
-        0,
-        0.8985843191146851
-      ],
-      "highest_point": 1.7008759508132933,
-      "lowest_point": 0.001,
-      "parent_id": null,
-      "root": false
-    }
-  ],
-  "relations": [
-    {
-      "type": "behind",
-      "subject": "meuble",
-      "object": "refrigerator",
-      "distance": 2.0
-    }
-  ]
-}
+[
+  {
+    "id": "lave_linge",
+    "urdf": "lave_linge",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/lave_linge/mobility.urdf",
+    "dimensions": [
+      0.553023099899292,
+      0.6144617199897766,
+      0.8500052094459534
+    ],
+    "scale": 0.5548,
+    "quat": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "pos": [
+      -0.011386497635022724,
+      0.021753042936325073,
+      0.7834142853021622
+    ],
+    "highest_point": 0.8237960751533508,
+    "lowest_point": 0.3522131849527359,
+    "parent_id": "boite_carton",
+    "root": false
+  },
+  {
+    "id": "boite_carton",
+    "urdf": "boite_carton",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/boite_carton/mobility.urdf",
+    "dimensions": [
+      0.8150079846382141,
+      0.5709556341171265,
+      0.3502131700515747
+    ],
+    "scale": 0.4717,
+    "quat": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "pos": [
+      0,
+      0,
+      0.15143361485004425
+    ],
+    "highest_point": 0.3512131849527359,
+    "lowest_point": 0.001,
+    "parent_id": null,
+    "root": false
+  },
+  {
+    "id": "ciseaux",
+    "urdf": "scissors",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/scissors/google_16k/textured.obj",
+    "dimensions": [
+      0.09810465574264526,
+      0.203750878572464,
+      0.01870022341609001
+    ],
+    "scale": 1.0,
+    "quat": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "pos": [
+      0.3584516644477844,
+      0.021753042936325073,
+      0.3541182034164667
+    ],
+    "highest_point": 0.3709134083688259,
+    "lowest_point": 0.3522131849527359,
+    "parent_id": "boite_carton",
+    "root": false
+  },
+  {
+    "id": "perceuse",
+    "urdf": "perceuse",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/perceuse/google_16k/textured.obj",
+    "dimensions": [
+      0.18759435415267944,
+      0.19046330451965332,
+      0.06026871129870415
+    ],
+    "scale": 1.0,
+    "quat": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "pos": [
+      0.31370681524276733,
+      0.19024616479873657,
+      0.3569502589739859
+    ],
+    "highest_point": 0.41248189625144005,
+    "lowest_point": 0.3522131849527359,
+    "parent_id": "boite_carton",
+    "root": false
+  }
+]
