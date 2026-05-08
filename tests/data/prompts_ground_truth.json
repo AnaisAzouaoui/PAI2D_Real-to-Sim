@@ -198,7 +198,7 @@
     },
     {
       "id": "p16",
-      "prompt": "Une table avec un ordinateur portable et des crackers dessus, un mug à 20 cm à droite de l'ordinateur portable, et une banane couchée devant le mug.",
+      "prompt": "Une lave linge avec un ordinateur portable et des crackers dessus, un mug à 20 cm à droite du lave linge, et une banane couchée devant le mug.",
       "expected_objects": [
         {"id": "lave_linge", "urdf": "lave_linge"},
         {"id": "ordinateur", "urdf": "ordinateur_portable"},
@@ -253,7 +253,7 @@
     },
     {
       "id": "p19",
-      "prompt": "A table with a laptop facing left on top , a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
+      "prompt": "A washing machine with a laptop facing left on top , a USB drive 10 cm behind the laptop, a mug upside down on the right of the laptop, and a banana in front of the mug.",
       "expected_objects": [
         {"id": "washing_machine", "urdf": "lave_linge"},
         {"id": "laptop", "urdf": "ordinateur_portable"},
@@ -324,7 +324,7 @@
     },
     {
       "id": "p23",
-      "prompt": "A laptop turned to the right on a table.",
+      "prompt": "A laptop turned to the right on a washing machine.",
       "expected_objects": [
         {"id": "laptop", "urdf": "ordinateur_portable"},
         {"id": "washing_machine", "urdf": "lave_linge"}
