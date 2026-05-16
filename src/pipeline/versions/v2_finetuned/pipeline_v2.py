@@ -1,8 +1,8 @@
 """
-Pipeline V1.1.1
+Pipeline V2
 Un seul appel Ollama vers phi3-scene (finetuned) pour extraire labels, root, relations, orientations.
-Matching URDF via embeddings (meme logique que V1.1).
-Scales via phi3:mini (meme logique que V1.1).
+Matching URDF via embeddings (meme logique que V1.1.1).
+Scales via phi3:mini (meme logique que V1.1.1).
 """
 import re
 import sys
@@ -10,7 +10,7 @@ import os
 import numpy as np
 
 from pipeline.utils.catalogue import objets_list
-from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import fix_ids_in_result
+from pipeline.versions.v1_1_llm_and_primitives.placement.placement_v1_relations import fix_ids_in_result
 from pipeline.itemSpec import loadScale
 from pipeline.utils.helpers import fuzzy_match
 from pipeline.sceneBuilding import buildScene
@@ -34,7 +34,7 @@ catalogue_keys = None
 def get_embed_model():
     global embed_model
     if embed_model is None:
-        print("[v1_1_1] chargement modele embedding...")
+        print("[v2] chargement modele embedding...")
         from sentence_transformers import SentenceTransformer
         embed_model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2', device='cpu')
     return embed_model
@@ -47,7 +47,7 @@ def get_catalogue():
         catalogue_keys = list(data.keys())
         names = [data[k]["name"].strip() for k in catalogue_keys]
         catalogue_vecs = get_embed_model().encode(names)
-        print(f"[v1_1_1] catalogue encode : {len(catalogue_keys)} objets")
+        print(f"[v2] catalogue encode : {len(catalogue_keys)} objets")
     return catalogue_vecs, catalogue_keys
 
 
@@ -66,9 +66,9 @@ phi3_cache = {}
 def phi3_result(prompt):
     """Appel phi3-scene unique par prompt (resultat mis en cache)"""
     if prompt not in phi3_cache:
-        print("[v1_1_1] appel phi3-scene...")
+        print("[v2] appel phi3-scene...")
         phi3_cache[prompt] = _phi3_extract(prompt)
-        print(f"[v1_1_1] phi3-scene retourne : {phi3_cache[prompt]}")
+        print(f"[v2] phi3-scene retourne : {phi3_cache[prompt]}")
     return phi3_cache[prompt]
 
 
@@ -107,12 +107,12 @@ def object_rec(prompt):
         best_score = float(scores[best_idx])
 
         if best_score < SEUIL:
-            print(f"[v1_1_1] '{label_id}' -> score {best_score:.2f} sous le seuil -> non reconnu")
+            print(f"[v2] '{label_id}' -> score {best_score:.2f} sous le seuil -> non reconnu")
             non_reconnus.append(label_id)
             continue
 
         urdf = cat_keys[best_idx]
-        print(f"[v1_1_1] '{label_id}' -> '{urdf}' (score {best_score:.2f})")
+        print(f"[v2] '{label_id}' -> '{urdf}' (score {best_score:.2f})")
 
         obj_reconnus[label_id] = {
             "urdf":       urdf,
@@ -120,8 +120,8 @@ def object_rec(prompt):
             "dimensions": objects_data[urdf]["dimensions"],
         }
 
-    print("[v1_1_1] Reconnus:", list(obj_reconnus.keys()))
-    print("[v1_1_1] Non reconnus:", non_reconnus)
+    print("[v2] Reconnus:", list(obj_reconnus.keys()))
+    print("[v2] Non reconnus:", non_reconnus)
     return obj_reconnus, non_reconnus
 
 
@@ -141,10 +141,10 @@ def fix_orientations(orientations, valid_ids):
         turn   = o.get("turn", "")
         matched = fuzzy_match(id_val, valid_ids)
         if not matched:
-            print(f"[v1_1_1] orientation ignoree (ID inconnu) : {o}")
+            print(f"[v2] orientation ignoree (ID inconnu) : {o}")
             continue
         if turn not in VALID_TURNS:
-            print(f"[v1_1_1] orientation ignoree (turn invalide '{turn}') : {o}")
+            print(f"[v2] orientation ignoree (turn invalide '{turn}') : {o}")
             continue
         fixed.append({"id": matched, "turn": turn})
     return fixed
@@ -178,7 +178,7 @@ def place_scene(prompt, obj_reconnus, build_scene_fn=None):
             "scale": loadScale({"urdf": info["urdf"]})["scale"],
         })
 
-    print("[v1_1_1] items:", items, "| relations:", relations, "| orientations:", orientations)
+    print("[v2] items:", items, "| relations:", relations, "| orientations:", orientations)
     fn = build_scene_fn if build_scene_fn is not None else buildScene
     items = fn(items, relations, orientations)
     for item in items:
@@ -191,6 +191,6 @@ def place_scene(prompt, obj_reconnus, build_scene_fn=None):
 
 
 def modify_scene(prompt, current_scene_json, obj_reconnus, build_scene_fn=None):
-    """Meme interface que v1.1. Vide le cache pour forcer un nouvel appel phi3-scene"""
+    """Meme interface que v1.1.1. Vide le cache pour forcer un nouvel appel phi3-scene"""
     phi3_cache.pop(prompt, None)
     return place_scene(prompt, obj_reconnus, build_scene_fn=build_scene_fn)

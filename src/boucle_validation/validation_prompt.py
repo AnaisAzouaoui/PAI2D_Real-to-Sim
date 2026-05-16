@@ -13,7 +13,7 @@ import json
 
 
 
-def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=5):
+def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=10):
 
     run_dir = create_run_dir()
     history = []
@@ -48,7 +48,8 @@ def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=5):
 
         corrections = res.get('corrections', [])
         all_ids = {item['id'] for item in data}
-        fixed_ids = all_ids  # tout fixer 
+        corrected_ids = {c['subject'] for c in corrections if c.get('subject')}
+        fixed_ids = all_ids - corrected_ids  # on ne fixe que les objets deja bien places
         print(f"objets fixes pour iter suivante: {fixed_ids}")
 
     else:

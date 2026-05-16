@@ -1,8 +1,8 @@
 """
 Test de reconnaissance des relations et orientations spatiales.
-V1  : LLM (object_relations + orientation)
-V1.1.1 : phi3-scene
-V2  : coherence spatiale uniquement (pas de relations explicites)
+V1.1 : LLM (object_relations + orientation)
+V2   : phi3-scene
+V1   : coherence spatiale uniquement (pas de relations explicites)
 Aucun appel Genesis.
 """
 import sys
@@ -16,12 +16,12 @@ for p in [SRC, ROOT]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import object_relations
-from pipeline.versions.v1_llm_prim.placement.placement_v1_distances_orientations import orientation as extract_orientation_v1
-from pipeline.versions.v1_llm_prim.pipeline_v1_1_1 import phi3_result, phi3_cache, object_rec as phi3_object_rec
-from pipeline.versions.v2_llm_only.pipeline_v2_llm import object_dim_quat
-from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_1_embedding import object_rec as rec_v1_1
-from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_llm import object_rec as rec_v1
+from pipeline.versions.v1_1_llm_and_primitives.placement.placement_v1_relations import object_relations
+from pipeline.versions.v1_1_llm_and_primitives.placement.placement_v1_distances_orientations import orientation as extract_orientation_v1_1
+from pipeline.versions.v2_finetuned.pipeline_v2 import phi3_result, phi3_cache, object_rec as phi3_object_rec
+from pipeline.versions.v1_llm_only.pipeline_v1_llm import object_dim_quat
+from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1_1 import object_rec as rec_v1_1_1
+from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1 import object_rec as rec_v1_1
 from metrics import (
     compute_relation_f1, compute_orientation_f1,
     compute_quat_validity, compute_position_plausibility, compute_relation_order_accuracy,
@@ -138,17 +138,17 @@ def to_urdf_ori(orientations, label_to_urdf):
     return result
 
 
-def extract_v1(prompt, entry):
-    obj_reconnus, _ = rec_v1(prompt)
+def extract_v1_1(prompt, entry):
+    obj_reconnus, _ = rec_v1_1(prompt)
     rel_result = object_relations(prompt, obj_reconnus)
-    ori_result = extract_orientation_v1(prompt, obj_reconnus)
+    ori_result = extract_orientation_v1_1(prompt, obj_reconnus)
     label_to_urdf = {label: info["urdf"] for label, info in obj_reconnus.items()}
     predicted_rel = to_urdf_rel(rel_result.get("relations", []), label_to_urdf)
     predicted_ori = to_urdf_ori(ori_result, label_to_urdf)
     return predicted_rel, predicted_ori
 
 
-def extract_v1_1_1(prompt, entry):
+def extract_v2(prompt, entry):
     phi3_cache.pop(prompt, None)
     phi3 = phi3_result(prompt)
     obj_phi3, _ = phi3_object_rec(prompt)
@@ -158,10 +158,10 @@ def extract_v1_1_1(prompt, entry):
     return predicted_rel, predicted_ori
 
 
-def run_v2_spatial(entries, n_runs):
-    """V2 produit des positions directement — on teste la coherence spatiale, pas les relations."""
+def run_v1_spatial(entries, n_runs):
+    """V1 produit des positions directement — on teste la coherence spatiale, pas les relations."""
     results = []
-    print(f"\n  V2 — coherence spatiale (positions LLM)  |  {n_runs} runs/prompt")
+    print(f"\n  V1 — coherence spatiale (positions LLM)  |  {n_runs} runs/prompt")
     print(f"  {'ID':<6} {'Quat':>6} {'Z ok':>6} {'Order':>7} {'Time':>6}")
     print(f"  {'-'*38}")
 
@@ -173,7 +173,7 @@ def run_v2_spatial(entries, n_runs):
         for _ in range(n_runs):
             t0 = time.time()
             try:
-                obj_reconnus, _ = rec_v1_1(prompt)
+                obj_reconnus, _ = rec_v1_1_1(prompt)
                 scene     = object_dim_quat(prompt, obj_reconnus)
                 quat_res  = compute_quat_validity(scene)
                 pos_res   = compute_position_plausibility(scene)
@@ -215,7 +215,7 @@ def global_mean(results, key):
 
 def run_all(n_runs=5, save_json=True, only_versions=None, tag=None):
     entries = load_prompts()
-    all_v = only_versions or ["V1", "V1.1.1", "V2"]
+    all_v = only_versions or ["V1.1", "V2", "V1"]
 
     print(f"\n{'='*60}")
     print(f"  TEST PLACEMENT  |  {n_runs} runs/prompt")
@@ -223,22 +223,22 @@ def run_all(n_runs=5, save_json=True, only_versions=None, tag=None):
 
     new_results = {}
 
-    if "V1" in all_v:
-        name = f"V1 ({tag})" if tag else "V1 (gpt-4o)"
-        res = run_version(name, entries, n_runs, extract_v1)
+    if "V1.1" in all_v:
+        name = f"V1.1 ({tag})" if tag else "V1.1 (gpt-4o)"
+        res = run_version(name, entries, n_runs, extract_v1_1)
         new_results[name] = res
         print(f"\n  Globaux {name} : rel_F1={global_mean(res, 'rel_f1_mean')}  "
               f"ori_F1={global_mean(res, 'ori_f1_mean')}")
 
-    if "V1.1.1" in all_v:
-        res = run_version("V1.1.1 (phi3-scene)", entries, n_runs, extract_v1_1_1)
-        new_results["V1.1.1 (phi3-scene)"] = res
-        print(f"\n  Globaux V1.1.1 (phi3-scene) : rel_F1={global_mean(res, 'rel_f1_mean')}  "
+    if "V2" in all_v:
+        res = run_version("V2 (phi3-scene)", entries, n_runs, extract_v2)
+        new_results["V2 (phi3-scene)"] = res
+        print(f"\n  Globaux V2 (phi3-scene) : rel_F1={global_mean(res, 'rel_f1_mean')}  "
               f"ori_F1={global_mean(res, 'ori_f1_mean')}")
 
-    if "V2" in all_v:
-        name = f"V2 ({tag})" if tag else "V2 (gpt-4o)"
-        res = run_v2_spatial(entries, n_runs)
+    if "V1" in all_v:
+        name = f"V1 ({tag})" if tag else "V1 (gpt-4o)"
+        res = run_v1_spatial(entries, n_runs)
         new_results[name] = res
         print(f"\n  Globaux {name} : quat={global_mean(res, 'quat_valid_rate'):.0%}  "
               f"z_ok={global_mean(res, 'pos_plausible_rate'):.0%}  "
@@ -265,7 +265,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--no-save", action="store_true")
-    parser.add_argument("--versions", nargs="+", choices=["V1", "V1.1.1", "V2"],
+    parser.add_argument("--versions", nargs="+", choices=["V1.1", "V2", "V1"],
                         help="Versions a tester (defaut: toutes)")
     parser.add_argument("--tag", type=str, default=None,
                         help="Suffixe modele ex: gpt-4o ou llama3.1")

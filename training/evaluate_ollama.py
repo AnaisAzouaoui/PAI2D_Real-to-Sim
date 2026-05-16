@@ -140,11 +140,11 @@ def main():
     print(f"{'='*45}")
 
     metrics = [
-        ("JSON parse OK",           avg(res["parse_ok"])),
-        ("F1 objets",               avg(res["f1_obj"])),
-        ("Root accuracy",           avg(res["root_acc"])),
-        ("Relation F1",             avg(res["rel_f1"])),
-        ("Relation exact match",    avg(res["rel_em"])),
+        ("JSON parse OK",  avg(res["parse_ok"])),
+        ("F1 objets", avg(res["f1_obj"])),
+        ("Root accuracy", avg(res["root_acc"])),
+        ("Relation F1", avg(res["rel_f1"])),
+        ("Relation exact match",  avg(res["rel_em"])),
         ("Orientation exact match", avg(res["ori_em"])),
     ]
 
@@ -152,10 +152,10 @@ def main():
         bar = ""
         if val is not None:
             filled = int(val * 20)
-            bar = f"  [{'#'*filled}{'.'*(20-filled)}]"
-            print(f"  {label:<28} {val:.1%}{bar}")
+            bar = f" [{'#'*filled}{'.'*(20-filled)}]"
+            print(f" {label:<28} {val:.1%}{bar}")
         else:
-            print(f"  {label:<28} N/A")
+            print(f" {label:<28} N/A")
 
     if res["held_f1"]:
         val = avg(res["held_f1"])

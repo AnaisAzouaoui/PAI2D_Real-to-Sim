@@ -2,9 +2,9 @@
 Benchmark du pipeline complet (de la reconnaissance jusqu'a la generation de scene).
 Mesure uniquement les temps d'execution, 5 runs par prompt par version.
 
-V1     : object_rec (LLM) + object_relations + orientation + buildScene (Genesis)
-V1.1.1 : phi3-scene + object_rec (embedding) + place_scene (Genesis)
-V2     : object_rec (embedding) + object_dim_quat (LLM, pas de Genesis)
+V1.1: object_rec (LLM) + object_relations + orientation + buildScene (Genesis)
+V2 : phi3-scene + object_rec (embedding) + place_scene (Genesis)
+V1 : object_rec (embedding) + object_dim_quat (LLM, pas de Genesis)
 """
 import sys
 import os
@@ -17,16 +17,16 @@ for p in [SRC, ROOT]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_llm import object_rec as rec_v1
-from pipeline.versions.v1_llm_prim.placement.placement_v1_relations import object_relations
-from pipeline.versions.v1_llm_prim.placement.placement_v1_distances_orientations import orientation as extract_orientation_v1
+from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1 import object_rec as rec_v1_1
+from pipeline.versions.v1_1_llm_and_primitives.placement.placement_v1_relations import object_relations
+from pipeline.versions.v1_1_llm_and_primitives.placement.placement_v1_distances_orientations import orientation as extract_orientation_v1_1
 from pipeline.sceneBuilding import buildScene
 from pipeline.itemSpec import getFilePath
 
-from pipeline.versions.v1_llm_prim.pipeline_v1_1_1 import object_rec as rec_v1_1_1, place_scene, phi3_cache
+from pipeline.versions.v2_finetuned.pipeline_v2 import object_rec as rec_v2, place_scene, phi3_cache
 
-from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_1_embedding import object_rec as rec_v1_1
-from pipeline.versions.v2_llm_only.pipeline_v2_llm import object_dim_quat
+from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1_1 import object_rec as rec_v1_1_1
+from pipeline.versions.v1_llm_only.pipeline_v1_llm import object_dim_quat
 
 DATA_PATH    = os.path.join(ROOT, "tests", "data", "prompts_ground_truth.json")
 RESULTS_DIR  = os.path.join(ROOT, "tests", "results")
@@ -38,12 +38,12 @@ def load_prompts():
         return json.load(f)["prompts"]
 
 
-def run_v1_full(prompt):
-    obj_reconnus, _ = rec_v1(prompt)
+def run_v1_1_full(prompt):
+    obj_reconnus, _ = rec_v1_1(prompt)
     if not obj_reconnus:
         return
-    relations  = object_relations(prompt, obj_reconnus).get("relations", [])
-    orientations = extract_orientation_v1(prompt, obj_reconnus)
+    relations    = object_relations(prompt, obj_reconnus).get("relations", [])
+    orientations = extract_orientation_v1_1(prompt, obj_reconnus)
     items = [
         {"id": k, "urdf": v["urdf"], "path": v["path"],
          "dimensions": v["dimensions"], "scale": 1.0}
@@ -52,23 +52,23 @@ def run_v1_full(prompt):
     buildScene(items, relations, orientations)
 
 
-def run_v1_1_1_full(prompt):
+def run_v2_full(prompt):
     phi3_cache.pop(prompt, None)
-    obj_reconnus, _ = rec_v1_1_1(prompt)
+    obj_reconnus, _ = rec_v2(prompt)
     if not obj_reconnus:
         return
     place_scene(prompt, obj_reconnus)
 
 
-def run_v2_full(prompt):
-    obj_reconnus, _ = rec_v1_1(prompt)
+def run_v1_full(prompt):
+    obj_reconnus, _ = rec_v1_1_1(prompt)
     object_dim_quat(prompt, obj_reconnus)
 
 
 VERSIONS = [
-    ("V1",     run_v1_full),
-    ("V1.1.1", run_v1_1_1_full),
-    ("V2",     run_v2_full),
+    ("V1.1", run_v1_1_full),
+    ("V2",   run_v2_full),
+    ("V1",   run_v1_full),
 ]
 
 
@@ -102,12 +102,12 @@ def benchmark(n_runs=5, save_json=True):
             mean = sum(times) / n
             std  = (sum((t - mean) ** 2 for t in times) / n) ** 0.5
             results[name].append({
-                "id":       entry["id"],
-                "mean_s":   round(mean, 3),
-                "std_s":    round(std, 3),
-                "min_s":    round(min(times), 3),
-                "max_s":    round(max(times), 3),
-                "runs":     times,
+                "id":  entry["id"],
+                "mean_s":  round(mean, 3),
+                "std_s": round(std, 3),
+                "min_s":round(min(times), 3),
+                "max_s": round(max(times), 3),
+                "runs":  times,
             })
             print(f"  {entry['id']:<6} {mean:>7.2f}s {std:>7.2f}s {min(times):>7.2f}s {max(times):>7.2f}s")
 

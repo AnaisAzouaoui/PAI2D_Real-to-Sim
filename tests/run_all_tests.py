@@ -4,7 +4,7 @@ Lance tous les tests dans l'ordre et affiche un tableau comparatif final.
 python tests/run_all_tests.py                                       # tous les tests, 5 runs
 python tests/run_all_tests.py --runs 1                              # rapide, 1 run
 python tests/run_all_tests.py --tests recognition                   # un seul test
-python tests/run_all_tests.py --model llama3.2                      # LLM Ollama pour V1/V1.1/V2
+python tests/run_all_tests.py --model llama3.2                      # LLM Ollama pour V1.1/V1.1.1/V1
 python tests/run_all_tests.py --vision-model llama3.2-vision        # VLM Ollama pour V3
 python tests/run_all_tests.py --model gpt-4o --vision-model gpt-4o  # tout GPT (defaut)
 """
@@ -35,7 +35,7 @@ def set_models(model, vision_model):
     import pipeline.utils.ollama_client as ollama_mod
     ollama_mod.LLM_MODEL = model
     print(f"[config] LLM       = {model}")
-    from pipeline.versions.v3_image import pipeline_v3_image as v3_mod
+    from pipeline.versions.v3_1_vlm_refined import pipeline_v3_1_image as v3_mod
     v3_mod.VISION_MODEL = vision_model
     print(f"[config] VisionLLM = {vision_model}")
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument("--tests", nargs="+", choices=[n for n, _ in TESTS],help="Tests a lancer (defaut: tous)")
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--model", choices=LLM_CHOICES, default="gpt-4o",
-                        help="LLM pour V1/V1.1/V2 (defaut: gpt-4o)")
+                        help="LLM pour V1.1/V1.1.1/V1 (defaut: gpt-4o)")
     parser.add_argument("--vision-model", dest="vision_model",
                         choices=VISION_CHOICES, default="gpt-4o",
                         help="VLM pour V3 (defaut: gpt-4o)")

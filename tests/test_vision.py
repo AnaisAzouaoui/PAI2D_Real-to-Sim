@@ -12,7 +12,7 @@ SRC  = os.path.join(ROOT, "src")
 if SRC not in sys.path:
     sys.path.insert(0, SRC)
 
-from pipeline.versions.v3_image.pipeline_v3_image import scene_from_image, detect_and_estimate, load_images
+from pipeline.versions.v3_1_vlm_refined.pipeline_v3_1_image import scene_from_image, detect_and_estimate, load_images
 from metrics import (
     compute_f1, aggregate_runs, compute_relation_f1,
     compute_mae, compute_relation_order_accuracy, compute_calibration_offset,
@@ -73,7 +73,14 @@ def run_single_image(entry, offset, n_runs):
     paths  = entry["paths"]
     expected_obj = entry["expected_objects"]
     expected_rel = entry["expected_relations"]
-    gt_positions = entry.get("ground_truth_positions", {})
+
+    raw_gt = entry.get("ground_truth_positions", {})
+    gt_positions = {}
+    for obj_id, pos in raw_gt.items():
+        if isinstance(pos, list) and len(pos) == 3:
+            gt_positions[obj_id] = {"x": pos[0], "y": pos[1], "z": pos[2]}
+        elif isinstance(pos, dict) and "x" in pos:
+            gt_positions[obj_id] = pos
     has_pos  = bool(gt_positions)
 
     per_run  = []
@@ -84,8 +91,8 @@ def run_single_image(entry, offset, n_runs):
         try:
             result = scene_from_image(paths)
             elapsed = time.time() - t0
-            predicted_urdfs = [obj["urdf"] for obj in result if "urdf" in obj]
-            f1_m = compute_f1(predicted_urdfs, expected_obj)
+            predicted_ids = [obj["id"] for obj in result if "id" in obj]
+            f1_m = compute_f1(predicted_ids, expected_obj)
             pred_pos  = {obj["id"]: obj["pos"] for obj in result if "pos" in obj}
 
             for obj_id, pos in pred_pos.items():

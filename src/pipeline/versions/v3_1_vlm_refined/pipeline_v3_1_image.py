@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from pipeline.utils.ollama_client import URL
 from pipeline.utils.groundingdino_detector import detect_contours
-from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_1_embedding import object_rec
+from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1_1 import object_rec
 from pipeline.sceneBuilding import initPosAndQuat, processRelations, processOrientations, get_genesis_dimensions
 from pipeline.itemSpec import loadScale
 

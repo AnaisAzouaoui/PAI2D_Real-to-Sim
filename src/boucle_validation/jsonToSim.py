@@ -111,7 +111,7 @@ def validation_physique(objetsList, fixed_ids=None, camera_params=None):
     """
     fixed_ids = set(fixed_ids) if fixed_ids else set()
     steps = 150
-    dt = 0.01
+    dt = 0.001
     corrected_objects = copy.deepcopy(objetsList)
     gs.init(backend=gs.cpu)
     scene = gs.Scene(show_viewer=False, sim_options=gs.options.SimOptions(dt=dt))

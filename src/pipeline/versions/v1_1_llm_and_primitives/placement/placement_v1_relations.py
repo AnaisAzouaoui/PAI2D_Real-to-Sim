@@ -283,8 +283,8 @@ def final_json(objets, scales):
 
 
 def modify_scene(prompt, current_scene_json, objet_reconnus, build_scene_fn=None):
-  """V1/V1.1 : meme interface que pipeline_v2_llm.modify_scene.
-  current_scene_json est ignore — V1 re-run le placement complet depuis le prompt."""
+  """V1.1/V1.1.1 : meme interface que pipeline_v1_llm.modify_scene.
+  current_scene_json est ignore — V1.1 re-run le placement complet depuis le prompt."""
   relations_data = object_relations(prompt, objet_reconnus)
   relations = relations_data.get("relations", [])
 

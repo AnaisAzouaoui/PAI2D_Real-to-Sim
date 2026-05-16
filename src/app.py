@@ -80,10 +80,10 @@ class MainWindow(QMainWindow):
         self.text_version_combo.setObjectName("version_combo")
         self.text_version_combo.setFixedWidth(190)
         for key, label in [
-            ("V1.1.1", "V1.1.1 — phi3 fine-tune"),
-            ("V1.1",   "V1.1 — embeddings"),
-            ("V1",     "V1 — LLM"),
-            ("V2",     "V2 — LLM only"),
+            ("V2",     "V2 — phi3 fine-tune"),
+            ("V1.1.1", "V1.1.1 — embeddings"),
+            ("V1.1",   "V1.1 — LLM"),
+            ("V1",     "V1 — LLM only"),
         ]:
             self.text_version_combo.addItem(label, key)
         self.text_version_combo.setCurrentIndex(0)

@@ -1,8 +1,8 @@
 [
   {
-    "id": "lave_linge",
+    "id": "lave-linge",
     "urdf": "lave_linge",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/lave_linge/mobility.urdf",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/lave_linge/mobility.urdf",
     "dimensions": [
       0.553023099899292,
       0.6144617199897766,
@@ -16,49 +16,22 @@
       1
     ],
     "pos": [
-      -0.011386497635022724,
-      0.021753042936325073,
-      0.7834142853021622
+      0.188,
+      -0.312,
+      0.43220110034942627
     ],
-    "highest_point": 0.8237960751533508,
-    "lowest_point": 0.3522131849527359,
-    "parent_id": "boite_carton",
-    "root": false
-  },
-  {
-    "id": "boite_carton",
-    "urdf": "boite_carton",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/boite_carton/mobility.urdf",
-    "dimensions": [
-      0.8150079846382141,
-      0.5709556341171265,
-      0.3502131700515747
-    ],
-    "scale": 0.4717,
-    "quat": [
-      0,
-      0,
-      0,
-      1
-    ],
-    "pos": [
-      0,
-      0,
-      0.15143361485004425
-    ],
-    "highest_point": 0.3512131849527359,
+    "highest_point": 0.8510052094459534,
     "lowest_point": 0.001,
-    "parent_id": null,
-    "root": false
+    "parent_id": null
   },
   {
-    "id": "ciseaux",
-    "urdf": "scissors",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/scissors/google_16k/textured.obj",
+    "id": "mug",
+    "urdf": "mug",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/mug/google_16k/textured.obj",
     "dimensions": [
-      0.09810465574264526,
-      0.203750878572464,
-      0.01870022341609001
+      0.11834801733493805,
+      0.09429117292165756,
+      0.08318310976028442
     ],
     "scale": 1.0,
     "quat": [
@@ -68,23 +41,22 @@
       1
     ],
     "pos": [
-      0.3584516644477844,
-      0.021753042936325073,
-      0.3541182034164667
+      0.188,
+      -0.3101276792092998,
+      0.8535152755426243
     ],
-    "highest_point": 0.3709134083688259,
-    "lowest_point": 0.3522131849527359,
-    "parent_id": "boite_carton",
-    "root": false
+    "highest_point": 0.9351883192062378,
+    "lowest_point": 0.8520052094459534,
+    "parent_id": "lave-linge"
   },
   {
-    "id": "perceuse",
-    "urdf": "perceuse",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/src/pipeline/../../objets/perceuse/google_16k/textured.obj",
+    "id": "banane",
+    "urdf": "banane",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/banane/google_16k/textured.obj",
     "dimensions": [
-      0.18759435415267944,
-      0.19046330451965332,
-      0.06026871129870415
+      0.11155420541763306,
+      0.181467205286026,
+      0.039900653064250946
     ],
     "scale": 1.0,
     "quat": [
@@ -94,13 +66,12 @@
       1
     ],
     "pos": [
-      0.31370681524276733,
-      0.19024616479873657,
-      0.3569502589739859
+      0.188,
+      -0.1355027426481247,
+      0.8539529213663191
     ],
-    "highest_point": 0.41248189625144005,
-    "lowest_point": 0.3522131849527359,
-    "parent_id": "boite_carton",
-    "root": false
+    "highest_point": 0.8919058625102043,
+    "lowest_point": 0.8520052094459534,
+    "parent_id": "lave-linge"
   }
 ]

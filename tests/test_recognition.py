@@ -1,6 +1,6 @@
 """
-Test de reconnaissance d'objets — V1 / V1.1 / V2
-F1 objets sur tout, synonymes V1.1, calibration seuil V1.1
+Test de reconnaissance d'objets — V1.1 / V1.1.1 / V1
+F1 objets sur tout, synonymes V1.1.1, calibration seuil V1.1.1
 """
 import sys
 import os
@@ -13,14 +13,14 @@ for p in [SRC, ROOT]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_llm import object_rec as rec_v1
-from pipeline.versions.v1_llm_prim.object_recognition.object_rec_v1_1_embedding import object_rec as rec_v1_1
-from pipeline.versions.v2_llm_only.pipeline_v2_llm import object_dim_quat as v2_place
+from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1 import object_rec as rec_v1_1
+from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1_1 import object_rec as rec_v1_1_1
+from pipeline.versions.v1_llm_only.pipeline_v1_llm import object_dim_quat as v1_place
 from metrics import compute_f1, aggregate_runs
 
 
-def rec_v2(prompt):
-    objs_list = v2_place(prompt, {})
+def rec_v1(prompt):
+    objs_list = v1_place(prompt, {})
     objs = {o["id"]: {"urdf": o["urdf"]} for o in objs_list if "urdf" in o}
     return objs, []
 
@@ -30,9 +30,9 @@ RESULTS_DIR = os.path.join(ROOT, "tests", "results")
 RESULTS_PATH  = os.path.join(RESULTS_DIR, "recognition_results.json")
 
 VERSIONS = [
-    ("V1",   rec_v1,   False),
-    ("V1.1", rec_v1_1, False),
-    ("V2",   rec_v2,   False),
+    ("V1.1",   rec_v1_1,   False),
+    ("V1.1.1", rec_v1_1_1, False),
+    ("V1",     rec_v1,     False),
 ]
 
 
@@ -78,12 +78,12 @@ def run_synonym_tests():
         print("[recognition] Aucun synonyme rempli — skip.")
         return []
     results = []
-    print(f"\n  Synonymes V1.1 :")
+    print(f"\n  Synonymes V1.1.1 :")
     print(f"  {'Label':<25} {'Attendu':<30} {'OK':>4}")
     print(f"  {'-'*62}")
     for pair in pairs:
         try:
-            objs, _ = rec_v1_1([pair["user_label"]])  # liste = bypass LLM, test embedding seul
+            objs, _ = rec_v1_1_1([pair["user_label"]])  # bypass LLM, test embedding seul
             predicted = [v["urdf"] for v in objs.values()]
             matched = pair["expected_urdf"] in predicted
         except Exception:
@@ -104,12 +104,12 @@ def run_threshold_tests():
         print("[recognition] Aucun threshold pair rempli — skip.")
         return []
     results = []
-    print(f"\n  Calibration seuil V1.1 :")
+    print(f"\n  Calibration seuil V1.1.1 :")
     print(f"  {'Label':<25} {'should_match':>12} {'did_match':>10} {'OK':>5}")
     print(f"  {'-'*55}")
     for pair in pairs:
         try:
-            objs, _ = rec_v1_1([pair["user_label"]])  # bypass LLM
+            objs, _ = rec_v1_1_1([pair["user_label"]])  # bypass LLM
             did_match = len(objs) > 0
         except Exception:
             did_match = False
@@ -155,10 +155,10 @@ def run_all(n_runs=5, save_json=True, only_versions=None, tag=None):
     for name, _, _ in versions:
         vals = [r["aggregated"]["f1_mean"] for r in version_results[name]]
         mean = sum(vals) / len(vals)
-        row += f"  {mean:>6.4f}          "
+        row += f"{mean:>6.4f} "
     print(row)
 
-    synonym_results   = run_synonym_tests()
+    synonym_results = run_synonym_tests()
     threshold_results = run_threshold_tests()
 
     if save_json:

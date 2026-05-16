@@ -24,13 +24,13 @@ PLACEMENT_PATH = os.path.join(RESULTS_DIR, "placement_results.json")
 TIMING_PATH    = os.path.join(RESULTS_DIR, "timing_results.json")
 
 COLORS = {
-    "V1 (gpt-4o)":         "#4C72B0",
-    "V1.1 (gpt-4o)":       "#DD8452",
-    "V2 (gpt-4o)":         "#C44E52",
-    "V1 (llama3.1)":       "#8172B2",
-    "V1.1 (llama3.1)":     "#937860",
-    "V2 (llama3.1)":       "#DA8BC3",
-    "V1.1.1 (phi3-scene)": "#55A868",
+    "V1.1 (gpt-4o)":       "#4C72B0",
+    "V1.1.1 (gpt-4o)":     "#DD8452",
+    "V1 (gpt-4o)":         "#C44E52",
+    "V1.1 (llama3.1)":     "#8172B2",
+    "V1.1.1 (llama3.1)":   "#937860",
+    "V1 (llama3.1)":       "#DA8BC3",
+    "V2 (phi3-scene)":     "#55A868",
 }
 
 _FALLBACK_COLORS = [

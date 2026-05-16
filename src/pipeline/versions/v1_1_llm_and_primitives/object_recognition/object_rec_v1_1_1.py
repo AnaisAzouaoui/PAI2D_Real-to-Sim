@@ -112,7 +112,7 @@ def extract_labels(prompt):
 # ---------------------------------------------------------------------
 # RECONNAISSANCE D'OBJETS
 # ---------------------------------------------------------------------
-# Remplace object_rec de object_rec_v1_llm.
+# Remplace object_rec de object_rec_v1_1.
 # Pipeline :
 #   1. LLM extrait les labels bruts de la phrase ("frigo", "table", "chaise"...)
 #   2. Pour chaque label, on calcule le cosinus contre tous les objets du catalogue
