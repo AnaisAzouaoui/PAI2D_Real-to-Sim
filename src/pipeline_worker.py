@@ -73,6 +73,7 @@ def get_genesis_dims_subprocess(items, orientations):
 # "V2" : object_rec + relations + orientations via phi3-scene (finetuned), scales via phi3:mini
 # "V1": placement et modification 100% LLM direct (sans sceneBuilding)
 PIPELINE_VERSION = "V2"
+IMAGE_VERSION = "V3.1"
 
 # on choisit object_rec selon la version
 if PIPELINE_VERSION == "V2":
@@ -92,6 +93,11 @@ def set_text_version(version):
     else:
         object_rec = _object_rec_v1_1
     print(f"[VERSION] Pipeline texte -> {version}")
+
+def set_image_version(version):
+    global IMAGE_VERSION
+    IMAGE_VERSION = version
+    print(f"[VERSION] Pipeline image -> {version}")
 
 
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -313,9 +319,12 @@ class ImageSceneWorker(QObject):
     def run(self):
         try:
             print(f"[ImageSceneWorker] Demarrage | {len(self.image_paths)} image(s): {self.image_paths}")
-            self.status_update.emit("Analyse de l'image en cours (V3)...")
-            print("[ImageSceneWorker] Import du pipeline V3...")
-            from pipeline.versions.v3_1_vlm_refined.pipeline_v3_1_image import scene_from_image
+            self.status_update.emit(f"Analyse de l'image en cours ({IMAGE_VERSION})...")
+            print(f"[ImageSceneWorker] Import du pipeline {IMAGE_VERSION}...")
+            if IMAGE_VERSION == "V3":
+                from pipeline.versions.v3_vlm_only.pipeline_v3_image import scene_from_image
+            else:
+                from pipeline.versions.v3_1_vlm_refined.pipeline_v3_1_image import scene_from_image
             print("[ImageSceneWorker] Import OK, appel de scene_from_image...")
             objetsList = scene_from_image(self.image_paths, dims_fn=get_genesis_dims_subprocess)
             if not objetsList:

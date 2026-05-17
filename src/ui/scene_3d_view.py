@@ -85,38 +85,32 @@ def load_meshes_from_urdf(urdf_path):
             geom = visual.find('geometry')
             if geom is None:
                 continue
-            mesh_tag = geom.find('mesh')
-            if mesh_tag is None:
-                continue
-            
-            box_tag = geom.find('box')
-            if box_tag is not None:
-                size = [float(v) for v in box_tag.get('size').split()]
-                m = trimesh.creation.box(extents=size)
-            else:
-                mesh_tag = geom.find('mesh')
-                if mesh_tag is None:
-                    continue
-                mesh_path = os.path.join(urdf_dir, mesh_tag.get('filename', ''))
-                if not os.path.exists(mesh_path):
-                    continue
-                m = trimesh.load(mesh_path, force='mesh')
-            mesh_path = os.path.join(urdf_dir, mesh_tag.get('filename', ''))
-            if not os.path.exists(mesh_path):
-                continue
 
-            # Couleur URDF optionnelle
-            urdf_rgba = None
-            material = visual.find('material')
-            if material is not None:
-                color_elem = material.find('color')
-                if color_elem is not None:
-                    vals = color_elem.get('rgba', '').split()
-                    if len(vals) == 4:
-                        urdf_rgba = tuple(float(v) for v in vals)
+            box_tag  = geom.find('box')
+            mesh_tag = geom.find('mesh')
 
             try:
-                m = trimesh.load(mesh_path, force='mesh')
+                if box_tag is not None:
+                    size = [float(v) for v in box_tag.get('size').split()]
+                    m = trimesh.creation.box(extents=size)
+                elif mesh_tag is not None:
+                    mesh_path = os.path.join(urdf_dir, mesh_tag.get('filename', ''))
+                    if not os.path.exists(mesh_path):
+                        continue
+                    m = trimesh.load(mesh_path, force='mesh')
+                else:
+                    continue
+
+                # Couleur URDF optionnelle
+                urdf_rgba = None
+                material = visual.find('material')
+                if material is not None:
+                    color_elem = material.find('color')
+                    if color_elem is not None:
+                        vals = color_elem.get('rgba', '').split()
+                        if len(vals) == 4:
+                            urdf_rgba = tuple(float(v) for v in vals)
+
                 vis_T = np.eye(4)
                 origin = visual.find('origin')
                 if origin is not None:
@@ -126,7 +120,6 @@ def load_meshes_from_urdf(urdf_path):
                     vis_T[:3, 3] = xyz
                 m.apply_transform(link_T @ vis_T)
 
-                # Si URDF donne une couleur, l'injecter dans le visual du mesh
                 if urdf_rgba is not None:
                     rgba_u8 = (np.array(urdf_rgba) * 255).clip(0, 255).astype(np.uint8)
                     m.visual = trimesh.visual.ColorVisuals(

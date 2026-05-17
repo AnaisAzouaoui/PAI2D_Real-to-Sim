@@ -1,14 +1,14 @@
 [
   {
-    "id": "lave-linge",
-    "urdf": "lave_linge",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/lave_linge/mobility.urdf",
+    "id": "boîte en plastique",
+    "urdf": "boite_plastique",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/boite_plastique/mobility.urdf",
     "dimensions": [
-      0.553023099899292,
-      0.6144617199897766,
-      0.8500052094459534
+      0.40000003576278687,
+      0.30000001192092896,
+      0.30000001192092896
     ],
-    "scale": 0.5548,
+    "scale": 1.0,
     "quat": [
       0,
       0,
@@ -16,22 +16,22 @@
       1
     ],
     "pos": [
-      0.188,
-      -0.312,
-      0.43220110034942627
+      -0.48,
+      -0.0,
+      0.1499406099319458
     ],
-    "highest_point": 0.8510052094459534,
-    "lowest_point": 0.001,
+    "highest_point": 0.3009999990463257,
+    "lowest_point": 0.0010000020265579224,
     "parent_id": null
   },
   {
-    "id": "mug",
-    "urdf": "mug",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/mug/google_16k/textured.obj",
+    "id": "boîte de conserve",
+    "urdf": "conserve",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/conserve/google_16k/textured.obj",
     "dimensions": [
-      0.11834801733493805,
-      0.09429117292165756,
-      0.08318310976028442
+      0.06791096925735474,
+      0.06770544499158859,
+      0.10182568430900574
     ],
     "scale": 1.0,
     "quat": [
@@ -41,22 +41,22 @@
       1
     ],
     "pos": [
-      0.188,
-      -0.3101276792092998,
-      0.8535152755426243
+      -0.48,
+      0.0,
+      0.32742536878585815
     ],
-    "highest_point": 0.9351883192062378,
-    "lowest_point": 0.8520052094459534,
-    "parent_id": "lave-linge"
+    "highest_point": 0.4038256833553314,
+    "lowest_point": 0.3019999990463257,
+    "parent_id": "boîte en plastique"
   },
   {
-    "id": "banane",
-    "urdf": "banane",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/banane/google_16k/textured.obj",
+    "id": "ciseaux",
+    "urdf": "ciseaux",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/ciseaux/google_16k/textured.obj",
     "dimensions": [
-      0.11155420541763306,
-      0.181467205286026,
-      0.039900653064250946
+      0.09810465574264526,
+      0.2037508636713028,
+      0.018700242042541504
     ],
     "scale": 1.0,
     "quat": [
@@ -66,12 +66,43 @@
       1
     ],
     "pos": [
-      0.188,
-      -0.1355027426481247,
-      0.8539529213663191
+      -0.5909476900100707,
+      -0.008124574124813079,
+      0.30891980028152466
     ],
-    "highest_point": 0.8919058625102043,
-    "lowest_point": 0.8520052094459534,
-    "parent_id": "lave-linge"
+    "highest_point": 0.3207002410888672,
+    "lowest_point": 0.3019999990463257,
+    "parent_id": "boîte en plastique"
+  },
+  {
+    "id": "tournevis",
+    "urdf": "tournevis",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/tournevis/screwdriver.obj",
+    "dimensions": [
+      0.03750273585319519,
+      0.03730233758687973,
+      0.2184332013130188
+    ],
+    "scale": 0.001,
+    "default_quat": [
+      0.707,
+      0,
+      0,
+      0.707
+    ],
+    "quat": [
+      0.707,
+      0,
+      0,
+      0.707
+    ],
+    "pos": [
+      -0.3387513500452042,
+      -0.09000000357627869,
+      0.4404593834877014
+    ],
+    "highest_point": 0.3022184322476387,
+    "lowest_point": 0.3019999990463257,
+    "parent_id": "boîte en plastique"
   }
 ]

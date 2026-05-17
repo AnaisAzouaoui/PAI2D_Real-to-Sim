@@ -98,8 +98,13 @@ class MainWindow(QMainWindow):
 
         self.image_version_combo = QComboBox()
         self.image_version_combo.setObjectName("version_combo")
-        self.image_version_combo.setFixedWidth(160)
-        self.image_version_combo.addItem("V3 — vision LLM", "V3")
+        self.image_version_combo.setFixedWidth(190)
+        for key, label in [
+            ("V3.1", "V3.1 — vision raffine"),
+            ("V3",   "V3 — vision LLM"),
+        ]:
+            self.image_version_combo.addItem(label, key)
+        self.image_version_combo.setCurrentIndex(0)
         self.image_version_combo.currentIndexChanged.connect(self._on_image_version_changed)
         vb_layout.addWidget(self.image_version_combo)
 
@@ -158,7 +163,7 @@ class MainWindow(QMainWindow):
         self.image_btn = QPushButton("📎")
         self.image_btn.setObjectName("image_btn")
         self.image_btn.setFixedWidth(55)
-        self.image_btn.setToolTip("Generer la scene depuis une image (V3)")
+        self.image_btn.setToolTip("Generer la scene depuis une image")
         self.image_btn.clicked.connect(self._on_load_image)
         input_row.addWidget(self.image_btn)
 
@@ -680,8 +685,9 @@ class MainWindow(QMainWindow):
         pipeline_worker.set_text_version(version)
 
     def _on_image_version_changed(self):
+        import pipeline_worker
         version = self.image_version_combo.currentData()
-        print(f"[VERSION] Pipeline image -> {version}")
+        pipeline_worker.set_image_version(version)
 
     def _dark_theme(self):
         app = QApplication.instance()
