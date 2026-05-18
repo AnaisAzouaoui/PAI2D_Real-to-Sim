@@ -15,10 +15,7 @@ def getFilePath(item):
     base = os.path.join(items_folder, item['urdf'])
     if not os.path.exists(base):
         raise FileNotFoundError(f"Pour {item['id']}, le fichier {item['urdf']} est introuvable.")
-    #path = addMass(path)
 
-    #TODO: question: pourquoi on cherche d'autres fichiers que mobility.urdf?
-    # si c'est un dossier on cherche un fichier qui existe
     if os.path.isdir(base):
         # objets PartNet : fichiers directement dans le dossier
         for name in ["table.urdf","mobility.urdf", "kinbody.xml", "textured.obj", "nontextured.stl", "nontextured.ply"]:
@@ -99,7 +96,7 @@ def getOriginalDimensions(item):
 
 
 def loadScale(item):
-    # lit scale.json dans le dossier de l'objet et met item['scale']
+    '''lit scale.json dans le dossier de l'objet et définit item['scale']'''
     objets_folder = os.path.join(os.path.dirname(__file__), '..', '..', 'objets')
     scale_path = os.path.join(objets_folder, item['urdf'], 'scale.json')
     if os.path.exists(scale_path):

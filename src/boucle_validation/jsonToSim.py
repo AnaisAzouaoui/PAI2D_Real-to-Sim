@@ -13,7 +13,7 @@ if SRC_DIR not in sys.path:
 from simulation.simulationGenesis import make_morph
 
 
-# (ox, oy, oz) sont des multiplicateurs appliques a dist
+# (ox, oy, oz) sont des multiplicateurs appliques à dist
 CAMERA_ANGLES = [
     {"name": "front",       "off": ( 1.0,  0.0, 0.8)},
     {"name": "front_left",  "off": ( 0.7, -0.7, 0.8)},
@@ -208,9 +208,7 @@ def validation_physique(objetsList, fixed_ids=None, camera_params=None):
                     centers_i = [(aabb_mins[i][k] + aabb_maxs[i][k]) * 0.5 for k in range(3)]
                     centers_j = [(aabb_mins[j][k] + aabb_maxs[j][k]) * 0.5 for k in range(3)]
 
-                    # c'est a ce niveau que ca mettait les objets au milieu somehow dcp j'ai change le seuil de
-                    # chevauchement lateral < 5cm : les objets sont juste proches, pas besoin de les ecarter lateralement
-                    #  on les souleve uniquement (deepseek a aider a trouver ce raisonnement et jusque la ca marche)
+                    # seuil de chevauchement lateral < 5cm : les objets sont juste proches, pas besoin de les ecarter lateralement, uniquement de les soulever
                     LATERAL_THRESHOLD = 0.05
                     if axis == 2 or overlaps[axis] < LATERAL_THRESHOLD:
                         target = j if centers_j[2] >= centers_i[2] else i
@@ -243,14 +241,13 @@ def validation_physique(objetsList, fixed_ids=None, camera_params=None):
             obj['lowest_point'] += 0.05
             obj['highest_point'] += 0.05
         elif delta_z < -0.001: #l'onbjet est tombe donc il etait trop haut
-            obj['pos'][2] = z_final[i] #on met la hauteyr finale là où l'objet est retombé
+            obj['pos'][2] = z_final[i] #on met la hauteur finale là où l'objet est retombé
             # final_quat = ent.get_quat()
             # obj['quat'] = [float(q) for q in final_quat]
   
     base_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'images')
     os.makedirs(base_dir, exist_ok=True)
 
-    #views = ["perspective", "top", "side", "side2"]
     views = ["perspective"]
     images = []
 
@@ -293,9 +290,9 @@ def create_scene(objetsList):
     '''
     gs.init(backend=gs.cpu)
 
-    scene = gs.Scene(show_viewer=True) #,vis_options=gs.options.VisOptions(show_world_frame=True,show_link_frame=True))
+    scene = gs.Scene(show_viewer=True) 
 
-    plane = scene.add_entity(gs.morphs.Plane()) #
+    plane = scene.add_entity(gs.morphs.Plane()) 
 
     #ajout des objets: une boucle for qui prend l'objet, sa position, son filepath, et qui crée les objets un par un
     for obj in objetsList:
@@ -309,99 +306,3 @@ def create_scene(objetsList):
     for i in range(1000):
         scene.step()
     gs.destroy()
-
-
-# def create_scene_validation(objetsList, fixed=False):
-#     '''
-#     Fonction qui permet de creer la scene sur genesis à partir des infos objenues précédemment.
-#     On commence par initialiser une scène vide, puis on rajoute les objets URDF.
-
-#     :param objets: une liste de dictionnaires des infos pour chaque objet (id, urdf, path, pos, quat)
-#     :return: le chemin vers le screenshot de la scène générée
-#     '''
-
-#     gs.init(backend=gs.cpu)
-
-#     scene = gs.Scene(show_viewer=False, sim_options=gs.options.SimOptions(dt=0.01), 
-#                      viewer_options=gs.options.ViewerOptions(res=(640, 480)),
-#                      vis_options=gs.options.VisOptions(show_world_frame=True,show_link_frame=True)
-#                      )
-
-#     plane = scene.add_entity(gs.morphs.Plane()) #la ground plaine
-
-#     cameras = {
-#         "perspective":scene.add_camera(res=(640, 480), pos=(3.5, 0.0, 2.5), lookat=(0, 0, 0.5), fov=30),
-#         "top":scene.add_camera(res=(640, 480), pos=(0.0, 0.0, 4.0), lookat=(0, 0, 0),   fov=40),
-#         "side":scene.add_camera(res=(640, 480), pos=(0.0, 3.5, 1.0), lookat=(0, 0, 0.5), fov=30),
-#         "side2": scene.add_camera(res=(640, 480),pos=(3.5, 0.0, 0.5),lookat=(0, 0, 0.5),fov=30)
-#     }
-
-
-#     #ajout des objets: une boucle for qui prend l'objet, sa position, son filepath, et qui crée les objets un par un
-#     for obj in objetsList:
-#         entity = scene.add_entity(
-#             gs.morphs.URDF(
-#                 file=obj['path'],
-#                 pos=tuple(obj['pos']),
-#                 quat=tuple(obj['quat']),
-#                 fixed=fixed
-#             ),
-#             material=gs.materials.Rigid(rho=1000)
-#         )
-
-#     scene.build()
-
-#     #for i in range(150):
-#     scene.step()
-
-#     image_paths = []
-#     base_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'images')
-#     os.makedirs(base_dir, exist_ok=True)
-
-#     #for name, cam in cameras.items():
-#     #    rgb, _, _, _ = cam.render(rgb=True)
-#     #    img_path = os.path.abspath(os.path.join(base_dir, f'screenshot_{name}.png'))
-#     #    Image.fromarray(rgb).save(img_path)
-#     #    image_paths.append(img_path)
-
-#     views = ["perspective", "top", "side", "side2"]
-#     images = []
-
-
-#     try: 
-#         font = ImageFont.truetype("arial.ttf", 25)
-#     except: 
-#         font = ImageFont.load_default()
-
-    
-#     for name in views:
-#         rgb, _, _, _ = cameras[name].render(rgb=True)
-#         images.append(Image.fromarray(rgb))
-#         draw = ImageDraw.Draw(images[-1])
-#         draw.text((10, 10), name, font=font, fill=(255, 255, 255))
-
-#     widths, heights = zip(*(i.size for i in images))
-#     total_width = sum(widths)
-#     max_height = max(heights)
-
-#     collage = Image.new('RGB', (total_width, max_height))
-
-#     x_offset = 0
-#     for im in images:
-#         collage.paste(im, (x_offset, 0))
-#         x_offset += im.size[0]
-
-#     path_collage = os.path.abspath(os.path.join(base_dir, "collage_validation.png"))
-#     collage.save(path_collage)
-
-
-#     gs.destroy()
-#     return path_collage
-
-
-# #get_pos, get_quat
-# #regarder comment faire pour récupérer la velocité
-# #q_pos: les positions angulaires, pour les joints
-# # = pour vérifier si tous les trucs sont stables
-
-# #entity.get_contact : donne les infos sur tous les contacts qui sont dans la scène

@@ -169,7 +169,7 @@ def plot_metrics(all_metrics, out_dir):
     fig.savefig(os.path.join(out_dir, "collisions.png"), dpi=150)
     plt.close(fig)
 
-    # nb d'iter
+    # nb d'iter boucle
     iters = [m["iterations"] if m["iterations"] is not None else 0 for m in all_metrics]
     fig, ax = plt.subplots(figsize=(max(8, len(ids)*0.8), 5))
     ax.plot(list(x), iters, marker="o", color="#1D9E75", linewidth=2)
