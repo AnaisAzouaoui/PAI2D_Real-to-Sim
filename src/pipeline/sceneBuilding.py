@@ -273,31 +273,8 @@ def changeQuatAndPosFromTurn(turn, item, ent):
     new_quat = [w1*x2 + x1*w2 + y1*z2 - z1*y2, w1*y2 - x1*z2 + y1*w2 + z1*x2, w1*z2 + x1*y2 - y1*x2 + z1*w2, w1*w2 - x1*x2 - y1*y2 - z1*z2]
     item['quat'] = new_quat
 
-    # #et ensuite on change les dimensions vu que le dessus de l'objet n'et plus le meme etc...
-    # if turn == 'turn_left' or turn == 'turn_right':
-    #     item['dimensions'] = (depth, width, height)
-    # elif turn == 'tip_forward' or turn == 'tip_backward':
-    #     item['dimensions'] = (width, height, depth)
-    # elif turn == 'tip_right' or turn == 'tip_left':
-    #     item['dimensions'] = (height, depth, width)
-
-    # le truc commenté, mais avec genesis instead hihi:
-
     if ent is not None:
         ent.set_quat(new_quat)
-    # scene.build()
-    
-    # aabb_min, aabb_max = ent.get_AABB()
-    # item['dimensions'] = [
-    #     float(aabb_max[0] - aabb_min[0]),
-    #     float(aabb_max[1] - aabb_min[1]),
-    #     float(aabb_max[2] - aabb_min[2])
-    # ]
-    # z_min_after_rot = float(aabb_min[2])
-    # item['z_offset_local'] = 0.001 - z_min_after_rot
-    # item['pos'][2] = item['z_offset_local']
-    # item['lowest_point'] = 0.001
-    # item['highest_point'] = float(aabb_max[2]) + item['z_offset_local']
 
     return item
 
@@ -352,7 +329,7 @@ def fallback_dims(item):
 
 
 def get_genesis_dimensions(items, orientations=None):
-    '''Charge les meshes dans Genesis pour obtenir les vraies AABB et dimensions (c'est pour v3 tkt)'''
+    '''Charge les meshes dans Genesis pour obtenir les vraies AABB et dimensions (pour v3)'''
     if orientations is None:
         orientations = []
     # try/init defensif : si une init precedente a plante sans destroy, on nettoie

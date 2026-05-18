@@ -28,8 +28,6 @@ def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=10):
 
         save_iteration_scene(image_path, iter, run_dir, itemsList)
         res, data = validation_semantique_prompt(user_prompt, corrected_objects, image_path)
-        #print(f"DEBUG: les res keys sont {res.keys()} et le contenu est {res}")
-        #print(f"DATA2: {data}")
         
         history.append(copy.deepcopy({
             'iteration': iter,
@@ -127,10 +125,6 @@ def validation_semantique_prompt(original_prompt, data, image_path):
         response_format={"type": "json_object"},
     )
     clean = clean_reponse(response.choices[0].message.content)
-
-
-    #clean = clean_reponse(resultat['message']['content'])
-    #print("CLEAN: ", clean)
     
     try:
         resultat = json.loads(clean)
