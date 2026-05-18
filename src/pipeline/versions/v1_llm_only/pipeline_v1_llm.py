@@ -62,7 +62,8 @@ def object_dim_quat(prompt, objet_reconnus):
 
     for obj in objetsList:
         if obj["id"] in objet_reconnus:
-            obj["path"] = objet_reconnus[obj["id"]]["path"]
+            obj["path"]       = objet_reconnus[obj["id"]]["path"]
+            obj["dimensions"] = objet_reconnus[obj["id"]]["dimensions"]
 
     return objetsList
 

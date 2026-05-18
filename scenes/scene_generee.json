@@ -4,7 +4,7 @@
     "urdf": "boite_plastique",
     "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/boite_plastique/mobility.urdf",
     "dimensions": [
-      0.40000003576278687,
+      0.3999999761581421,
       0.30000001192092896,
       0.30000001192092896
     ],
@@ -16,46 +16,21 @@
       1
     ],
     "pos": [
-      -0.48,
+      0.828,
       -0.0,
-      0.1499406099319458
+      0.14994068443775177
     ],
     "highest_point": 0.3009999990463257,
     "lowest_point": 0.0010000020265579224,
     "parent_id": null
   },
   {
-    "id": "boîte de conserve",
-    "urdf": "conserve",
-    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/conserve/google_16k/textured.obj",
-    "dimensions": [
-      0.06791096925735474,
-      0.06770544499158859,
-      0.10182568430900574
-    ],
-    "scale": 1.0,
-    "quat": [
-      0,
-      0,
-      0,
-      1
-    ],
-    "pos": [
-      -0.48,
-      0.0,
-      0.32742536878585815
-    ],
-    "highest_point": 0.4038256833553314,
-    "lowest_point": 0.3019999990463257,
-    "parent_id": "boîte en plastique"
-  },
-  {
     "id": "ciseaux",
     "urdf": "ciseaux",
     "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/ciseaux/google_16k/textured.obj",
     "dimensions": [
-      0.09810465574264526,
-      0.2037508636713028,
+      0.09810471534729004,
+      0.203750878572464,
       0.018700242042541504
     ],
     "scale": 1.0,
@@ -66,9 +41,9 @@
       1
     ],
     "pos": [
-      -0.5909476900100707,
-      -0.008124574124813079,
-      0.30891980028152466
+      0.717052369594574,
+      0.008124566674232482,
+      0.3088879714012146
     ],
     "highest_point": 0.3207002410888672,
     "lowest_point": 0.3019999990463257,
@@ -79,9 +54,9 @@
     "urdf": "tournevis",
     "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/tournevis/screwdriver.obj",
     "dimensions": [
-      0.03750273585319519,
+      0.0375027060508728,
       0.03730233758687973,
-      0.2184332013130188
+      0.2184331864118576
     ],
     "scale": 0.001,
     "default_quat": [
@@ -97,11 +72,36 @@
       0.707
     ],
     "pos": [
-      -0.3387513500452042,
-      -0.09000000357627869,
-      0.4404593834877014
+      0.9479999928474426,
+      0.06000000238418579,
+      0.43282917952537536
     ],
-    "highest_point": 0.3022184322476387,
+    "highest_point": 0.30221843223273753,
+    "lowest_point": 0.3019999990463257,
+    "parent_id": "boîte en plastique"
+  },
+  {
+    "id": "boîte de conserve",
+    "urdf": "conserve",
+    "path": "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/objets/conserve/google_16k/textured.obj",
+    "dimensions": [
+      0.06791102886199951,
+      0.06770545244216919,
+      0.10182568430900574
+    ],
+    "scale": 1.0,
+    "quat": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "pos": [
+      0.828,
+      0.0,
+      0.327422358751297
+    ],
+    "highest_point": 0.4038256833553314,
     "lowest_point": 0.3019999990463257,
     "parent_id": "boîte en plastique"
   }

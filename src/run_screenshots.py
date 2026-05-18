@@ -40,10 +40,10 @@ def compute_camera_params(objects_list):
 
 def make_cameras(cx, cy, dist, cam_height, lookat_z):
     return [
-        ("front", dict(pos=(cx + dist, cy,        cam_height), lookat=(cx, cy, lookat_z), fov=35)),
-        ("back",  dict(pos=(cx - dist, cy,        cam_height), lookat=(cx, cy, lookat_z), fov=35)),
-        ("left",  dict(pos=(cx,        cy + dist, cam_height), lookat=(cx, cy, lookat_z), fov=35)),
-        ("right", dict(pos=(cx,        cy - dist, cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+        ("front", dict(pos=(cx + dist, cy,cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+        ("back",  dict(pos=(cx - dist, cy, cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+        ("left",  dict(pos=(cx,cy + dist, cam_height), lookat=(cx, cy, lookat_z), fov=35)),
+        ("right", dict(pos=(cx,  cy - dist, cam_height), lookat=(cx, cy, lookat_z), fov=35)),
     ]
 
 

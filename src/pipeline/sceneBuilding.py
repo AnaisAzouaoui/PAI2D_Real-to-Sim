@@ -1,5 +1,7 @@
 import os
 import random
+import numpy as np
+from scipy.spatial.transform import Rotation
 from .itemSpec import getOriginalDimensions, getFilePath
 from .jsonParsing import simplifyRelations
 import xml.etree.ElementTree as ET
@@ -17,6 +19,26 @@ https://genesis-world.readthedocs.io/en/latest/user_guide/getting_started/conven
 '''
 
 
+def world_aabb(aabb_min, aabb_max, quat):
+    """Transforme un AABB local (repere entite) en AABB monde en appliquant le quat.
+    Genesis retourne get_AABB() en repere local (sans rotation), ce qui donne un z
+    faux pour les objets avec un default_quat non-identite (ex: tournevis couche).
+    """
+    corners = np.array([
+        [aabb_min[0], aabb_min[1], aabb_min[2]],
+        [aabb_max[0], aabb_min[1], aabb_min[2]],
+        [aabb_min[0], aabb_max[1], aabb_min[2]],
+        [aabb_max[0], aabb_max[1], aabb_min[2]],
+        [aabb_min[0], aabb_min[1], aabb_max[2]],
+        [aabb_max[0], aabb_min[1], aabb_max[2]],
+        [aabb_min[0], aabb_max[1], aabb_max[2]],
+        [aabb_max[0], aabb_max[1], aabb_max[2]],
+    ], dtype=np.float64)
+    rot = Rotation.from_quat(quat).as_matrix()
+    world = corners @ rot.T
+    return world.min(axis=0).tolist(), world.max(axis=0).tolist()
+
+
 def initPosAndQuat(items, scene=None, entites=None):
     '''
     Initialise les positions et orientations des objets, en prenant les infos sur la taille de l'objet de genesis en generant les objets plutot qu'en les parsant
@@ -26,16 +48,19 @@ def initPosAndQuat(items, scene=None, entites=None):
     :return: les items mais avec des positions et orientations de base.
     '''
     for item in items:
-        if entites is not None:
-            ent = entites[item['id']]
-            aabb_min, aabb_max = ent.get_AABB() #on get les limites de la bounding box
+        ent = entites.get(item['id']) if entites is not None else None
+        if ent is not None:
+            local_min, local_max = ent.get_AABB()
+            quat = item.get('quat', [0, 0, 0, 1])
+            aabb_min, aabb_max = world_aabb(local_min, local_max, quat)
             item['dimensions'] = [float(aabb_max[0] - aabb_min[0]), float(aabb_max[1] - aabb_min[1]),float(aabb_max[2] - aabb_min[2])]
-            offset = 0.001 - float(aabb_min[2]) #qui est le lowest point
+            offset = 0.001 - float(aabb_min[2])
             item['highest_point'] = float(aabb_max[2]) + offset
         else:
+            # item absent de entites (echec de chargement Genesis) -> fallback_dims s'en chargera plus tard
             offset = 0.001
-            item['highest_point'] = item['dimensions'][2] + offset
-        item['pos'] = [0, 0, offset] #fait sortir les objets du sol
+            item['highest_point'] = item.get('dimensions', [0.1, 0.1, 0.1])[2] + offset
+        item['pos'] = [0, 0, offset]
         item['lowest_point'] = 0.001
         item['parent_id'] = None
     return items
@@ -300,22 +325,66 @@ def processOrientations(items, orientations, entites=None):
 
 
 
+def fallback_dims(item):
+    """Calcule dimensions/pos via trimesh pour les objets que Genesis ne peut pas charger."""
+    try:
+        m = trimesh.load(item['path'], force='mesh')
+        verts = np.array(m.vertices, dtype=np.float64) * item.get('scale', 1.0)
+        rot = Rotation.from_quat(item.get('quat', [0, 0, 0, 1])).as_matrix()
+        verts_r = verts @ rot.T
+        min_v = verts_r.min(axis=0)
+        max_v = verts_r.max(axis=0)
+        item['dimensions'] = (max_v - min_v).tolist()
+        offset = 0.001 - float(min_v[2])
+        item['pos'] = [0, 0, offset]
+        item['highest_point'] = float(max_v[2]) + offset
+        item['lowest_point'] = 0.001
+        item['parent_id'] = None
+        print(f"[get_genesis_dimensions] fallback trimesh OK pour '{item['id']}'")
+    except Exception as e2:
+        print(f"[get_genesis_dimensions] fallback trimesh echoue pour '{item['id']}': {e2}")
+        offset = 0.001
+        dims = item.get('dimensions', [0.1, 0.1, 0.1])
+        item['pos'] = [0, 0, offset]
+        item['highest_point'] = dims[2] + offset
+        item['lowest_point'] = 0.001
+        item['parent_id'] = None
+
+
 def get_genesis_dimensions(items, orientations=None):
     '''Charge les meshes dans Genesis pour obtenir les vraies AABB et dimensions (c'est pour v3 tkt)'''
     if orientations is None:
         orientations = []
+    # try/init defensif : si une init precedente a plante sans destroy, on nettoie
+    try:
+        gs.destroy()
+    except Exception:
+        pass
     gs.init(backend=gs.cpu)
-    scene = gs.Scene(show_viewer=False)
-    entites = {}
+    failed_ids = set()
+    try:
+        scene = gs.Scene(show_viewer=False)
+        entites = {}
+        for item in items:
+            item['quat'] = item.get('default_quat', [0, 0, 0, 1])
+            item['pos'] = [0, 0, 0]
+            try:
+                ent = scene.add_entity(make_morph(item['path'], scale=item.get('scale', 1.0), pos=[0,0,0], quat=item['quat'], fixed=True))
+                entites[item['id']] = ent
+            except Exception as e:
+                print(f"[get_genesis_dimensions] '{item['id']}' impossible a charger dans Genesis ({type(e).__name__}: {e}), fallback trimesh")
+                failed_ids.add(item['id'])
+        scene.build()
+        items = processOrientations(items, orientations, entites)
+        items = initPosAndQuat(items, scene, entites)
+    finally:
+        try:
+            gs.destroy()
+        except Exception as e:
+            print(f"[get_genesis_dimensions] gs.destroy() a leve : {e}")
     for item in items:
-        item['quat'] = item.get('default_quat', [0, 0, 0, 1])
-        item['pos'] = [0, 0, 0]
-        ent = scene.add_entity(make_morph(item['path'], scale=item.get('scale', 1.0), pos=[0,0,0], quat=item['quat'], fixed=True))
-        entites[item['id']] = ent
-    scene.build()
-    items = processOrientations(items, orientations, entites)
-    items = initPosAndQuat(items, scene, entites)
-    gs.destroy()
+        if item['id'] in failed_ids:
+            fallback_dims(item)
     return items
 
 

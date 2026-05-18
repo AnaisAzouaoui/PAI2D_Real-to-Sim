@@ -16,6 +16,7 @@ for p in [SRC, ROOT]:
 from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1 import object_rec as rec_v1_1
 from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1_1 import object_rec as rec_v1_1_1
 from pipeline.versions.v1_llm_only.pipeline_v1_llm import object_dim_quat as v1_place
+from pipeline.versions.v2_finetuned.pipeline_v2 import object_rec as _rec_v2, phi3_cache
 from metrics import compute_f1, aggregate_runs
 
 
@@ -23,6 +24,10 @@ def rec_v1(prompt):
     objs_list = v1_place(prompt, {})
     objs = {o["id"]: {"urdf": o["urdf"]} for o in objs_list if "urdf" in o}
     return objs, []
+
+def rec_v2(prompt):
+    phi3_cache.pop(prompt, None)
+    return _rec_v2(prompt)
 
 DATA_PATH = os.path.join(ROOT, "tests", "data", "prompts_ground_truth.json")
 SYNONYMES_PATH = os.path.join(ROOT, "tests", "data", "synonymes.json")
@@ -33,6 +38,7 @@ VERSIONS = [
     ("V1.1",   rec_v1_1,   False),
     ("V1.1.1", rec_v1_1_1, False),
     ("V1",     rec_v1,     False),
+    ("V2",     rec_v2,     True),
 ]
 
 
@@ -129,8 +135,11 @@ def run_all(n_runs=5, save_json=True, only_versions=None, tag=None):
 
     versions = [(n, fn, fl) for n, fn, fl in VERSIONS
                 if only_versions is None or n in only_versions]
+    versions = [("V2 (phi3-scene)", fn, fl) if n == "V2" else (n, fn, fl)
+                for n, fn, fl in versions]
     if tag:
-        versions = [(f"{n} ({tag})", fn, fl) for n, fn, fl in versions]
+        versions = [(n, fn, fl) if n == "V2 (phi3-scene)" else (f"{n} ({tag})", fn, fl)
+                    for n, fn, fl in versions]
 
     print(f"\n{'='*75}")
     print(f"  TEST RECONNAISSANCE  |  {n_runs} runs/prompt")

@@ -25,9 +25,10 @@ from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_
 from metrics import (
     compute_relation_f1, compute_orientation_f1,
     compute_quat_validity, compute_position_plausibility, compute_relation_order_accuracy,
+    derive_relations_from_positions,
 )
 
-DATA_PATH    = os.path.join(ROOT, "tests", "data", "prompts_ground_truth.json")
+DATA_PATH  = os.path.join(ROOT, "tests", "data", "prompts_ground_truth.json")
 RESULTS_DIR  = os.path.join(ROOT, "tests", "results")
 RESULTS_PATH = os.path.join(RESULTS_DIR, "placement_results.json")
 
@@ -90,6 +91,7 @@ def run_version(name, entries, n_runs, extract_fn):
                     "error":   None,
                 })
             except Exception as e:
+                print(f"  [ERREUR {entry['id']}] {type(e).__name__}: {e}")
                 per_run.append({
                     "rel_f1": 0.0, "rel_pre": 0.0, "rel_rec": 0.0,
                     "ori_f1": 0.0, "ori_pre": 0.0, "ori_rec": 0.0,
@@ -148,6 +150,16 @@ def extract_v1_1(prompt, entry):
     return predicted_rel, predicted_ori
 
 
+def extract_v1_1_1(prompt, entry):
+    obj_reconnus, _ = rec_v1_1_1(prompt)
+    rel_result = object_relations(prompt, obj_reconnus)
+    ori_result = extract_orientation_v1_1(prompt, obj_reconnus)
+    label_to_urdf = {label: info["urdf"] for label, info in obj_reconnus.items()}
+    predicted_rel = to_urdf_rel(rel_result.get("relations", []), label_to_urdf)
+    predicted_ori = to_urdf_ori(ori_result, label_to_urdf)
+    return predicted_rel, predicted_ori
+
+
 def extract_v2(prompt, entry):
     phi3_cache.pop(prompt, None)
     phi3 = phi3_result(prompt)
@@ -159,26 +171,39 @@ def extract_v2(prompt, entry):
 
 
 def run_v1_spatial(entries, n_runs):
-    """V1 produit des positions directement — on teste la coherence spatiale, pas les relations."""
+    """V1 positions -> proxy metrics + rel_F1 derives des positions."""
     results = []
-    print(f"\n  V1 — coherence spatiale (positions LLM)  |  {n_runs} runs/prompt")
-    print(f"  {'ID':<6} {'Quat':>6} {'Z ok':>6} {'Order':>7} {'Time':>6}")
-    print(f"  {'-'*38}")
+    print(f"\n  V1 — positions LLM  |  {n_runs} runs/prompt")
+    print(f"  {'ID':<6} {'Rel F1':>7} {'Quat':>6} {'Z ok':>6} {'Order':>7} {'Time':>6}")
+    print(f"  {'-'*46}")
 
     for entry in entries:
         prompt       = entry["prompt"]
-        expected_rel = entry.get("expected_relations", [])
-        per_run      = []
+        gt_urdf      = {o["id"]: o["urdf"] for o in entry.get("expected_objects", [])}
+        expected_rel = [
+            {**r, "subject": gt_urdf.get(r["subject"], r["subject"]),
+                   "object":  gt_urdf.get(r["object"],  r["object"])}
+            for r in entry.get("expected_relations", [])
+        ]
+        per_run = []
 
         for _ in range(n_runs):
             t0 = time.time()
             try:
                 obj_reconnus, _ = rec_v1_1_1(prompt)
-                scene     = object_dim_quat(prompt, obj_reconnus)
-                quat_res  = compute_quat_validity(scene)
-                pos_res   = compute_position_plausibility(scene)
-                order_acc = compute_relation_order_accuracy(scene, expected_rel)
+                scene = object_dim_quat(prompt, obj_reconnus)
+                lbl_to_urdf = {lbl: info["urdf"] for lbl, info in obj_reconnus.items()}
+                scene_urdf = [{**obj, "id": lbl_to_urdf.get(obj["id"], obj["id"])}
+                              for obj in scene]
+                derived_rel = derive_relations_from_positions(scene_urdf)
+                rel_metrics = compute_relation_f1(derived_rel, expected_rel)
+                quat_res    = compute_quat_validity(scene_urdf)
+                pos_res     = compute_position_plausibility(scene_urdf)
+                order_acc   = compute_relation_order_accuracy(scene_urdf, expected_rel)
                 per_run.append({
+                    "rel_f1":        rel_metrics["f1"],
+                    "rel_pre":       rel_metrics["precision"],
+                    "rel_rec":       rel_metrics["recall"],
                     "quat_valid":    quat_res["all_valid"],
                     "pos_plausible": pos_res["all_valid"],
                     "rel_order_acc": order_acc,
@@ -186,24 +211,33 @@ def run_v1_spatial(entries, n_runs):
                     "error":         None,
                 })
             except Exception as e:
+                print(f"  [ERREUR {entry['id']}] {type(e).__name__}: {e}")
                 per_run.append({
+                    "rel_f1": 0.0, "rel_pre": 0.0, "rel_rec": 0.0,
                     "quat_valid": False, "pos_plausible": False, "rel_order_acc": 0.0,
                     "time_s": round(time.time() - t0, 3), "error": str(e),
                 })
 
-        times      = [r["time_s"] for r in per_run]
-        quat_rate  = sum(1 for r in per_run if r["quat_valid"]) / len(per_run)
-        pos_rate   = sum(1 for r in per_run if r["pos_plausible"]) / len(per_run)
-        order_mean = sum(r["rel_order_acc"] for r in per_run) / len(per_run)
+        times       = [r["time_s"] for r in per_run]
+        rel_f1_mean = sum(r["rel_f1"] for r in per_run) / len(per_run)
+        quat_rate   = sum(1 for r in per_run if r["quat_valid"]) / len(per_run)
+        pos_rate    = sum(1 for r in per_run if r["pos_plausible"]) / len(per_run)
+        order_mean  = sum(r["rel_order_acc"] for r in per_run) / len(per_run)
 
         results.append({
             "id":                 entry["id"],
+            "rel_precision":      round(sum(r["rel_pre"] for r in per_run) / len(per_run), 4),
+            "rel_recall":         round(sum(r["rel_rec"] for r in per_run) / len(per_run), 4),
+            "rel_f1_mean":        round(rel_f1_mean, 4),
+            "ori_precision":      0.0,
+            "ori_recall":         0.0,
+            "ori_f1_mean":        0.0,
             "quat_valid_rate":    round(quat_rate, 4),
             "pos_plausible_rate": round(pos_rate, 4),
             "rel_order_acc_mean": round(order_mean, 4),
             "time_mean_s":        round(sum(times) / len(times), 3),
         })
-        print(f"  {entry['id']:<6} {quat_rate:>6.0%} {pos_rate:>6.0%} {order_mean:>7.4f} {sum(times)/len(times):>5.2f}s")
+        print(f"  {entry['id']:<6} {rel_f1_mean:>7.3f} {quat_rate:>6.0%} {pos_rate:>6.0%} {order_mean:>7.4f} {sum(times)/len(times):>5.2f}s")
 
     return results
 
@@ -215,7 +249,7 @@ def global_mean(results, key):
 
 def run_all(n_runs=5, save_json=True, only_versions=None, tag=None):
     entries = load_prompts()
-    all_v = only_versions or ["V1.1", "V2", "V1"]
+    all_v = only_versions or ["V1.1", "V1.1.1", "V2", "V1"]
 
     print(f"\n{'='*60}")
     print(f"  TEST PLACEMENT  |  {n_runs} runs/prompt")
@@ -230,6 +264,13 @@ def run_all(n_runs=5, save_json=True, only_versions=None, tag=None):
         print(f"\n  Globaux {name} : rel_F1={global_mean(res, 'rel_f1_mean')}  "
               f"ori_F1={global_mean(res, 'ori_f1_mean')}")
 
+    if "V1.1.1" in all_v:
+        name = f"V1.1.1 ({tag})" if tag else "V1.1.1 (gpt-4o)"
+        res = run_version(name, entries, n_runs, extract_v1_1_1)
+        new_results[name] = res
+        print(f"\n  Globaux {name} : rel_F1={global_mean(res, 'rel_f1_mean')}  "
+              f"ori_F1={global_mean(res, 'ori_f1_mean')}")
+
     if "V2" in all_v:
         res = run_version("V2 (phi3-scene)", entries, n_runs, extract_v2)
         new_results["V2 (phi3-scene)"] = res
@@ -240,7 +281,8 @@ def run_all(n_runs=5, save_json=True, only_versions=None, tag=None):
         name = f"V1 ({tag})" if tag else "V1 (gpt-4o)"
         res = run_v1_spatial(entries, n_runs)
         new_results[name] = res
-        print(f"\n  Globaux {name} : quat={global_mean(res, 'quat_valid_rate'):.0%}  "
+        print(f"\n  Globaux {name} : rel_F1={global_mean(res, 'rel_f1_mean')}  "
+              f"quat={global_mean(res, 'quat_valid_rate'):.0%}  "
               f"z_ok={global_mean(res, 'pos_plausible_rate'):.0%}  "
               f"order={global_mean(res, 'rel_order_acc_mean')}")
 
@@ -265,7 +307,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--no-save", action="store_true")
-    parser.add_argument("--versions", nargs="+", choices=["V1.1", "V2", "V1"],
+    parser.add_argument("--versions", nargs="+", choices=["V1.1", "V1.1.1", "V2", "V1"],
                         help="Versions a tester (defaut: toutes)")
     parser.add_argument("--tag", type=str, default=None,
                         help="Suffixe modele ex: gpt-4o ou llama3.1")

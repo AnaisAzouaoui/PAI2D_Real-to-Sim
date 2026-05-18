@@ -9,8 +9,6 @@ import subprocess
 import tempfile
 import traceback
 import argparse
-import genesis as gs
-from simulation.simulationGenesis import make_morph
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
@@ -20,9 +18,9 @@ for p in [SRC, ROOT]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from pipeline.versions.v2_finetuned.pipeline_v2 import (object_rec as object_rec_v2, place_scene, phi3_cache,)
-from pipeline.versions.v1_1_llm_and_primitives.object_recognition.object_rec_v1_1_1 import object_rec as object_rec_v111
-from pipeline.versions.v1_llm_only.pipeline_v1_llm import object_dim_quat
+import genesis as gs
+from simulation.simulationGenesis import make_morph
+from pipeline.versions.v2_finetuned.pipeline_v2 import object_rec as object_rec_v2, place_scene
 from pipeline_worker import build_scene_subprocess, postprocess_objects
 
 DATA_PATH = os.path.join(ROOT, "tests", "data", "prompts_ground_truth.json")
@@ -53,7 +51,10 @@ def count_collisions(objetsList):
     scene.add_entity(gs.morphs.Plane())
     entities = []
     for obj in objetsList:
-        ent = scene.add_entity(make_morph(obj['path'], pos=tuple(obj['pos']), quat=tuple(obj.get('quat', [0.0, 1.0, 1.0, 0.0])), scale=obj.get('scale', 1.0), fixed=True),
+        ent = scene.add_entity(
+            make_morph(obj['path'], pos=tuple(obj['pos']),
+                       quat=tuple(obj.get('quat', [0.0, 0.0, 0.0, 1.0])),
+                       scale=obj.get('scale', 1.0), fixed=True),
             material=gs.materials.Rigid(rho=1000))
         entities.append(ent)
     scene.build()
@@ -74,22 +75,95 @@ def count_collisions(objetsList):
 
 
 def run_validation_subprocess(scene_json_path, prompt):
-    result = subprocess.run([sys.executable, RUN_VALIDATION, "prompt", scene_json_path, prompt], cwd=SRC, capture_output=True, text=True)
+    result = subprocess.run(
+        [sys.executable, RUN_VALIDATION, "prompt", scene_json_path, prompt],
+        cwd=SRC, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"Validation subprocess failed with code {result.returncode}")
 
-def run_v111(prompt):
-    phi3_cache.pop(prompt, None)
-    obj_reconnus, non_reconnus = object_rec_v111(prompt)
+
+def run_v2(prompt):
+    obj_reconnus, non_reconnus = object_rec_v2(prompt)
     if not obj_reconnus:
-        raise ValueError(f"Aucun objet reconnu (v1.1.1) pour: {prompt!r}")
+        raise ValueError(f"Aucun objet reconnu (v2) pour: {prompt!r}")
     if non_reconnus:
-        print(f"  [v1.1.1] objets non reconnus (ignores): {non_reconnus}")
+        print(f"  [v2] objets non reconnus (ignores): {non_reconnus}")
     items = place_scene(prompt, obj_reconnus, build_scene_fn=build_scene_subprocess)
     items = postprocess_objects(items, obj_reconnus)
     return items
 
-def process_version(pid, prompt, version_label, run_fn):
+
+# ---------------------------------------------------------------
+# EVALUATION PLACEMENT GROUND TRUTH
+# ---------------------------------------------------------------
+
+def check_relation(rel_type, subject, ref):
+    sx, sy, sz = subject['pos'][0], subject['pos'][1], subject['pos'][2]
+    rx, ry, rz = ref['pos'][0], ref['pos'][1], ref['pos'][2]
+    if rel_type == 'on':
+        return sz > rz
+    elif rel_type == 'under':
+        return sz < rz
+    elif rel_type == 'right_of':
+        return sy > ry
+    elif rel_type == 'left_of':
+        return sy < ry
+    elif rel_type == 'in_front_of':
+        return sx > rx
+    elif rel_type == 'behind':
+        return sx < rx
+    elif rel_type in ('inside', 'against'):
+        return True  # geometrie trop complexe pour etre verifiee simplement
+    return False
+
+
+def match_gt_to_items(ground_truth_entry, items):
+    """Associe les IDs du ground truth aux items de la scene.
+    Essaie d'abord un match direct par ID, puis par URDF."""
+    items_by_id = {item['id']: item for item in items}
+    items_by_urdf = {}
+    for item in items:
+        items_by_urdf.setdefault(item.get('urdf', ''), []).append(item)
+
+    id_map = {}
+    urdf_usage = {}
+    for exp_obj in ground_truth_entry.get('expected_objects', []):
+        gt_id = exp_obj['id']
+        urdf = exp_obj['urdf']
+        if gt_id in items_by_id:
+            id_map[gt_id] = items_by_id[gt_id]
+        else:
+            candidates = items_by_urdf.get(urdf, [])
+            used = urdf_usage.get(urdf, 0)
+            if used < len(candidates):
+                id_map[gt_id] = candidates[used]
+                urdf_usage[urdf] = used + 1
+    return id_map
+
+
+def evaluate_placement(items, ground_truth_entry):
+    """Evalue le pourcentage de relations spatiales du ground truth respectees.
+    Retourne (score 0-1, nb correct, nb total evaluable)."""
+    id_map = match_gt_to_items(ground_truth_entry, items)
+    relations = ground_truth_entry.get('expected_relations', [])
+    evaluable = [
+        r for r in relations
+        if r['subject'] in id_map and r['object'] in id_map
+    ]
+    if not evaluable:
+        return None, 0, 0
+    ok = sum(
+        1 for r in evaluable
+        if check_relation(r['type'], id_map[r['subject']], id_map[r['object']])
+    )
+    return ok / len(evaluable), ok, len(evaluable)
+
+
+# ---------------------------------------------------------------
+# BOUCLE PRINCIPALE
+# ---------------------------------------------------------------
+
+def process_version(pid, prompt, version_label, run_fn, ground_truth_entry=None):
     out_dir = os.path.join(IMAGES_BASE_DIR, pid, version_label)
     os.makedirs(out_dir, exist_ok=True)
     print(f"  [{pid}/{version_label}] pipeline...")
@@ -101,21 +175,27 @@ def process_version(pid, prompt, version_label, run_fn):
         return False, None
     scene_path = save_tmp_scene(items)
     try:
-        #avant vallidation collisions
         collisions_before = count_collisions(items)
         print(f"[{pid}/{version_label}] collisions avant: {collisions_before}")
 
-        # validation
+        placement_before, placement_ok_before, placement_total = None, 0, 0
+        if ground_truth_entry:
+            placement_before, placement_ok_before, placement_total = evaluate_placement(items, ground_truth_entry)
+            print(f"[{pid}/{version_label}] placement avant: {placement_ok_before}/{placement_total} ({placement_before:.0%})" if placement_before is not None else f"[{pid}/{version_label}] placement avant: N/A")
+
         print(f"[{pid}/{version_label}] boucle validation")
         run_validation_subprocess(scene_path, prompt)
 
-        # apres la validation
         with open(scene_path, 'r', encoding='utf-8') as f:
             final_items = json.load(f)
         collisions_after = count_collisions(final_items)
         print(f"[{pid}/{version_label}] collisions apres: {collisions_after}")
 
-        # convergence
+        placement_after = None
+        if ground_truth_entry:
+            placement_after, placement_ok_after, _ = evaluate_placement(final_items, ground_truth_entry)
+            print(f"[{pid}/{version_label}] placement apres: {placement_ok_after}/{placement_total} ({placement_after:.0%})" if placement_after is not None else f"[{pid}/{version_label}] placement apres: N/A")
+
         iterations = None
         converged = False
         runs_dir = os.path.join(ROOT, "runs")
@@ -131,10 +211,18 @@ def process_version(pid, prompt, version_label, run_fn):
                     converged = history[-1].get('valid', False)
                     print(f"[{pid}/{version_label}] iterations: {iterations}, converged: {converged}")
 
-        # metriques
-        metrics = {"id": pid, "prompt": prompt, "version": version_label,
-        "collisions_before": collisions_before,"collisions_after": collisions_after,
-        "iterations": iterations,"converged": converged,}
+        metrics = {
+            "id": pid,
+            "prompt": prompt,
+            "version": version_label,
+            "collisions_before": collisions_before,
+            "collisions_after": collisions_after,
+            "placement_score_before": placement_before,
+            "placement_score_after": placement_after,
+            "placement_relations_total": placement_total,
+            "iterations": iterations,
+            "converged": converged,
+        }
         print(f"[{pid}/{version_label}] OK")
         return True, metrics
 
@@ -158,53 +246,74 @@ def plot_metrics(all_metrics, out_dir):
     fig, ax = plt.subplots(figsize=(max(8, len(ids)*0.8), 5))
     w = 0.35
     ax.bar([i - w/2 for i in x], [m["collisions_before"] for m in all_metrics], w, label="Avant", color="#378ADD")
-    ax.bar([i + w/2 for i in x], [m["collisions_after"]  for m in all_metrics], w, label="Après",  color="#D85A30")
-    ax.set_xticks(list(x)); 
+    ax.bar([i + w/2 for i in x], [m["collisions_after"]  for m in all_metrics], w, label="Apres",  color="#D85A30")
+    ax.set_xticks(list(x))
     ax.set_xticklabels(ids, rotation=45, ha="right")
-    ax.set_ylabel("Collisions"); 
-    ax.set_title("Collisions avant / après validation")
-    ax.legend(); 
+    ax.set_ylabel("Collisions")
+    ax.set_title("Collisions avant / apres validation")
+    ax.legend()
     ax.yaxis.set_major_locator(mticker.MaxNLocator(integer=True))
     fig.tight_layout()
     fig.savefig(os.path.join(out_dir, "collisions.png"), dpi=150)
     plt.close(fig)
 
-    # nb d'iter
+    # placement score
+    scores_before = [m["placement_score_before"] if m["placement_score_before"] is not None else 0 for m in all_metrics]
+    scores_after  = [m["placement_score_after"]  if m["placement_score_after"]  is not None else 0 for m in all_metrics]
+    fig, ax = plt.subplots(figsize=(max(8, len(ids)*0.8), 5))
+    ax.bar([i - w/2 for i in x], [s * 100 for s in scores_before], w, label="Avant", color="#378ADD")
+    ax.bar([i + w/2 for i in x], [s * 100 for s in scores_after],  w, label="Apres",  color="#D85A30")
+    ax.set_xticks(list(x))
+    ax.set_xticklabels(ids, rotation=45, ha="right")
+    ax.set_ylabel("Relations correctes (%)")
+    ax.set_title("Score placement (relations GT) avant / apres validation")
+    ax.set_ylim(0, 105)
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter())
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(os.path.join(out_dir, "placement_score.png"), dpi=150)
+    plt.close(fig)
+
+    # nb d'iterations
     iters = [m["iterations"] if m["iterations"] is not None else 0 for m in all_metrics]
     fig, ax = plt.subplots(figsize=(max(8, len(ids)*0.8), 5))
     ax.plot(list(x), iters, marker="o", color="#1D9E75", linewidth=2)
     ax.fill_between(list(x), iters, alpha=0.15, color="#1D9E75")
-    ax.set_xticks(list(x)); 
+    ax.set_xticks(list(x))
     ax.set_xticklabels(ids, rotation=45, ha="right")
-    ax.set_ylabel("Itérations"); 
-    ax.set_title("Nombre d'itérations par prompt")
+    ax.set_ylabel("Iterations")
+    ax.set_title("Nombre d'iterations par prompt")
     ax.yaxis.set_major_locator(mticker.MaxNLocator(integer=True))
     fig.tight_layout()
     fig.savefig(os.path.join(out_dir, "iterations.png"), dpi=150)
     plt.close(fig)
 
-    # convergence
+    # convergence cumulee
     conv = []
     for i, m in enumerate(all_metrics):
-        sl = [x for x in all_metrics[:i+1] if x["converged"] is not None]
-        conv.append(sum(1 for x in sl if x["converged"]) / len(sl) * 100 if sl else 0)
+        sl = [m2 for m2 in all_metrics[:i+1] if m2["converged"] is not None]
+        conv.append(sum(1 for m2 in sl if m2["converged"]) / len(sl) * 100 if sl else 0)
     fig, ax = plt.subplots(figsize=(max(8, len(ids)*0.8), 5))
     ax.plot(list(x), conv, marker="o", color="#BA7517", linewidth=2)
     ax.fill_between(list(x), conv, alpha=0.15, color="#BA7517")
-    ax.set_xticks(list(x)); ax.set_xticklabels(ids, rotation=45, ha="right")
-    ax.set_ylim(0, 105); ax.yaxis.set_major_formatter(mticker.PercentFormatter())
-    ax.set_title("Taux de convergence cumulé"); fig.tight_layout()
+    ax.set_xticks(list(x))
+    ax.set_xticklabels(ids, rotation=45, ha="right")
+    ax.set_ylim(0, 105)
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter())
+    ax.set_title("Taux de convergence cumule")
+    fig.tight_layout()
     fig.savefig(os.path.join(out_dir, "convergence.png"), dpi=150)
     plt.close(fig)
 
-    print(f"plots sauvegardés dans {out_dir}/")
-
+    print(f"plots sauvegardes dans {out_dir}/")
 
 
 def main():
     parser = argparse.ArgumentParser(description="Genere les images formulaire et les metriques de validation pour les prompts")
     parser.add_argument("--ids", nargs="+", help="IDs a traiter (ex: p01 p02), tous par defaut")
-    parser.add_argument("--versions", nargs="+", choices=["v1"], default=["v1"], help="Versions a executer (defaut: v1)")
+    parser.add_argument("--versions", nargs="+", choices=["v2"], default=["v2"], help="Versions a executer (defaut: v2)")
+    parser.add_argument("--no-screenshots", action="store_true", help="Ne pas afficher le chemin des images")
+    parser.add_argument("--no-metrics", action="store_true", help="Ne pas afficher le chemin des metriques")
     parser.add_argument("--exclude", nargs="+", help="Exclure les prompts contenant ces mots (ex: table chaise)")
     args = parser.parse_args()
 
@@ -220,7 +329,7 @@ def main():
     if not args.no_metrics:
         print(f"[generate] metriques -> {METRICS_FILE}")
 
-    version_fns = {"v1": run_v111}
+    version_fns = {"v2": run_v2}
 
     ok_count  = 0
     err_count = 0
@@ -234,7 +343,9 @@ def main():
         print(f"{'='*60}")
 
         for version_label in args.versions:
-            success, metrics = process_version(pid, prompt, version_label,version_fns[version_label]
+            success, metrics = process_version(
+                pid, prompt, version_label, version_fns[version_label],
+                ground_truth_entry=entry,
             )
             if success:
                 ok_count += 1
@@ -243,7 +354,6 @@ def main():
             else:
                 err_count += 1
 
-    #sauvegarde des métriques
     if all_metrics:
         os.makedirs(os.path.dirname(METRICS_FILE), exist_ok=True)
         with open(METRICS_FILE, 'w', encoding='utf-8') as f:
@@ -251,26 +361,33 @@ def main():
         print(f"\n[metrics] {len(all_metrics)} resultats sauvegardes dans {METRICS_FILE}")
 
         print("\n" + "="*60)
-        print("RÉSUMÉ DES MÉTRIQUES")
+        print("RESUME DES METRIQUES")
         print("="*60)
         valid = [m for m in all_metrics if m['collisions_before'] is not None]
         if valid:
             avg_before = sum(m['collisions_before'] for m in valid) / len(valid)
-            avg_after  = sum(m['collisions_after'] for m in valid) / len(valid)
+            avg_after  = sum(m['collisions_after']  for m in valid) / len(valid)
             no_coll_before = sum(1 for m in valid if m['collisions_before'] == 0) / len(valid) * 100
-            no_coll_after  = sum(1 for m in valid if m['collisions_after'] == 0) / len(valid) * 100
+            no_coll_after  = sum(1 for m in valid if m['collisions_after']  == 0) / len(valid) * 100
             iterations_list = [m['iterations'] for m in valid if m['iterations'] is not None]
-            converged_list  = [m['converged'] for m in valid if m['converged'] is not None]
-            avg_iter = sum(iterations_list)/len(iterations_list) if iterations_list else 0
+            converged_list  = [m['converged']  for m in valid if m['converged']  is not None]
+            placement_before_list = [m['placement_score_before'] for m in valid if m['placement_score_before'] is not None]
+            placement_after_list  = [m['placement_score_after']  for m in valid if m['placement_score_after']  is not None]
+            avg_iter = sum(iterations_list) / len(iterations_list) if iterations_list else 0
             median_iter = sorted(iterations_list)[len(iterations_list)//2] if iterations_list else 0
             converged_rate = sum(1 for c in converged_list if c) / len(converged_list) * 100 if converged_list else 0
-            print(f"Taux moyen de collisions avant: {avg_before:.2f}")
-            print(f"Taux moyen de collisions après: {avg_after:.2f}")
-            print(f"Scènes sans collision avant: {no_coll_before:.1f}%")
-            print(f"Scènes sans collision après: {no_coll_after:.1f}%")
-            print(f"Nombre moyen d'itérations: {avg_iter:.2f}")
-            print(f"Médiane des itérations: {median_iter}")
-            print(f"Taux de convergence: {converged_rate:.1f}%")
+            avg_placement_before = sum(placement_before_list) / len(placement_before_list) * 100 if placement_before_list else 0
+            avg_placement_after  = sum(placement_after_list)  / len(placement_after_list)  * 100 if placement_after_list  else 0
+
+            print(f"Collisions moyennes avant:           {avg_before:.2f}")
+            print(f"Collisions moyennes apres:           {avg_after:.2f}")
+            print(f"Scenes sans collision avant:         {no_coll_before:.1f}%")
+            print(f"Scenes sans collision apres:         {no_coll_after:.1f}%")
+            print(f"Score placement moyen avant:         {avg_placement_before:.1f}%")
+            print(f"Score placement moyen apres:         {avg_placement_after:.1f}%")
+            print(f"Nombre moyen d'iterations:           {avg_iter:.2f}")
+            print(f"Mediane des iterations:              {median_iter}")
+            print(f"Taux de convergence:                 {converged_rate:.1f}%")
 
             summary = {
                 "total_prompts": len(all_metrics),
@@ -278,12 +395,15 @@ def main():
                 "avg_collisions_after": avg_after,
                 "pct_no_collision_before": no_coll_before,
                 "pct_no_collision_after": no_coll_after,
+                "avg_placement_score_before": avg_placement_before,
+                "avg_placement_score_after": avg_placement_after,
                 "avg_iterations": avg_iter,
                 "median_iterations": median_iter,
-                "convergence_rate": converged_rate,}
+                "convergence_rate": converged_rate,
+            }
             with open(SUMMARY_FILE, 'w', encoding='utf-8') as f:
                 json.dump(summary, f, indent=2, ensure_ascii=False)
-            print(f"[metrics] résumé sauvegardé dans {SUMMARY_FILE}")
+            print(f"[metrics] resume sauvegarde dans {SUMMARY_FILE}")
 
             plot_metrics(all_metrics, os.path.join(ROOT, "tests", "plots"))
 

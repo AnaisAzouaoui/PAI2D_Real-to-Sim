@@ -1,8 +1,10 @@
 import base64
 import io
+import math
 import os
 import re
 import requests
+import numpy as np
 from collections import defaultdict
 from pathlib import Path
 from PIL import Image
@@ -32,6 +34,12 @@ MAX_IMAGE_SIZE = 1024
 SCENE_WIDTH = 5.0
 SCENE_DEPTH = 5.0
 DEPTH_NUDGE = 0.3
+
+# Parametres camera supposes pour la back-projection metrique
+CAM_FOV_DEG          = 70.0   # champ de vision horizontal (smartphone typique)
+CAM_HEIGHT_FRONTAL   = 1.0    # hauteur camera en metres (vue frontale)
+CAM_TILT_FRONTAL_DEG = 40.0   # inclinaison vers le bas (photo de sol typique : 35-45 deg)
+CAM_HEIGHT_TOPDOWN   = 1.5    # hauteur camera en metres (vue top-down)
 
 VERTICAL_RELATIONS = {"on", "under", "inside"}
 DEPTH_RELATIONS    = {"in_front_of", "behind"}
@@ -185,9 +193,28 @@ TASK:
    - "frontal"  : camera is roughly horizontal, looking at the scene from the side (most room photos)
    - "top_down" : camera is above, looking straight down at the scene
 
-2. Detect every distinct visible object in the image(s).
+2. Estimate the camera parameters (used for accurate 3D back-projection):
+   - cam_tilt_deg: angle in degrees the camera is tilted DOWNWARD from horizontal.
+       0  = perfectly horizontal (looking straight ahead, floor not visible)
+       30 = slight downward tilt (floor visible at the bottom)
+       45 = moderate tilt (floor fills half the image)
+       60 = steep tilt (floor fills most of the image, objects appear compressed)
+       90 = looking straight down (pure top-down)
+       Look at how much floor is visible and how compressed the perspective is.
+   - cam_height_m: estimated height of the camera above the floor in metres.
+       0.3 = camera near floor level
+       0.8 = table height
+       1.0 = phone held at waist/chest height
+       1.5 = phone held above head
+   - cam_fov_deg: horizontal field of view in degrees.
+       60  = narrow (telephoto)
+       70  = typical smartphone
+       90  = wide angle
+       110 = ultra-wide
 
-3. For each object estimate:
+3. Detect every distinct visible object in the image(s).
+
+4. For each object estimate:
    - pos_norm: [x, y] — normalised centre of the object IN THE IMAGE.
        x = 0.0 -> left edge,  x = 1.0 -> right edge.
        y = 0.0 -> top edge,   y = 1.0 -> bottom edge.
@@ -206,7 +233,7 @@ TASK:
        "upside_down"  — completely inverted
        -> Use "default" unless a rotation is CLEARLY visible.
 
-4. Extract ONLY the spatial relations that are unambiguously visible:
+5. Extract ONLY the spatial relations that are unambiguously visible:
    - "on"         : A rests on top of B
    - "under"      : A is below B
    - "inside"     : A is inside B
@@ -219,6 +246,9 @@ TASK:
 OUTPUT FORMAT — return ONLY this JSON, nothing else:
 {
   "view_type": "<frontal|top_down>",
+  "cam_tilt_deg": <0-90>,
+  "cam_height_m": <float>,
+  "cam_fov_deg": <float>,
   "objects": [
     {
       "label": "<nom en francais>",
@@ -250,7 +280,11 @@ RULES:
         return {"view_type": "frontal", "objects": [], "relations": []}
     if result.get("view_type") not in ("frontal", "top_down"):
         result["view_type"] = "frontal"
-    print(f"[detect_and_estimate] termine -> vue={result['view_type']}, {len(result['objects'])} objet(s), {len(result.get('relations', []))} relation(s)")
+    tilt = result.get("cam_tilt_deg", "?")
+    height = result.get("cam_height_m", "?")
+    fov = result.get("cam_fov_deg", "?")
+    print(f"[detect_and_estimate] termine -> vue={result['view_type']}, tilt={tilt}deg, h={height}m, fov={fov}deg")
+    print(f"[detect_and_estimate] {len(result['objects'])} objet(s), {len(result.get('relations', []))} relation(s)")
     return result
 
 
@@ -258,31 +292,52 @@ RULES:
 # COORDINATE CONVERSION
 # -----------------------------------------------------------------------------
 
+FALLBACK_WIDTH = 1.5   # metres, plage laterale si pas de depth map
+FALLBACK_DEPTH = 2.0   # metres, profondeur max si pas de depth map
+
+
 def pos_norm_to_world(pos_norm, view_type):
-    """
-    Convert normalised image coordinates [0..1, 0..1] to world (x, y).
-
-    World convention (from sceneBuilding.apply_relation):
-      x = depth axis  (in_front_of = more x, behind = less x)
-      y = lateral axis (right_of = more y, left_of = less y)
-      z = vertical     (on = more z)
-
-    Frontal view (camera horizontal, looking along -x):
-      image x (left-right)         -> world y  (centered)
-      image y (top=far, bot=near)  -> world x  (top -> larger x = farther)
-
-    Top-down view (camera above, looking along -z):
-      image x -> world x  (centered)
-      image y -> world y  (inverted: top of image = positive y)
+    """Fallback lineaire (utilise uniquement si pas de depth map).
+    world_x : toujours positif (bas image = proche, haut = loin).
+    world_y : lateral, centre sur 0.
     """
     px, py = pos_norm
     if view_type == "top_down":
-        world_x = round((px - 0.5) * SCENE_WIDTH,  3)
-        world_y = round((0.5 - py) * SCENE_DEPTH, 3)
-    else:  # frontal (default)
-        world_x = round((0.5 - py) * SCENE_DEPTH, 3)
-        world_y = round((px - 0.5) * SCENE_WIDTH,  3)
+        world_x = round((px - 0.5) * FALLBACK_WIDTH, 3)
+        world_y = round((0.5 - py) * FALLBACK_DEPTH, 3)
+    else:
+        world_x = round((1.0 - py) * FALLBACK_DEPTH, 3)   # bas=0, haut=DEPTH
+        world_y = round((px - 0.5) * FALLBACK_WIDTH, 3)
     return world_x, world_y
+
+
+def depth_to_world(u, v, D, view_type, image_size, cam_params=None):
+    """
+    Back-projection metrique : pixel (u,v) + profondeur D (metres) -> (world_x, world_y).
+
+    cam_params: dict optionnel avec tilt_deg, height_m, fov_deg estimes par le VLM.
+    Fallback sur les constantes globales si absent.
+    """
+    W, H = image_size
+    p = cam_params or {}
+    fov_deg   = float(p.get("cam_fov_deg",   CAM_FOV_DEG))
+    height    = float(p.get("cam_height_m",  CAM_HEIGHT_FRONTAL))
+    tilt_deg  = float(p.get("cam_tilt_deg",  CAM_TILT_FRONTAL_DEG))
+
+    fov_x = math.radians(max(20.0, min(150.0, fov_deg)))
+    fx = (W / 2) / math.tan(fov_x / 2)
+    cx, cy = W / 2.0, H / 2.0
+    D = max(0.1, float(D))
+
+    if view_type == "top_down":
+        world_x = (u - cx) / fx * D
+        world_y = -(v - cy) / fx * D
+    else:
+        theta = math.radians(max(1.0, min(89.0, tilt_deg)))
+        world_x = (D - math.sin(theta) * height) / math.cos(theta)
+        world_y = (u - cx) / fx * D
+
+    return round(float(world_x), 3), round(float(world_y), 3)
 
 
 # -----------------------------------------------------------------------------
@@ -364,9 +419,7 @@ def assign_contours(detected_objects, detections, image_size):
 
 
 def load_depth_map(path):
-    # accepte .npy (numpy) ou n'importe quelle image (PNG/JPG/EXR via PIL)
-    # convention: valeurs en metres, plus grand = plus loin de la camera
-    import numpy as np
+    """Charge une depth map depuis .npy ou image PIL. Valeurs en metres."""
     if path.lower().endswith(".npy"):
         return np.load(path)
     img = Image.open(path)
@@ -458,7 +511,12 @@ def scene_from_image(image_paths, depth_map_paths=None, dims_fn=None):
     detected_objects = detected_raw.get("objects", [])
     detected_relations = detected_raw.get("relations", [])
     view_type = detected_raw.get("view_type", "frontal")
-    print(f"[scene_from_image] view_type={view_type}, {len(detected_objects)} objets detectes")
+    cam_params = {
+        k: detected_raw[k]
+        for k in ("cam_tilt_deg", "cam_height_m", "cam_fov_deg")
+        if k in detected_raw
+    }
+    print(f"[scene_from_image] view_type={view_type}, cam_params={cam_params}, {len(detected_objects)} objets detectes")
 
     if not detected_objects:
         return []
@@ -511,23 +569,60 @@ def scene_from_image(image_paths, depth_map_paths=None, dims_fn=None):
     print(f"[scene_from_image] etape 4/6 - orientations ({len(orientations)} non-default) + dimensions Genesis...")
     items = (dims_fn or get_genesis_dimensions)(items, orientations)
 
-    # Depth map optionnelle
+    # Depth map : fournie ou generee automatiquement par Depth Anything V2
     depth_map = None
+    depth_source = "aucune"
     if depth_map_paths:
-        print(f"[scene_from_image] depth map fournie: {depth_map_paths[0]}")
+        print(f"[depth] depth map fournie manuellement : {depth_map_paths[0]}")
         depth_map = load_depth_map(depth_map_paths[0])
+        depth_source = "manuelle"
+        print(f"[depth] shape={depth_map.shape}, range=[{depth_map.min():.2f}, {depth_map.max():.2f}] m")
+    else:
+        try:
+            from pipeline.utils.depth_estimator import estimate_depth
+            print("[depth] generation depth map via Depth Anything V2 metric (MPS)...")
+            depth_map = estimate_depth(images_pil[0])
+            depth_source = "Depth Anything V2"
+            print(f"[depth] OK  shape={depth_map.shape}  range=[{depth_map.min():.2f}, {depth_map.max():.2f}] m  mean={depth_map.mean():.2f} m")
+        except Exception as e:
+            depth_source = f"FALLBACK lineaire (erreur: {e})"
+            print(f"[depth] ERREUR depth model -> fallback lineaire ({e})")
 
-    print(f"[scene_from_image] etape 5/6 - conversion coords image -> monde (vue={view_type})...")
+    print(f"\n[coords] ---- conversion image -> monde (vue={view_type}, source depth={depth_source}) ----")
+    print(f"[coords] image size={images_pil[0].size}  cam_params={cam_params}")
+    img_w, img_h = images_pil[0].size
     for item in items:
         est = item_estimates.get(item["id"], {})
         pos_norm = est.get("pos_norm", [0.5, 0.5])
-        world_x, world_y = pos_norm_to_world(pos_norm, view_type)
-        # Si on a une depth map et un contour, on remplace world_x par la mesure de profondeur
-        if depth_map is not None and "contour" in est:
-            world_x = round(sample_depth_at_contour(depth_map, est["contour"]), 3)
+        contour = est.get("contour")
+
+        if depth_map is not None:
+            if contour:
+                u = (contour[0] + contour[2]) / 2.0
+                v = (contour[1] + contour[3]) / 2.0
+                src = "contour GroundingDINO"
+            else:
+                u = pos_norm[0] * img_w
+                v = pos_norm[1] * img_h
+                src = "pos_norm VLM (pas de contour)"
+            D = float(depth_map[
+                min(int(round(v)), depth_map.shape[0] - 1),
+                min(int(round(u)), depth_map.shape[1] - 1)
+            ])
+            world_x, world_y = depth_to_world(u, v, D, view_type, (img_w, img_h), cam_params)
+            print(f"[coords] {item['id']:20s}  pixel=({u:5.0f},{v:5.0f})  source={src}")
+            print(f"         D={D:.3f}m  -> monde x={world_x:.3f}m  y={world_y:.3f}m")
+        else:
+            world_x, world_y = pos_norm_to_world(pos_norm, view_type)
+            print(f"[coords] {item['id']:20s}  pos_norm={pos_norm}  FALLBACK LINEAIRE")
+            print(f"         -> monde x={world_x:.3f}m  y={world_y:.3f}m")
+
         _, _, z = item["pos"]
         item["pos"] = [world_x, world_y, z]
-        print(f"  {item['id']}: monde=({world_x:.3f}, {world_y:.3f}, {z:.3f})")
+
+    print(f"[coords] ---- positions finales ----")
+    for item in items:
+        print(f"[coords] {item['id']:20s}  pos={[round(v,3) for v in item['pos']]}")
 
     print(f"[scene_from_image] etape 6/6 - placement vertical + repositionnement enfants...")
     on_parent_map = {
@@ -591,6 +686,7 @@ def scene_from_image(image_paths, depth_map_paths=None, dims_fn=None):
             target_y = py + parent_dy / 2 - rel_y * parent_dy
             item["pos"][1] = max(py - margin_y, min(target_y, py + margin_y))
 
+    # nudge qualitatif seulement si pas de depth map (sinon profondeur deja metrique)
     if depth_map is None:
         nudge_depth_from_relations(items, depth_relations, view_type)
 

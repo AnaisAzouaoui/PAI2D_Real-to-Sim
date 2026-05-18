@@ -1,18 +1,19 @@
 """
-Test V3 
+Test V3 et V3.1
 F1 objets, F1 relations, MAE/RMSE positions avec offset de calibration
 """
 import sys
 import os
 import json
 import time
+import importlib
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC  = os.path.join(ROOT, "src")
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SRC not in sys.path:
     sys.path.insert(0, SRC)
 
-from pipeline.versions.v3_1_vlm_refined.pipeline_v3_1_image import scene_from_image, detect_and_estimate, load_images
 from metrics import (
     compute_f1, aggregate_runs, compute_relation_f1,
     compute_mae, compute_relation_order_accuracy, compute_calibration_offset,
@@ -20,33 +21,80 @@ from metrics import (
 
 DATA_PATH  = os.path.join(ROOT, "tests", "data", "images_ground_truth.json")
 RESULTS_DIR = os.path.join(ROOT, "tests", "results")
-RESULTS_PATH = os.path.join(RESULTS_DIR, "vision_results.json")
+
+PIPELINES = {
+    "v3":   "pipeline.versions.v3_vlm_only.pipeline_v3_image",
+    "v3.1": "pipeline.versions.v3_1_vlm_refined.pipeline_v3_1_image",
+}
+
+
+def get_pipeline(version):
+    mod = importlib.import_module(PIPELINES[version])
+    scene_fn = getattr(mod, "scene_from_image")
+    detect_fn = getattr(mod, "detect_and_estimate", None)
+    load_fn   = getattr(mod, "load_images", None)
+    return scene_fn, detect_fn, load_fn
+
+
+def resolve_paths(paths):
+    # rend chaque chemin absolu, en partant du dossier tests/
+    out = []
+    for p in paths:
+        if os.path.isabs(p):
+            out.append(p)
+        else:
+            out.append(os.path.join(TESTS_DIR, p))
+    return out
+
+
+def normalize_gt(raw_gt):
+    # converti [x,y,z] ou {"x":,"y":,"z":} vers {"x":,"y":,"z":}, ignore les valeurs vides
+    out = {}
+    for obj_id, pos in raw_gt.items():
+        if isinstance(pos, list) and len(pos) == 3:
+            out[obj_id] = {"x": pos[0], "y": pos[1], "z": pos[2]}
+        elif isinstance(pos, dict) and "x" in pos:
+            out[obj_id] = pos
+    return out
+
+
+def derive_relations_from_parents(items):
+    # fallback pour V3 qui ne renvoie pas de liste 'relations' separee
+    rels = []
+    by_id = {it["id"]: it for it in items}
+    for it in items:
+        parent_id = it.get("parent_id")
+        if parent_id and parent_id in by_id:
+            rels.append({"type": "on", "subject": it["id"], "object": parent_id})
+    return rels
 
 
 def load_image_ground_truth():
     with open(DATA_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
-    valid = [img for img in data["images"]]
+    valid = [img for img in data["images"] if not img.get("skip")]
     if not valid:
-        print("[vision] Aucune image remplie dans images_ground_truth.json")
+        print("[vision] Aucune image utilisable (toutes skip).")
     return valid
 
 
-def compute_calibration(image_entries, n_runs):
+def compute_calibration(image_entries, scene_fn, n_runs):
     calib_entries = [e for e in image_entries if e.get("is_calibration")]
     if not calib_entries:
-        print("[vision] Aucune image de calibration — offset = (0, 0, 0)")
+        print("[vision] Aucune image de calibration -> offset = (0, 0, 0)")
         return {"x": 0.0, "y": 0.0, "z": 0.0}
 
     print(f"\n[vision] Calibration sur {len(calib_entries)} image(s)...")
     all_offsets = []
     for entry in calib_entries:
+        gt_pos = normalize_gt(entry.get("ground_truth_positions", {}))
+        paths  = resolve_paths(entry["paths"])
         xs, ys, zs = [], [], []
         for _ in range(n_runs):
             try:
-                result = scene_from_image(entry["paths"])
+                result = scene_fn(paths)
                 pred_pos = {obj["id"]: obj["pos"] for obj in result if "pos" in obj}
-                off  = compute_calibration_offset(pred_pos, entry["ground_truth_positions"])
+                off  = compute_calibration_offset(pred_pos, gt_pos)
                 xs.append(off["x"]); ys.append(off["y"]); zs.append(off["z"])
             except Exception as e:
                 print(f"  [calibration] erreur : {e}")
@@ -69,27 +117,23 @@ def compute_calibration(image_entries, n_runs):
     return offset
 
 
-def run_single_image(entry, offset, n_runs):
-    paths  = entry["paths"]
+def run_single_image(entry, offset, scene_fn, detect_fn, load_fn, n_runs):
+    paths  = resolve_paths(entry["paths"])
     expected_obj = entry["expected_objects"]
     expected_rel = entry["expected_relations"]
 
-    raw_gt = entry.get("ground_truth_positions", {})
-    gt_positions = {}
-    for obj_id, pos in raw_gt.items():
-        if isinstance(pos, list) and len(pos) == 3:
-            gt_positions[obj_id] = {"x": pos[0], "y": pos[1], "z": pos[2]}
-        elif isinstance(pos, dict) and "x" in pos:
-            gt_positions[obj_id] = pos
+    gt_positions = normalize_gt(entry.get("ground_truth_positions", {}))
     has_pos  = bool(gt_positions)
 
     per_run  = []
     all_positions = {}
+    last_result = None
 
     for i in range(n_runs):
         t0 = time.time()
         try:
-            result = scene_from_image(paths)
+            result = scene_fn(paths)
+            last_result = result
             elapsed = time.time() - t0
             predicted_ids = [obj["id"] for obj in result if "id" in obj]
             f1_m = compute_f1(predicted_ids, expected_obj)
@@ -121,10 +165,14 @@ def run_single_image(entry, offset, n_runs):
                 "rel_order_acc": 0.0, "time_s": round(time.time()-t0, 3), "error": str(e),
             })
 
+    # F1 relations : V3.1 a detect_and_estimate, V3 derive depuis parent_id
     try:
-        images = load_images(paths)
-        vlm_output  = detect_and_estimate(images)
-        predicted_rels = vlm_output.get("relations", [])
+        if detect_fn is not None and load_fn is not None:
+            images = load_fn(paths)
+            vlm_output  = detect_fn(images)
+            predicted_rels = vlm_output.get("relations", [])
+        else:
+            predicted_rels = derive_relations_from_parents(last_result or [])
         rel_f1 = compute_relation_f1(predicted_rels, expected_rel)
     except Exception:
         rel_f1 = {"VP": 0, "FP": 0, "FN": len(expected_rel),
@@ -171,23 +219,28 @@ def run_single_image(entry, offset, n_runs):
     }
 
 
-def run_all(n_runs=5, save_json=True):
+def run_all(version="v3.1", n_runs=5, save_json=True):
+    if version not in PIPELINES:
+        raise ValueError(f"version inconnue: {version}. Choix: {list(PIPELINES)}")
+
+    scene_fn, detect_fn, load_fn = get_pipeline(version)
+
     entries = load_image_ground_truth()
     if not entries:
         return {}
 
-    offset = compute_calibration(entries, n_runs=n_runs)
+    offset = compute_calibration(entries, scene_fn, n_runs=n_runs)
     test_entries = [e for e in entries if not e.get("is_calibration")]
     results  = []
 
     print(f"\n{'='*70}")
-    print(f"  TEST VISION  |  {n_runs} runs/image  |  offset={offset}")
+    print(f"  TEST VISION {version}  |  {n_runs} runs/image  |  offset={offset}")
     print(f"{'='*70}")
     print(f"{'ID':<8} {'F1 obj':>8} {'F1 rel':>8} {'MAE x':>7} {'MAE y':>7} {'MAE z':>7} {'RMSE':>7} {'Time':>7}")
     print(f"{'-'*70}")
 
     for entry in test_entries:
-        r = run_single_image(entry, offset, n_runs)
+        r = run_single_image(entry, offset, scene_fn, detect_fn, load_fn, n_runs)
         agg = r["aggregated_f1"]
         mae_m = r["mae_mean"]
         f1_rel = r.get("relation_f1", {}).get("f1", 0.0)
@@ -211,6 +264,7 @@ def run_all(n_runs=5, save_json=True):
         print(f"  Global MAE z : {sum(mae_z_vals)/len(mae_z_vals):.4f} m")
 
     output = {
+        "version": version,
         "n_runs": n_runs,
         "calibration_offset": offset,
         "results": results,
@@ -224,9 +278,11 @@ def run_all(n_runs=5, save_json=True):
 
     if save_json:
         os.makedirs(RESULTS_DIR, exist_ok=True)
-        with open(RESULTS_PATH, "w", encoding="utf-8") as f:
+        suffix = version.replace(".", "_")
+        results_path = os.path.join(RESULTS_DIR, f"vision_results_{suffix}.json")
+        with open(results_path, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=2, ensure_ascii=False)
-        print(f"\n[vision] Resultats -> {RESULTS_PATH}")
+        print(f"\n[vision] Resultats -> {results_path}")
 
     return output
 
@@ -234,7 +290,11 @@ def run_all(n_runs=5, save_json=True):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument("--version", choices=list(PIPELINES) + ["all"], default="v3.1")
     parser.add_argument("--runs", type=int, default=5)
     parser.add_argument("--no-save", action="store_true")
     args = parser.parse_args()
-    run_all(n_runs=args.runs, save_json=not args.no_save)
+
+    versions = list(PIPELINES) if args.version == "all" else [args.version]
+    for v in versions:
+        run_all(version=v, n_runs=args.runs, save_json=not args.no_save)

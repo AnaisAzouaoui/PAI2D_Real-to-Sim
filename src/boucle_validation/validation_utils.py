@@ -69,23 +69,45 @@ def correct_list(data, corrections, field):
     return data
 
 
+def get_descendants(items_dict, root_id):
+    """Retourne tous les IDs qui sont descendants directs ou indirects de root_id."""
+    descendants = set()
+    to_visit = [root_id]
+    while to_visit:
+        current = to_visit.pop()
+        for item_id, item in items_dict.items():
+            if item.get('parent_id') == current and item_id not in descendants:
+                descendants.add(item_id)
+                to_visit.append(item_id)
+    return descendants
+
+
 def apply_semantic_corrections(data, corrections):
     """Applique les corrections semantiques du VLM en utilisant apply_relation
     Le VLM retourne des types de relations, le code calcule les coordonnees exactes
-    sans se fier aux chiffres hallucinés par le VLM """
+    sans se fier aux chiffres hallucines par le VLM """
     items_dict = {item['id']: item for item in data}
     for corr in corrections:
         subject_id = corr.get('subject')
         obj_id = corr.get('object')
         rel_type = corr.get('type')
         if not subject_id or not rel_type or subject_id not in items_dict:
-            print(f"[apply_semantic_corrections] correction ignoree (subject ou type manquant somehow): {corr}")
+            print(f"[apply_semantic_corrections] correction ignoree (subject ou type manquant): {corr}")
             continue
         subject = items_dict[subject_id]
         if not obj_id or obj_id not in items_dict:
             print(f"[apply_semantic_corrections] objet de reference introuvable: {obj_id}")
             continue
         ref = items_dict[obj_id]
+
+        # bloquer les corrections laterales ou la reference est un descendant du sujet :
+        # ex: "boite behind conserve" alors que conserve est posee sur boite → ferait flotter la boite
+        if rel_type not in ('on', 'inside'):
+            descendants = get_descendants(items_dict, subject_id)
+            if obj_id in descendants:
+                print(f"[apply_semantic_corrections] correction ignoree: {obj_id} est un descendant de {subject_id}, ignorer {rel_type}")
+                continue
+
         if rel_type in ('on', 'inside'):
             # sauvegarder X/Y avant apply_relation qui les randomise
             prev_x, prev_y = subject['pos'][0], subject['pos'][1]

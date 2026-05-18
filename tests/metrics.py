@@ -250,6 +250,52 @@ def compute_relation_order_accuracy(objects: list, expected_relations: list) -> 
     return round(correct / len(vertical_relations), 4)
 
 
+def derive_relations_from_positions(objects: list) -> list:
+    """
+    Derive les relations spatiales implicites a partir des positions V1.
+    Permet de comparer V1 sur rel_F1 comme V1.1 et V2.
+    """
+    relations = []
+    for i, a in enumerate(objects):
+        for b in objects[i + 1:]:
+            a_pos = a.get("pos", [0, 0, 0])
+            b_pos = b.get("pos", [0, 0, 0])
+            a_dim = a.get("dimensions") or [0, 0, 0]
+            b_dim = b.get("dimensions") or [0, 0, 0]
+            a_sc  = a.get("scale", 1.0)
+            b_sc  = b.get("scale", 1.0)
+            a_id  = a.get("id", "")
+            b_id  = b.get("id", "")
+
+            a_top = a_pos[2] + a_dim[2] * a_sc / 2
+            b_bot = b_pos[2] - b_dim[2] * b_sc / 2
+            b_top = b_pos[2] + b_dim[2] * b_sc / 2
+            a_bot = a_pos[2] - b_dim[2] * b_sc / 2
+
+            if b_bot >= a_top - 0.05:
+                relations.append({"type": "on", "subject": b_id, "object": a_id})
+            elif a_bot >= b_top - 0.05:
+                relations.append({"type": "on", "subject": a_id, "object": b_id})
+            else:
+                dy = b_pos[1] - a_pos[1]
+                threshold_y = (a_dim[1] * a_sc + b_dim[1] * b_sc) / 2
+                if abs(dy) > threshold_y:
+                    if dy > 0:
+                        relations.append({"type": "right_of", "subject": b_id, "object": a_id})
+                    else:
+                        relations.append({"type": "left_of", "subject": b_id, "object": a_id})
+
+                dx = b_pos[0] - a_pos[0]
+                threshold_x = (a_dim[0] * a_sc + b_dim[0] * b_sc) / 2
+                if abs(dx) > threshold_x:
+                    if dx > 0:
+                        relations.append({"type": "in_front_of", "subject": b_id, "object": a_id})
+                    else:
+                        relations.append({"type": "behind", "subject": b_id, "object": a_id})
+
+    return relations
+
+
 def compute_calibration_offset(predicted: dict, ground_truth: dict) -> dict:
     """
     Calcule l'offset systematique entre les positions predites par V3 et les positions reelles.

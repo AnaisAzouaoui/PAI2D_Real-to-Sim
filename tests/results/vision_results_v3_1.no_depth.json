@@ -1,0 +1,878 @@
+{
+  "version": "v3.1",
+  "n_runs": 5,
+  "calibration_offset": {
+    "x": 0.3119,
+    "y": -0.0684,
+    "z": -0.0297
+  },
+  "results": [
+    {
+      "id": "img02",
+      "paths": [
+        "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/tests/images_labo/img02.png"
+      ],
+      "description": "Un mug a l'envers avec une banane devant et des ciseaux a droite du mug.",
+      "per_run": [
+        {
+          "run": 1,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "VP": 3,
+          "FP": 0,
+          "FN": 0,
+          "mae_x": 0.7137,
+          "mae_y": 0.3063,
+          "mae_z": 0.0223,
+          "rmse": 0.8104,
+          "rel_order_acc": 1.0,
+          "time_s": 23.765,
+          "error": null
+        },
+        {
+          "run": 2,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "VP": 3,
+          "FP": 0,
+          "FN": 0,
+          "mae_x": 0.7137,
+          "mae_y": 0.3063,
+          "mae_z": 0.0223,
+          "rmse": 0.8104,
+          "rel_order_acc": 1.0,
+          "time_s": 13.832,
+          "error": null
+        },
+        {
+          "run": 3,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "VP": 3,
+          "FP": 0,
+          "FN": 0,
+          "mae_x": 0.7137,
+          "mae_y": 0.3063,
+          "mae_z": 0.0223,
+          "rmse": 0.8104,
+          "rel_order_acc": 1.0,
+          "time_s": 14.702,
+          "error": null
+        },
+        {
+          "run": 4,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "VP": 3,
+          "FP": 0,
+          "FN": 0,
+          "mae_x": 0.7137,
+          "mae_y": 0.3063,
+          "mae_z": 0.0223,
+          "rmse": 0.8104,
+          "rel_order_acc": 1.0,
+          "time_s": 14.465,
+          "error": null
+        },
+        {
+          "run": 5,
+          "f1": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "VP": 3,
+          "FP": 0,
+          "FN": 0,
+          "mae_x": 0.7137,
+          "mae_y": 0.3063,
+          "mae_z": 0.0223,
+          "rmse": 0.8104,
+          "rel_order_acc": 1.0,
+          "time_s": 14.747,
+          "error": null
+        }
+      ],
+      "aggregated_f1": {
+        "precision_mean": 1.0,
+        "precision_std": 0.0,
+        "recall_mean": 1.0,
+        "recall_std": 0.0,
+        "f1_mean": 1.0,
+        "f1_std": 0.0
+      },
+      "relation_f1": {
+        "VP": 0,
+        "FP": 0,
+        "FN": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "mae_mean": {
+        "x": 0.7137,
+        "y": 0.3063,
+        "z": 0.0223,
+        "rmse": 0.8104
+      },
+      "mae_std": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rmse": 0.0
+      },
+      "position_variance": {
+        "mug": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "ciseaux": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "banane": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        }
+      },
+      "time_mean_s": 16.302,
+      "time_std_s": 3.746
+    },
+    {
+      "id": "img03",
+      "paths": [
+        "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/tests/images_labo/img03.png"
+      ],
+      "description": "Une perceuse a gauche des ciseaux, a gauche d'un mug, a gauche d'un tournevis, a gauche d'une banane.",
+      "per_run": [
+        {
+          "run": 1,
+          "f1": 0.7273,
+          "precision": 0.6667,
+          "recall": 0.8,
+          "VP": 4,
+          "FP": 2,
+          "FN": 1,
+          "mae_x": 0.181,
+          "mae_y": 0.1644,
+          "mae_z": 0.0183,
+          "rmse": 0.2883,
+          "rel_order_acc": 1.0,
+          "time_s": 27.136,
+          "error": null
+        },
+        {
+          "run": 2,
+          "f1": 0.7273,
+          "precision": 0.6667,
+          "recall": 0.8,
+          "VP": 4,
+          "FP": 2,
+          "FN": 1,
+          "mae_x": 0.1812,
+          "mae_y": 0.1647,
+          "mae_z": 0.0183,
+          "rmse": 0.2885,
+          "rel_order_acc": 1.0,
+          "time_s": 40.684,
+          "error": null
+        },
+        {
+          "run": 3,
+          "f1": 0.6667,
+          "precision": 0.5714,
+          "recall": 0.8,
+          "VP": 4,
+          "FP": 3,
+          "FN": 1,
+          "mae_x": 0.1815,
+          "mae_y": 0.1647,
+          "mae_z": 0.0183,
+          "rmse": 0.2886,
+          "rel_order_acc": 1.0,
+          "time_s": 53.522,
+          "error": null
+        },
+        {
+          "run": 4,
+          "f1": 0.7273,
+          "precision": 0.6667,
+          "recall": 0.8,
+          "VP": 4,
+          "FP": 2,
+          "FN": 1,
+          "mae_x": 0.1812,
+          "mae_y": 0.1647,
+          "mae_z": 0.0183,
+          "rmse": 0.2885,
+          "rel_order_acc": 1.0,
+          "time_s": 24.173,
+          "error": null
+        },
+        {
+          "run": 5,
+          "f1": 0.7273,
+          "precision": 0.6667,
+          "recall": 0.8,
+          "VP": 4,
+          "FP": 2,
+          "FN": 1,
+          "mae_x": 0.1812,
+          "mae_y": 0.1647,
+          "mae_z": 0.0183,
+          "rmse": 0.2885,
+          "rel_order_acc": 1.0,
+          "time_s": 21.727,
+          "error": null
+        }
+      ],
+      "aggregated_f1": {
+        "precision_mean": 0.6476,
+        "precision_std": 0.0381,
+        "recall_mean": 0.8,
+        "recall_std": 0.0,
+        "f1_mean": 0.7152,
+        "f1_std": 0.0242
+      },
+      "relation_f1": {
+        "VP": 0,
+        "FP": 0,
+        "FN": 4,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "mae_mean": {
+        "x": 0.1812,
+        "y": 0.1646,
+        "z": 0.0183,
+        "rmse": 0.2885
+      },
+      "mae_std": {
+        "x": 0.0002,
+        "y": 0.0001,
+        "z": 0.0,
+        "rmse": 0.0001
+      },
+      "position_variance": {
+        "ciseaux": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "mug": {
+          "x_std": 0.0004,
+          "y_std": 0.0004,
+          "z_std": 0.0
+        },
+        "tournevis": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "banane": {
+          "x_std": 0.0004,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "jouet": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "boîte": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        }
+      },
+      "time_mean_s": 33.448,
+      "time_std_s": 11.988
+    },
+    {
+      "id": "img04",
+      "paths": [
+        "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/tests/images_labo/img04.png"
+      ],
+      "description": "Un mug a l'envers sur laquelle est posee une boite de conserve, et derriere lequel est un tournevis, derriere lequel sont des ciseaux. A droite du mug, une perceuse posee sur une banane.",
+      "per_run": [
+        {
+          "run": 1,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 3,
+          "FP": 3,
+          "FN": 3,
+          "mae_x": 0.7818,
+          "mae_y": 0.3243,
+          "mae_z": 0.0248,
+          "rmse": 0.9276,
+          "rel_order_acc": 0.0,
+          "time_s": 207.328,
+          "error": null
+        },
+        {
+          "run": 2,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 3,
+          "FP": 3,
+          "FN": 3,
+          "mae_x": 0.7818,
+          "mae_y": 0.3243,
+          "mae_z": 0.0248,
+          "rmse": 0.9276,
+          "rel_order_acc": 0.0,
+          "time_s": 20.226,
+          "error": null
+        },
+        {
+          "run": 3,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 3,
+          "FP": 3,
+          "FN": 3,
+          "mae_x": 0.7841,
+          "mae_y": 0.3243,
+          "mae_z": 0.0529,
+          "rmse": 0.9304,
+          "rel_order_acc": 0.0,
+          "time_s": 23.052,
+          "error": null
+        },
+        {
+          "run": 4,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 3,
+          "FP": 3,
+          "FN": 3,
+          "mae_x": 0.7815,
+          "mae_y": 0.2576,
+          "mae_z": 0.0248,
+          "rmse": 0.9158,
+          "rel_order_acc": 0.0,
+          "time_s": 23.221,
+          "error": null
+        },
+        {
+          "run": 5,
+          "f1": 0.3636,
+          "precision": 0.4,
+          "recall": 0.3333,
+          "VP": 2,
+          "FP": 3,
+          "FN": 4,
+          "mae_x": 1.0271,
+          "mae_y": 0.2968,
+          "mae_z": 0.025,
+          "rmse": 1.0953,
+          "rel_order_acc": 0.0,
+          "time_s": 20.751,
+          "error": null
+        }
+      ],
+      "aggregated_f1": {
+        "precision_mean": 0.48,
+        "precision_std": 0.04,
+        "recall_mean": 0.4667,
+        "recall_std": 0.0667,
+        "f1_mean": 0.4727,
+        "f1_std": 0.0546
+      },
+      "relation_f1": {
+        "VP": 0,
+        "FP": 1,
+        "FN": 5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "mae_mean": {
+        "x": 0.8313,
+        "y": 0.3055,
+        "z": 0.0305,
+        "rmse": 0.9593
+      },
+      "mae_std": {
+        "x": 0.0979,
+        "y": 0.0262,
+        "z": 0.0112,
+        "rmse": 0.0682
+      },
+      "position_variance": {
+        "ciseaux": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "tournevis": {
+          "x_std": 0.0,
+          "y_std": 0.098,
+          "z_std": 0.0
+        },
+        "boîte de conserve": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "gobelet": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "banane": {
+          "x_std": 0.0032,
+          "y_std": 0.0,
+          "z_std": 0.0365
+        },
+        "pistolet jouet": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "jouet": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        }
+      },
+      "time_mean_s": 58.916,
+      "time_std_s": 74.216
+    },
+    {
+      "id": "img05",
+      "paths": [
+        "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/tests/images_labo/img05.png"
+      ],
+      "description": "Sur une boite, il y a une boite de conserve. A gauche de la boite de conserve il y a un mug, et a sa droite il y a une banane.",
+      "per_run": [
+        {
+          "run": 1,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0906,
+          "mae_y": 0.1182,
+          "mae_z": 0.4726,
+          "rmse": 0.506,
+          "rel_order_acc": 0.0,
+          "time_s": 19.265,
+          "error": null
+        },
+        {
+          "run": 2,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0906,
+          "mae_y": 0.1182,
+          "mae_z": 0.4726,
+          "rmse": 0.506,
+          "rel_order_acc": 0.0,
+          "time_s": 18.285,
+          "error": null
+        },
+        {
+          "run": 3,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0906,
+          "mae_y": 0.1182,
+          "mae_z": 0.4726,
+          "rmse": 0.506,
+          "rel_order_acc": 0.0,
+          "time_s": 20.986,
+          "error": null
+        },
+        {
+          "run": 4,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0906,
+          "mae_y": 0.1182,
+          "mae_z": 0.4726,
+          "rmse": 0.506,
+          "rel_order_acc": 0.0,
+          "time_s": 19.05,
+          "error": null
+        },
+        {
+          "run": 5,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0906,
+          "mae_y": 0.1182,
+          "mae_z": 0.4726,
+          "rmse": 0.506,
+          "rel_order_acc": 0.0,
+          "time_s": 20.84,
+          "error": null
+        }
+      ],
+      "aggregated_f1": {
+        "precision_mean": 0.5,
+        "precision_std": 0.0,
+        "recall_mean": 0.5,
+        "recall_std": 0.0,
+        "f1_mean": 0.5,
+        "f1_std": 0.0
+      },
+      "relation_f1": {
+        "VP": 0,
+        "FP": 6,
+        "FN": 3,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "mae_mean": {
+        "x": 0.0906,
+        "y": 0.1182,
+        "z": 0.4726,
+        "rmse": 0.506
+      },
+      "mae_std": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rmse": 0.0
+      },
+      "position_variance": {
+        "boîte": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "mug": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "boîte de conserve": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "banane": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        }
+      },
+      "time_mean_s": 19.685,
+      "time_std_s": 1.055
+    },
+    {
+      "id": "img06",
+      "paths": [
+        "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/tests/images_labo/img06.png"
+      ],
+      "description": "Dans une boite, une boite de conserve derriere des ciseaux et un tournevis qui est a gauche des ciseaux.",
+      "per_run": [
+        {
+          "run": 1,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0338,
+          "mae_y": 0.0823,
+          "mae_z": 0.3128,
+          "rmse": 0.3284,
+          "rel_order_acc": 1.0,
+          "time_s": 20.002,
+          "error": null
+        },
+        {
+          "run": 2,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0338,
+          "mae_y": 0.0823,
+          "mae_z": 0.3128,
+          "rmse": 0.3284,
+          "rel_order_acc": 1.0,
+          "time_s": 33.466,
+          "error": null
+        },
+        {
+          "run": 3,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0338,
+          "mae_y": 0.0823,
+          "mae_z": 0.3128,
+          "rmse": 0.3284,
+          "rel_order_acc": 1.0,
+          "time_s": 18.279,
+          "error": null
+        },
+        {
+          "run": 4,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0338,
+          "mae_y": 0.0823,
+          "mae_z": 0.3128,
+          "rmse": 0.3284,
+          "rel_order_acc": 1.0,
+          "time_s": 18.77,
+          "error": null
+        },
+        {
+          "run": 5,
+          "f1": 0.5,
+          "precision": 0.5,
+          "recall": 0.5,
+          "VP": 2,
+          "FP": 2,
+          "FN": 2,
+          "mae_x": 0.0338,
+          "mae_y": 0.0823,
+          "mae_z": 0.3128,
+          "rmse": 0.3284,
+          "rel_order_acc": 1.0,
+          "time_s": 18.709,
+          "error": null
+        }
+      ],
+      "aggregated_f1": {
+        "precision_mean": 0.5,
+        "precision_std": 0.0,
+        "recall_mean": 0.5,
+        "recall_std": 0.0,
+        "f1_mean": 0.5,
+        "f1_std": 0.0
+      },
+      "relation_f1": {
+        "VP": 0,
+        "FP": 3,
+        "FN": 5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "mae_mean": {
+        "x": 0.0338,
+        "y": 0.0823,
+        "z": 0.3128,
+        "rmse": 0.3284
+      },
+      "mae_std": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rmse": 0.0
+      },
+      "position_variance": {
+        "boîte": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "tournevis": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "ciseaux": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "boîte de conserve": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        }
+      },
+      "time_mean_s": 21.845,
+      "time_std_s": 5.839
+    },
+    {
+      "id": "img09",
+      "paths": [
+        "/Users/anaisazouaoui/Desktop/PAI2D/projet Real-to-Sim/PAI2D_Real-to-Sim/tests/images_labo/img09.png"
+      ],
+      "description": "Une banane dans un mug. A gauche du mug, un tournevis.",
+      "per_run": [
+        {
+          "run": 1,
+          "f1": 0.6667,
+          "precision": 0.6667,
+          "recall": 0.6667,
+          "VP": 2,
+          "FP": 1,
+          "FN": 1,
+          "mae_x": 0.782,
+          "mae_y": 0.22,
+          "mae_z": 0.0168,
+          "rmse": 0.872,
+          "rel_order_acc": 1.0,
+          "time_s": 16.985,
+          "error": null
+        },
+        {
+          "run": 2,
+          "f1": 0.6667,
+          "precision": 0.6667,
+          "recall": 0.6667,
+          "VP": 2,
+          "FP": 1,
+          "FN": 1,
+          "mae_x": 0.782,
+          "mae_y": 0.22,
+          "mae_z": 0.0168,
+          "rmse": 0.872,
+          "rel_order_acc": 1.0,
+          "time_s": 16.802,
+          "error": null
+        },
+        {
+          "run": 3,
+          "f1": 0.6667,
+          "precision": 0.6667,
+          "recall": 0.6667,
+          "VP": 2,
+          "FP": 1,
+          "FN": 1,
+          "mae_x": 0.782,
+          "mae_y": 0.22,
+          "mae_z": 0.0168,
+          "rmse": 0.872,
+          "rel_order_acc": 1.0,
+          "time_s": 17.345,
+          "error": null
+        },
+        {
+          "run": 4,
+          "f1": 0.6667,
+          "precision": 0.6667,
+          "recall": 0.6667,
+          "VP": 2,
+          "FP": 1,
+          "FN": 1,
+          "mae_x": 0.782,
+          "mae_y": 0.22,
+          "mae_z": 0.0168,
+          "rmse": 0.872,
+          "rel_order_acc": 1.0,
+          "time_s": 17.093,
+          "error": null
+        },
+        {
+          "run": 5,
+          "f1": 0.6667,
+          "precision": 0.6667,
+          "recall": 0.6667,
+          "VP": 2,
+          "FP": 1,
+          "FN": 1,
+          "mae_x": 0.782,
+          "mae_y": 0.22,
+          "mae_z": 0.0168,
+          "rmse": 0.872,
+          "rel_order_acc": 1.0,
+          "time_s": 18.759,
+          "error": null
+        }
+      ],
+      "aggregated_f1": {
+        "precision_mean": 0.6667,
+        "precision_std": 0.0,
+        "recall_mean": 0.6667,
+        "recall_std": 0.0,
+        "f1_mean": 0.6667,
+        "f1_std": 0.0
+      },
+      "relation_f1": {
+        "VP": 0,
+        "FP": 2,
+        "FN": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "mae_mean": {
+        "x": 0.782,
+        "y": 0.22,
+        "z": 0.0168,
+        "rmse": 0.872
+      },
+      "mae_std": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "rmse": 0.0
+      },
+      "position_variance": {
+        "tournevis": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "banane": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        },
+        "tasse": {
+          "x_std": 0.0,
+          "y_std": 0.0,
+          "z_std": 0.0
+        }
+      },
+      "time_mean_s": 17.397,
+      "time_std_s": 0.703
+    }
+  ],
+  "global_f1_mean": 0.6424,
+  "global_mae_mean": {
+    "x": 0.4388,
+    "y": 0.1995,
+    "z": 0.1456
+  }
+}

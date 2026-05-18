@@ -51,8 +51,8 @@
         {"id": "carboard_box", "urdf": "boite_carton_ouverte"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "carboard_box", "object": "lave_linge"},
-        {"type": "under", "subject": "scissors", "object": "lave_linge"}
+        {"type": "on", "subject": "carboard_box", "object": "washing_machine"},
+        {"type": "under", "subject": "scissors", "object": "washing_machine"}
       ],
       "expected_orientations": []
     },
@@ -88,13 +88,13 @@
       "id": "p07",
       "prompt": "Une table avec des ciseaux sous la table et un mug dessus.",
       "expected_objects": [
-        {"id": "lave_linge", "urdf": "lave_linge"},
+        {"id": "table", "urdf": "table"},
         {"id": "mug", "urdf": "mug"},
         {"id": "scissors", "urdf": "scissors"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "mug", "object": "lave_linge"},
-        {"type": "under", "subject": "scissors", "object": "lave_linge"}
+        {"type": "on", "subject": "mug", "object": "table"},
+        {"type": "under", "subject": "scissors", "object": "table"}
       ],
       "expected_orientations": []
     },
@@ -208,12 +208,12 @@
       ],
       "expected_relations": [
         {"type": "on", "subject": "ordinateur", "object": "lave_linge"},
-        {"type": "right_of",  "subject": "mug", "object": "ordinateur", "distance": 0.2},
+        {"type": "right_of",  "subject": "mug", "object": "lave_linge", "distance": 0.2},
         {"type": "in_front_of", "subject": "banane",  "object": "mug"},
         {"type": "on", "subject": "crackers",  "object": "lave_linge"}
 
       ],
-      "expected_orientations": []
+      "expected_orientations": [{"id": "banane", "turn": "tip_forward"}]
     },
     {
       "id": "p17",
@@ -226,8 +226,8 @@
       ],
       "expected_relations": [
         {"type": "on", "subject": "toaster", "object": "refrigerator"},
-        {"type": "left_of", "subject": "poubelle", "object": "frigo",    "distance": 0.5},
-        {"type": "in_front_of", "subject": "carton",   "object": "poubelle"}
+        {"type": "left_of", "subject": "trash_can", "object": "refrigerator", "distance": 0.5},
+        {"type": "in_front_of", "subject": "carboard_box",   "object": "trash_can"}
       ],
       "expected_orientations": [
         {"id": "carboard_box", "turn": "turn_right"}
@@ -244,8 +244,8 @@
       ],
       "expected_relations": [
         {"type": "on", "subject": "carton", "object": "lave_linge"},
-        {"type": "in_front_of", "subject": "lave_linge", "object": "ciseaux","distance": 0.5},
-         {"type": "left_of", "subject": "perceuse", "object": "ciseaux"}
+        {"type": "in_front_of", "subject": "ciseaux", "object": "lave_linge","distance": 0.3},
+         {"type": "right_of", "subject": "perceuse", "object": "ciseaux"}
       ],
       "expected_orientations": [
         {"id": "perceuse", "turn": "tip_forward"}
@@ -262,14 +262,14 @@
         {"id": "banana", "urdf": "banane"}
       ],
       "expected_relations": [
-        {"type": "on",  "subject": "laptop", "object": "dishwasher"},
-        {"type": "behind", "subject": "cle", "object": "laptop", "distance": 0.1},
+        {"type": "on",  "subject": "laptop", "object": "washing_machine"},
+        {"type": "behind", "subject": "USB_drive", "object": "laptop", "distance": 0.1},
         {"type": "right_of", "subject": "mug","object": "laptop"},
         {"type": "in_front_of", "subject": "banana", "object": "mug"}
       ],
       "expected_orientations": [
           {"id": "mug", "turn": "upside_down"},
-          {"id": "mug", "turn": "turn_left"}
+          {"id": "laptop", "turn": "turn_left"}
       ]
     },
     {
@@ -330,7 +330,7 @@
         {"id": "washing_machine", "urdf": "lave_linge"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "ordinateur", "object": "washing_machine"}
+        {"type": "on", "subject": "laptop", "object": "washing_machine"}
       ],
       "expected_orientations": [
         {"id": "laptop", "turn": "turn_right"}
@@ -344,7 +344,7 @@
         {"id": "perceuse", "urdf": "perceuse"}
       ],
       "expected_relations": [
-        {"type": "on", "subject": "perceuse", "object": "refrigerateur"}
+        {"type": "in_front_of", "subject": "perceuse", "object": "refrigerateur"}
       ],
       "expected_orientations": []
     },
