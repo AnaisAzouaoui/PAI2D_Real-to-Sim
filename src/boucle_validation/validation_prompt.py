@@ -14,7 +14,7 @@ import json
 
 
 def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=10):
-
+    '''Boucle de validation avec un VLM pour corriger la scène itérativement.'''
     run_dir = create_run_dir()
     history = []
     fixed_ids = set()
@@ -57,6 +57,8 @@ def boucle_vlm_prompt(user_prompt, jsonFile, max_iter=10):
 
 
 def validation_semantique_prompt(original_prompt, data, image_path):
+    '''Appel au VLM pour validation semantique de la scene.'''
+
     pos_and_dims = [
         {'id': item['id'], 'pos': item['pos'], 'dimensions': item['dimensions'],
          'lowest_point': item['lowest_point'], 'highest_point': item['highest_point']}

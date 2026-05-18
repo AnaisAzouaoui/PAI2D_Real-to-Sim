@@ -179,6 +179,7 @@ _OPPOSITE_DIRECTION = {
 
 
 def processRelations(items, relations):
+    '''Applique les relations entre les items, en respectant l'ordre, pour calculer leur position finale.'''
     items_dict = {item['id']: item for item in items}
     relations = simplifyRelations(relations)
     build_scene_graph(items_dict, relations)
